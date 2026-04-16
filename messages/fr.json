@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de bord",
+    "admin": "Admin",
+    "about": "À propos"
+  },
+  "landing": {
+    "hero": {
+      "title": "The Last Billboard",
+      "tagline": "Le dernier espace publicitaire. Rivalisez pour la visibilité. Le gagnant rafle tout.",
+      "cta": "Entrer dans le Billboard"
+    },
+    "explanation": {
+      "title": "Comment ça marche",
+      "text": "Les annonceurs enchérissent pour de l'espace sur une toile partagée. La taille de votre annonce croît logarithmiquement avec votre enchère. D'autres peuvent vous déplacer en enchérissant plus haut. Quand le compte à rebours se termine, le billboard se fige pour toujours."
+    },
+    "preview": {
+      "placeholder": "Aperçu du Billboard — à venir en Phase 2"
+    },
+    "countdown": {
+      "title": "Temps avant le gel",
+      "ended": "Billboard figé"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion à The Last Billboard",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "submit": "Envoyer le lien magique",
+      "checkEmail": "Consultez votre e-mail pour le lien magique !",
+      "error": "Échec de l'envoi du lien magique. Veuillez réessayer."
+    }
+  },
+  "dashboard": {
+    "title": "Mes enchères",
+    "empty": "Vous n'avez pas encore placé d'enchères.",
+    "emptyAction": "Placez votre première enchère pour revendiquer de l'espace sur le billboard."
+  },
+  "admin": {
+    "title": "Tableau de bord administrateur",
+    "placeholder": "Fonctionnalités admin à venir en Phase 2"
+  },
+  "about": {
+    "title": "À propos de The Last Billboard",
+    "content": "The Last Billboard est une expérience sur la rareté numérique et la compétition publicitaire."
+  },
+  "footer": {
+    "legal": "Mentions légales",
+    "privacy": "Confidentialité"
+  }
+}

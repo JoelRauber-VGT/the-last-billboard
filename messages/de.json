@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "about": "Über uns"
+  },
+  "landing": {
+    "hero": {
+      "title": "The Last Billboard",
+      "tagline": "Die letzte Werbefläche. Konkurrieren Sie um Sichtbarkeit. Der Gewinner bekommt alles.",
+      "cta": "Billboard betreten"
+    },
+    "explanation": {
+      "title": "So funktioniert es",
+      "text": "Werbetreibende bieten auf Platz auf einer gemeinsamen Leinwand. Ihre Anzeigengröße wächst logarithmisch mit Ihrem Gebot. Andere können Sie durch höhere Gebote verdrängen. Wenn der Countdown endet, friert das Billboard für immer ein."
+    },
+    "preview": {
+      "placeholder": "Billboard-Vorschau – kommt in Phase 2"
+    },
+    "countdown": {
+      "title": "Zeit bis zum Einfrieren",
+      "ended": "Billboard eingefroren"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Bei The Last Billboard anmelden",
+      "email": "E-Mail-Adresse",
+      "emailPlaceholder": "ihre@email.de",
+      "submit": "Magic Link senden",
+      "checkEmail": "Prüfen Sie Ihre E-Mail für den Magic Link!",
+      "error": "Fehler beim Senden des Magic Links. Bitte versuchen Sie es erneut."
+    }
+  },
+  "dashboard": {
+    "title": "Meine Gebote",
+    "empty": "Sie haben noch keine Gebote abgegeben.",
+    "emptyAction": "Geben Sie Ihr erstes Gebot ab, um Platz auf dem Billboard zu beanspruchen."
+  },
+  "admin": {
+    "title": "Admin-Dashboard",
+    "placeholder": "Admin-Funktionen kommen in Phase 2"
+  },
+  "about": {
+    "title": "Über The Last Billboard",
+    "content": "The Last Billboard ist ein Experiment zu digitaler Knappheit und Werbewettbewerb."
+  },
+  "footer": {
+    "legal": "Rechtliches",
+    "privacy": "Datenschutz"
+  }
+}

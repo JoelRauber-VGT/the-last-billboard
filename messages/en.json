@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "login": "Login",
+    "logout": "Logout",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "about": "About"
+  },
+  "landing": {
+    "hero": {
+      "title": "The Last Billboard",
+      "tagline": "The final advertising space. Compete for visibility. Winner takes all.",
+      "cta": "Enter Billboard"
+    },
+    "explanation": {
+      "title": "How it works",
+      "text": "Advertisers bid for space on a shared canvas. Your ad size grows logarithmically with your bid. Others can displace you by bidding higher. When the countdown ends, the billboard freezes forever."
+    },
+    "preview": {
+      "placeholder": "Billboard Preview — coming in Phase 2"
+    },
+    "countdown": {
+      "title": "Time until freeze",
+      "ended": "Billboard frozen"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login to The Last Billboard",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "submit": "Send Magic Link",
+      "checkEmail": "Check your email for the magic link!",
+      "error": "Failed to send magic link. Please try again."
+    }
+  },
+  "dashboard": {
+    "title": "My Bids",
+    "empty": "You haven't placed any bids yet.",
+    "emptyAction": "Place your first bid to claim space on the billboard."
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "placeholder": "Admin features coming in Phase 2"
+  },
+  "about": {
+    "title": "About The Last Billboard",
+    "content": "The Last Billboard is an experiment in digital scarcity and advertising competition."
+  },
+  "footer": {
+    "legal": "Legal",
+    "privacy": "Privacy"
+  }
+}

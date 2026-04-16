@@ -1,0 +1,54 @@
+{
+  "nav": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "dashboard": "Panel",
+    "admin": "Admin",
+    "about": "Acerca de"
+  },
+  "landing": {
+    "hero": {
+      "title": "The Last Billboard",
+      "tagline": "El último espacio publicitario. Compite por visibilidad. El ganador se lleva todo.",
+      "cta": "Entrar al Billboard"
+    },
+    "explanation": {
+      "title": "Cómo funciona",
+      "text": "Los anunciantes pujan por espacio en un lienzo compartido. El tamaño de tu anuncio crece logarítmicamente con tu oferta. Otros pueden desplazarte pujando más alto. Cuando termine la cuenta regresiva, el billboard se congela para siempre."
+    },
+    "preview": {
+      "placeholder": "Vista previa del Billboard — próximamente en Fase 2"
+    },
+    "countdown": {
+      "title": "Tiempo hasta el congelamiento",
+      "ended": "Billboard congelado"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión en The Last Billboard",
+      "email": "Dirección de correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "submit": "Enviar enlace mágico",
+      "checkEmail": "¡Revisa tu correo para el enlace mágico!",
+      "error": "Error al enviar el enlace mágico. Por favor, inténtalo de nuevo."
+    }
+  },
+  "dashboard": {
+    "title": "Mis ofertas",
+    "empty": "Aún no has realizado ninguna oferta.",
+    "emptyAction": "Realiza tu primera oferta para reclamar espacio en el billboard."
+  },
+  "admin": {
+    "title": "Panel de administración",
+    "placeholder": "Funciones de admin próximamente en Fase 2"
+  },
+  "about": {
+    "title": "Acerca de The Last Billboard",
+    "content": "The Last Billboard es un experimento sobre escasez digital y competencia publicitaria."
+  },
+  "footer": {
+    "legal": "Legal",
+    "privacy": "Privacidad"
+  }
+}
