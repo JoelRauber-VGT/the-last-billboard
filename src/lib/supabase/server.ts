@@ -9,7 +9,8 @@ import type { Database } from '@/types/database'
 export async function createServerClient() {
   const cookieStore = await cookies()
 
-  return createClient<Database>(
+  // Type parameter temporarily removed - will be added back when types are fully configured
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -17,7 +18,7 @@ export async function createServerClient() {
         getAll() {
           return cookieStore.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[]) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
@@ -40,7 +41,8 @@ export async function createServerClient() {
 export async function createServerActionClient() {
   const cookieStore = await cookies()
 
-  return createClient<Database>(
+  // Type parameter temporarily removed - will be added back when types are fully configured
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -48,7 +50,7 @@ export async function createServerActionClient() {
         getAll() {
           return cookieStore.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[]) {
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, options)
           )

@@ -1,10 +1,17 @@
 {
   "nav": {
-    "login": "Iniciar sesión",
-    "logout": "Cerrar sesión",
-    "dashboard": "Panel",
-    "admin": "Admin",
-    "about": "Acerca de"
+    "login": "iniciar-sesión",
+    "logout": "cerrar-sesión",
+    "loggingOut": "cerrando sesión...",
+    "dashboard": "panel",
+    "myBids": "mis ofertas",
+    "settings": "configuración",
+    "admin": "admin",
+    "about": "acerca-de",
+    "placeBid": "hacer-oferta",
+    "rules": "reglas",
+    "signIn": "iniciar sesión",
+    "bid": "ofertar"
   },
   "landing": {
     "hero": {
@@ -16,6 +23,23 @@
       "title": "Cómo funciona",
       "text": "Los anunciantes pujan por espacio en un lienzo compartido. El tamaño de tu anuncio crece logarítmicamente con tu oferta. Otros pueden desplazarte pujando más alto. Cuando termine la cuenta regresiva, el billboard se congela para siempre."
     },
+    "onboarding": {
+      "step1": {
+        "title": "Haz tu oferta",
+        "description": "Cada anunciante obtiene un espacio en el billboard. El tamaño de tu bloque crece logarítmicamente con tu oferta — incluso una pequeña inversión te da espacio visible."
+      },
+      "step2": {
+        "title": "Desplaza a los competidores",
+        "description": "Supera la oferta de un espacio existente para tomarlo. El propietario anterior recibe automáticamente un 90% de reembolso. El billboard se reorganiza en tiempo real."
+      },
+      "step3": {
+        "title": "La congelación",
+        "description": "Cuando la cuenta regresiva llegue a cero, el billboard se congela permanentemente. Sin más ofertas, sin más cambios. Tu espacio permanece para siempre — o lo pierdes definitivamente."
+      },
+      "back": "Atrás",
+      "next": "Siguiente",
+      "startBidding": "Empezar a ofertar"
+    },
     "preview": {
       "placeholder": "Vista previa del Billboard — próximamente en Fase 2"
     },
@@ -24,31 +48,624 @@
       "ended": "Billboard congelado"
     }
   },
+  "countdown": {
+    "title": "Tiempo hasta la congelación",
+    "frozen": "Billboard congelado",
+    "frozenMessage": "Este billboard es ahora permanente y permanecerá en su estado final.",
+    "days": "Días",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos",
+    "urgentWarning": "¡Apúrate! ¡Menos de 1 hora restante!"
+  },
+  "freeze": {
+    "title": "Billboard congelado",
+    "message": "No se pueden realizar más ofertas. Este billboard está ahora en su estado final y permanente.",
+    "linksStillWork": "Todos los enlaces de slots permanecen clicables."
+  },
   "auth": {
     "login": {
       "title": "Iniciar sesión en The Last Billboard",
+      "command": "auth",
       "email": "Dirección de correo electrónico",
       "emailPlaceholder": "tu@email.com",
       "submit": "Enviar enlace mágico",
       "checkEmail": "¡Revisa tu correo para el enlace mágico!",
-      "error": "Error al enviar el enlace mágico. Por favor, inténtalo de nuevo."
+      "error": "Error al enviar el enlace mágico. Por favor, inténtalo de nuevo.",
+      "prompt": "ingresa tu correo para recibir un enlace mágico",
+      "sendLink": "enviar enlace",
+      "sending": "enviando",
+      "linkSent": "enlace enviado a {email}",
+      "checkInbox": "revisa tu bandeja de entrada",
+      "waiting": "esperando",
+      "invalidEmail": "formato de correo inválido",
+      "errorSending": "error al enviar el enlace",
+      "unexpectedError": "error inesperado",
+      "errorPrefix": "error"
     }
   },
   "dashboard": {
     "title": "Mis ofertas",
     "empty": "Aún no has realizado ninguna oferta.",
-    "emptyAction": "Realiza tu primera oferta para reclamar espacio en el billboard."
+    "emptyAction": "Realiza tu primera oferta para reclamar espacio en el billboard.",
+    "placeBid": "Realizar tu primera oferta"
+  },
+  "settings": {
+    "title": "Configuración",
+    "description": "Administra la configuración y preferencias de tu cuenta",
+    "profile": {
+      "title": "Perfil",
+      "description": "Actualiza tu información de perfil",
+      "email": "Dirección de correo electrónico",
+      "emailHelp": "Tu dirección de correo no puede ser cambiada",
+      "displayName": "Nombre para mostrar",
+      "displayNamePlaceholder": "Tu nombre o marca",
+      "displayNameHelp": "Este nombre se mostrará en tus ofertas (opcional, máx. 50 caracteres)"
+    },
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "success": "¡Configuración guardada exitosamente!",
+    "errors": {
+      "notAuthenticated": "Debes iniciar sesión",
+      "updateFailed": "Error al actualizar. Por favor, inténtalo de nuevo.",
+      "unexpected": "Error inesperado"
+    }
   },
   "admin": {
-    "title": "Panel de administración",
-    "placeholder": "Funciones de admin próximamente en Fase 2"
+    "nav": {
+      "overview": "Resumen",
+      "reports": "Reportes",
+      "slots": "Espacios",
+      "transactions": "Transacciones",
+      "users": "Usuarios"
+    },
+    "overview": {
+      "title": "Panel de administración",
+      "activeSlots": "Espacios activos",
+      "openReports": "Reportes abiertos",
+      "totalRevenue": "Ingresos totales",
+      "totalBidVolume": "Volumen total de ofertas",
+      "timeToFreeze": "Tiempo hasta la congelación",
+      "recentTransactions": "Transacciones recientes"
+    },
+    "reports": {
+      "title": "Cola de reportes",
+      "viewSlot": "Ver espacio",
+      "dismiss": "Descartar",
+      "removeWithRefund": "Eliminar y reembolsar",
+      "removeNoRefund": "Eliminar (sin reembolso)",
+      "confirmRemove": "¿Está seguro de que desea eliminar este espacio?"
+    },
+    "slots": {
+      "title": "Gestión de espacios",
+      "hide": "Ocultar",
+      "restore": "Restaurar",
+      "viewHistory": "Ver historial",
+      "confirmHide": "¿Está seguro de que desea ocultar este espacio?",
+      "confirmRestore": "¿Restaurar este espacio?"
+    },
+    "transactions": {
+      "title": "Registro de transacciones",
+      "export": "Exportar CSV"
+    },
+    "users": {
+      "title": "Gestión de usuarios",
+      "toggleAdmin": "Cambiar admin",
+      "viewBids": "Ver ofertas",
+      "confirmToggleAdmin": "¿Cambiar el estado de administrador para este usuario?"
+    }
   },
   "about": {
     "title": "Acerca de The Last Billboard",
-    "content": "The Last Billboard es un experimento sobre escasez digital y competencia publicitaria."
+    "concept": {
+      "title": "El Concepto",
+      "text": "The Last Billboard es un experimento digital que explora la escasez, la competencia y la permanencia en la publicidad. A diferencia de los vallas publicitarias tradicionales que rotan contenido o existen en múltiples ubicaciones, solo hay un Last Billboard, y solo se mostrará una vez."
+    },
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "step1": {
+        "title": "Crear una cuenta",
+        "text": "Inicia sesión con tu correo electrónico usando un enlace mágico. No se requieren contraseñas."
+      },
+      "step2": {
+        "title": "Hacer tu oferta",
+        "text": "Elige el nombre de tu marca, sube una imagen, establece una URL de enlace e ingresa el monto de tu oferta."
+      },
+      "step3": {
+        "title": "Tu espacio crece logarítmicamente",
+        "text": "El tamaño de tu espacio publicitario crece con tu oferta, pero logarítmicamente para garantizar la equidad."
+      },
+      "step4": {
+        "title": "Competir por espacio",
+        "text": "Otros pueden superarte, desplazando tu espacio. Recibirás el 90% de tu oferta como reembolso si eres desplazado."
+      },
+      "step5": {
+        "title": "La Congelación",
+        "text": "Cuando la cuenta regresiva termina, el billboard se congela para siempre en su estado final."
+      }
+    },
+    "pricing": {
+      "title": "Precios y Economía",
+      "commission": "Cobramos una tarifa de plataforma del 10% en todas las ofertas. Esto cubre alojamiento, procesamiento de pagos y moderación.",
+      "refund": "Si tu espacio es desplazado por un postor más alto, recibes automáticamente el 90% de tu oferta original como reembolso a tu método de pago.",
+      "example": "Ejemplo: Ofertas €100. Si te superan, recibes €90 de vuelta. La plataforma retiene €10 independientemente del resultado."
+    },
+    "freeze": {
+      "title": "La Congelación",
+      "countdown": "Cuando la cuenta regresiva llega a cero, el billboard entra en un estado permanente y congelado.",
+      "permanent": "No se pueden hacer más cambios. El estado final se convierte en un artefacto digital permanente, preservado como una instantánea de este momento único en la historia de la publicidad."
+    },
+    "technology": {
+      "title": "Stack Tecnológico",
+      "intro": "Construido con tecnologías modernas y escalables:",
+      "nextjs": "Next.js 15 con React Server Components para un rendimiento ultrarrápido",
+      "supabase": "Supabase para autenticación, base de datos y actualizaciones en tiempo real",
+      "stripe": "Stripe para procesamiento seguro de pagos y reembolsos automáticos",
+      "vercel": "Vercel para alojamiento optimizado en edge y distribución global"
+    },
+    "specifications": {
+      "title": "Especificaciones Técnicas",
+      "canvasSize": "Tamaño del Canvas: 10.000 × 10.000 píxeles",
+      "maxImageSize": "Tamaño Máximo de Imagen: 10 MB",
+      "imageFormats": "Formatos Soportados: PNG, JPEG, WebP",
+      "minBlockSize": "Tamaño Mínimo de Bloque: 40 × 40 píxeles"
+    },
+    "faq": {
+      "title": "Preguntas Frecuentes",
+      "q1": {
+        "question": "¿Qué pasa si me superan?",
+        "answer": "Recibirás automáticamente el 90% del monto de tu oferta como reembolso a tu método de pago original. La plataforma retiene el 10% como comisión."
+      },
+      "q2": {
+        "question": "¿Puedo actualizar mi espacio después de ofertar?",
+        "answer": "No. Una vez realizada, las ofertas son inmutables. Para hacer cambios, deberás realizar una nueva oferta que supere tu espacio actual."
+      },
+      "q3": {
+        "question": "¿Qué pasa después de la congelación?",
+        "answer": "El billboard se vuelve permanente e inmutable. Todos los enlaces de espacios permanecen clicables, pero no se pueden realizar nuevas ofertas."
+      },
+      "q4": {
+        "question": "¿Qué contenido está prohibido?",
+        "answer": "La pornografía, la violencia, el discurso de odio, el malware, las violaciones de derechos de autor y el contenido ilegal están estrictamente prohibidos. Los espacios que violen esto serán eliminados."
+      },
+      "q5": {
+        "question": "¿Es seguro mi pago?",
+        "answer": "Sí. Todos los pagos se procesan a través de Stripe, un procesador de pagos conforme con PCI. Nunca almacenamos tu información de tarjeta de crédito."
+      }
+    },
+    "philosophy": {
+      "title": "Por qué esto importa",
+      "text": "En una era de espacio digital infinito y contenido efímero, The Last Billboard trae de vuelta el concepto de escasez y permanencia. Pregunta: ¿qué dirías si supieras que se preservará para siempre? ¿Cuánto estarías dispuesto a pagar por una visibilidad verdaderamente duradera?"
+    }
   },
   "footer": {
-    "legal": "Legal",
-    "privacy": "Privacidad"
+    "imprint": "aviso-legal",
+    "privacy": "privacidad",
+    "terms": "términos",
+    "contact": "contacto",
+    "live": "en vivo",
+    "uptime": "tiempo de actividad"
+  },
+  "bid": {
+    "frozen": {
+      "title": "Billboard congelado",
+      "message": "El período de ofertas ha terminado. No se pueden realizar más ofertas.",
+      "backToBoard": "Volver al Billboard"
+    },
+    "form": {
+      "title": "Hacer tu oferta",
+      "titleOutbid": "Superar oferta del slot",
+      "outbiddingInfo": "Estás superando la oferta de {name} (oferta actual: €{amount})",
+      "displayName": "Nombre para mostrar",
+      "displayNamePlaceholder": "Tu marca o nombre",
+      "image": "Imagen (opcional)",
+      "imageHelp": "Máx 10MB, PNG/JPEG/WEBP",
+      "linkUrl": "URL del enlace",
+      "linkUrlPlaceholder": "https://tu-sitio-web.com",
+      "brandColor": "Color de marca",
+      "bidAmount": "Monto de la oferta (€)",
+      "bidAmountHelp": "Mínimo: €{min}",
+      "submit": "Proceder al pago",
+      "submitting": "Procesando...",
+      "uploadingImage": "Subiendo imagen..."
+    },
+    "validation": {
+      "displayNameRequired": "El nombre para mostrar es requerido",
+      "displayNameTooLong": "El nombre para mostrar debe tener máximo 50 caracteres",
+      "imageTooBig": "La imagen debe tener máximo 10MB",
+      "imageInvalidType": "Solo PNG, JPEG, WEBP permitidos",
+      "linkRequired": "La URL del enlace es requerida",
+      "linkInvalid": "Debe ser una URL HTTPS válida",
+      "colorInvalid": "Formato de color inválido",
+      "bidTooLow": "La oferta debe ser al menos €{min}",
+      "bidInvalid": "Monto de oferta inválido"
+    },
+    "errors": {
+      "uploadFailed": "Error al subir la imagen, por favor inténtalo de nuevo",
+      "sessionFailed": "Error al crear la sesión de pago",
+      "unauthorized": "Debes iniciar sesión para hacer una oferta",
+      "slotNotFound": "Slot no encontrado",
+      "bidTooLowForOutbid": "Tu oferta debe ser mayor que la oferta actual"
+    },
+    "success": {
+      "title": "Pago exitoso",
+      "message": "Tu oferta está siendo procesada.",
+      "viewBillboard": "Ver Billboard"
+    },
+    "cancel": {
+      "title": "Pago cancelado",
+      "message": "Puedes intentarlo de nuevo o volver al billboard.",
+      "tryAgain": "Intentar de nuevo",
+      "backToBillboard": "Volver al Billboard"
+    }
+  },
+  "errors": {
+    "generic": "Algo salió mal. Por favor, inténtelo de nuevo.",
+    "unauthorized": "Debes iniciar sesión para hacer esto.",
+    "forbidden": "No tienes permiso para hacer esto.",
+    "rateLimit": "Demasiadas solicitudes. Por favor, espera e inténtalo de nuevo.",
+    "serverError": "Error del servidor. Hemos sido notificados y estamos trabajando en ello.",
+    "networkError": "Error de red. Por favor, verifica tu conexión.",
+    "notFound": "Página no encontrada",
+    "tryAgain": "Intentar de nuevo",
+    "retry": "Reintentar",
+    "contactSupport": "Contactar Soporte",
+    "imageUpload": {
+      "tooLarge": "Archivo demasiado grande (máx. 10MB)",
+      "invalidType": "Tipo de archivo inválido. Use PNG, JPEG o WebP.",
+      "uploadFailed": "Error al subir. Por favor, inténtelo de nuevo."
+    },
+    "bid": {
+      "submitFailed": "Error al enviar oferta. Por favor, inténtelo de nuevo.",
+      "amountTooLow": "El monto de la oferta debe ser al menos €{min}."
+    },
+    "report": {
+      "submitFailed": "Error al enviar el reporte.",
+      "rateLimitReached": "Has alcanzado el número máximo de reportes por hora."
+    },
+    "admin": {
+      "actionFailed": "Acción fallida. Por favor, inténtelo de nuevo.",
+      "loadFailed": "Error al cargar datos.",
+      "cannotDemoteSelf": "No puedes degradarte a ti mismo ya que eres el último admin."
+    },
+    "stripe": {
+      "sessionCreationFailed": "Error al crear la sesión de pago",
+      "invalidAmount": "Monto de oferta inválido",
+      "unauthorized": "Debes iniciar sesión para hacer una oferta"
+    }
+  },
+  "billboard": {
+    "emptyState": "Aún no hay ofertas. Sé el primero.",
+    "loading": "Cargando billboard...",
+    "slotDetail": {
+      "title": "Detalles del slot",
+      "currentBid": "Oferta actual",
+      "history": "Historial",
+      "loading": "Cargando historial...",
+      "outbid": "Superar esta oferta",
+      "report": "Reportar",
+      "reportTooltip": "Próximamente",
+      "ownedBy": "Propiedad de {name}",
+      "from": "desde",
+      "to": "hasta",
+      "displacedBy": "desplazado por {name}",
+      "currentOwner": "propietario actual"
+    }
+  },
+  "ticker": {
+    "title": "Actividad en vivo",
+    "empty": "Sin actividad aún",
+    "enteredFor": "entró al billboard por",
+    "outbidFor": "superó una oferta por",
+    "displaced": "desplazado",
+    "justNow": "justo ahora"
+  },
+  "report": {
+    "button": "Reportar slot",
+    "title": "Reportar este slot",
+    "reason": {
+      "label": "Razón",
+      "inappropriate": "Contenido inapropiado (adulto, violencia, discurso de odio)",
+      "misleading": "Engañoso o estafa",
+      "copyright": "Violación de derechos de autor",
+      "malware": "Malware o enlace de phishing",
+      "spam": "Spam",
+      "other": "Otro"
+    },
+    "details": {
+      "label": "Detalles adicionales (opcional)",
+      "placeholder": "Por favor proporcione más información...",
+      "maxLength": "Máximo 500 caracteres"
+    },
+    "submit": "Enviar reporte",
+    "success": "Reporte enviado exitosamente. ¡Gracias!",
+    "error": "Error al enviar el reporte. Por favor intente de nuevo.",
+    "rateLimit": "Ha alcanzado el número máximo de reportes por hora. Por favor intente más tarde.",
+    "removed": {
+      "title": "Slot bajo revisión",
+      "message": "Este slot fue reportado y está bajo revisión. Contacte al soporte si cree que esto es un error.",
+      "contactSupport": "Contactar soporte"
+    }
+  },
+  "meta": {
+    "landing": {
+      "title": "The Last Billboard — Reclama tu espacio en la última cuadrícula publicitaria de Internet",
+      "description": "Compite por visibilidad en el billboard final. Oferta logarítmicamente, desplaza a otros, el ganador se lo lleva todo cuando se agote el tiempo."
+    },
+    "about": {
+      "title": "Acerca de The Last Billboard",
+      "description": "Conoce The Last Billboard - el último espacio publicitario donde los anunciantes compiten por visibilidad eterna."
+    },
+    "bid": {
+      "title": "Haz tu oferta — The Last Billboard",
+      "description": "Reclama tu espacio en el billboard final. Elige tu imagen, establece tu oferta y compite por visibilidad."
+    },
+    "dashboard": {
+      "title": "Mi panel — The Last Billboard",
+      "description": "Gestiona tus ofertas en The Last Billboard."
+    },
+    "settings": {
+      "title": "Configuración — The Last Billboard",
+      "description": "Administra la configuración de tu cuenta en The Last Billboard."
+    }
+  },
+  "legal": {
+    "cookieBanner": {
+      "message": "Solo usamos cookies esenciales para autenticación y preferencias. Sin seguimiento ni análisis.",
+      "accept": "Entendido",
+      "learnMore": "Saber más"
+    },
+    "imprint": {
+      "title": "Aviso Legal",
+      "operator": {
+        "title": "Información del Operador",
+        "placeholder": "Información conforme a requisitos legales (§5 TMG / ECG / etc.)",
+        "todoTitle": "TODO: Reemplazar con detalles reales del operador",
+        "todoItems": {
+          "name": "Nombre legal completo / Nombre de empresa",
+          "address": "Dirección completa (calle, código postal, ciudad, país)",
+          "email": "Dirección de correo electrónico",
+          "phone": "Número de teléfono (si corresponde)",
+          "vat": "ID de IVA / ID fiscal (si corresponde)",
+          "register": "Entrada de registro (si es empresa)"
+        }
+      },
+      "contact": {
+        "title": "Contacto",
+        "emailLabel": "Correo electrónico",
+        "placeholder": "TODO: Reemplazar con correo de contacto real"
+      },
+      "disclaimer": {
+        "title": "Descargo de responsabilidad",
+        "liability": "A pesar del control cuidadoso del contenido, no asumimos responsabilidad por el contenido de enlaces externos. Los operadores de las páginas enlazadas son los únicos responsables de su contenido.",
+        "externalLinks": "Los enlaces externos a sitios web de terceros están más allá de nuestro control. Nos distanciamos de todo el contenido en páginas enlazadas y no asumimos responsabilidad por ello.",
+        "copyright": "Todo el contenido y obras en este sitio web están sujetos a derechos de autor. La reproducción requiere permiso por escrito."
+      },
+      "disputeResolution": {
+        "title": "Resolución de Disputas",
+        "text": "La Comisión Europea proporciona una plataforma de resolución de disputas en línea (RDL). No estamos dispuestos ni obligados a participar en procedimientos de resolución de disputas ante una junta de arbitraje de consumidores."
+      }
+    },
+    "privacy": {
+      "title": "Política de Privacidad",
+      "introduction": {
+        "title": "Introducción",
+        "text": "Nos tomamos en serio la protección de sus datos personales. Esta política de privacidad explica qué datos recopilamos, cómo los usamos y sus derechos bajo RGPD."
+      },
+      "dataCollection": {
+        "title": "Datos que Recopilamos",
+        "intro": "Recopilamos los siguientes tipos de datos:",
+        "personal": {
+          "title": "Datos Personales que Usted Proporciona",
+          "emailLabel": "Dirección de correo electrónico",
+          "email": "Requerida para autenticación y gestión de cuenta",
+          "paymentLabel": "Datos de pago",
+          "payment": "Procesados de forma segura por Stripe (nunca almacenamos detalles de tarjeta de crédito)",
+          "bidsLabel": "Datos de ofertas",
+          "bids": "Nombre para mostrar, URL de enlace, color de marca y monto de oferta para sus espacios",
+          "imagesLabel": "Imágenes cargadas",
+          "images": "Imágenes que sube para sus espacios publicitarios"
+        },
+        "automatic": {
+          "title": "Datos Recopilados Automáticamente",
+          "cookiesLabel": "Cookies",
+          "cookies": "Solo cookies esenciales para autenticación y preferencias de idioma",
+          "ipLabel": "Dirección IP",
+          "ip": "Registrada temporalmente para seguridad y prevención de abusos",
+          "browserLabel": "Datos del navegador",
+          "browser": "User agent e información del navegador para compatibilidad"
+        }
+      },
+      "dataUsage": {
+        "title": "Cómo Usamos sus Datos",
+        "intro": "Usamos sus datos para los siguientes propósitos:",
+        "authentication": "Autenticación de usuarios y gestión de cuentas",
+        "processing": "Procesamiento de ofertas y pagos",
+        "display": "Mostrar sus espacios publicitarios en el billboard",
+        "moderation": "Moderación de contenido y prevención de abusos",
+        "legal": "Cumplimiento de obligaciones legales (impuestos, contabilidad)"
+      },
+      "processors": {
+        "title": "Procesadores de Datos (Terceros)",
+        "intro": "Compartimos sus datos con los siguientes procesadores de confianza:",
+        "supabase": "Autenticación, base de datos y almacenamiento de archivos (servidores EU/US, compatible con RGPD)",
+        "stripe": "Procesamiento de pagos y reembolsos (certificado PCI-DSS Nivel 1)",
+        "vercel": "Alojamiento y entrega de contenido (red edge global)",
+        "privacyPolicy": "Política de Privacidad"
+      },
+      "rights": {
+        "title": "Sus Derechos bajo RGPD",
+        "intro": "Tiene los siguientes derechos:",
+        "access": {
+          "title": "Derecho de Acceso",
+          "text": "Solicitar una copia de todos los datos que tenemos sobre usted"
+        },
+        "rectification": {
+          "title": "Derecho de Rectificación",
+          "text": "Solicitar corrección de datos inexactos"
+        },
+        "erasure": {
+          "title": "Derecho de Eliminación",
+          "text": "Solicitar eliminación de su cuenta y datos (excluyendo registros legalmente requeridos)"
+        },
+        "portability": {
+          "title": "Derecho a la Portabilidad de Datos",
+          "text": "Recibir sus datos en un formato estructurado y legible por máquina"
+        },
+        "objection": {
+          "title": "Derecho de Objeción",
+          "text": "Objetar el procesamiento basado en interés legítimo"
+        },
+        "complaint": {
+          "title": "Derecho a Presentar una Queja",
+          "text": "Presentar una queja ante su autoridad nacional de protección de datos"
+        },
+        "contact": "Para ejercer sus derechos, contáctenos en",
+        "todoEmail": "TODO: Reemplazar privacy@example.com con correo de contacto real"
+      },
+      "cookies": {
+        "title": "Cookies",
+        "essential": "Solo usamos cookies esenciales:",
+        "authLabel": "Cookies de autenticación",
+        "auth": "Gestión de sesión (expira después de cerrar sesión)",
+        "preferencesLabel": "Cookies de preferencias",
+        "preferences": "Selección de idioma y preferencias de UI",
+        "noTracking": "NO usamos cookies de seguimiento, cookies de análisis o cookies publicitarias."
+      },
+      "retention": {
+        "title": "Retención de Datos",
+        "accounts": "Los datos de cuenta y ofertas se retienen mientras su cuenta esté activa.",
+        "transactions": "Los registros de transacciones se retienen durante 10 años para cumplir con regulaciones fiscales y contables.",
+        "logs": "Los registros del servidor (direcciones IP) se eliminan después de 90 días."
+      },
+      "security": {
+        "title": "Medidas de Seguridad",
+        "text": "Implementamos medidas de seguridad estándar de la industria que incluyen cifrado (TLS/SSL), autenticación segura (enlaces mágicos), cifrado de base de datos en reposo y auditorías de seguridad regulares."
+      },
+      "international": {
+        "title": "Transferencias Internacionales de Datos",
+        "text": "Sus datos pueden ser procesados en la UE y EE.UU. Todos los procesadores son compatibles con RGPD y proporcionan protección adecuada a través de Privacy Shield, Cláusulas Contractuales Estándar o mecanismos equivalentes."
+      },
+      "updates": {
+        "title": "Actualizaciones de Política",
+        "text": "Podemos actualizar esta política ocasionalmente. Los cambios materiales se comunicarán por correo electrónico.",
+        "lastUpdated": "Última actualización"
+      },
+      "contact": {
+        "title": "Contacto",
+        "text": "Para preguntas relacionadas con privacidad, contáctenos en:",
+        "emailLabel": "Correo electrónico",
+        "seeImprint": "Para detalles de contacto completos, consulte nuestro",
+        "imprintLink": "Aviso Legal"
+      }
+    },
+    "terms": {
+      "title": "Términos de Servicio",
+      "acceptance": {
+        "title": "Aceptación de Términos",
+        "text": "Al acceder o usar The Last Billboard, acepta estar sujeto a estos Términos de Servicio. Si no está de acuerdo, no use el servicio."
+      },
+      "service": {
+        "title": "Descripción del Servicio",
+        "description": "The Last Billboard es una plataforma publicitaria digital donde los usuarios pujan por espacio en un lienzo compartido. Los espacios se asignan según el monto de la oferta, con el tamaño creciendo logarítmicamente.",
+        "freeze": "Después de que expire la cuenta regresiva, el billboard entra en un estado congelado permanente y no son posibles más cambios."
+      },
+      "account": {
+        "title": "Registro de Cuenta",
+        "magicLink": "Debe crear una cuenta usando autenticación por correo electrónico (enlace mágico) para hacer ofertas.",
+        "responsibility": "Es responsable de mantener la confidencialidad de su cuenta y todas las actividades bajo ella."
+      },
+      "bidding": {
+        "title": "Reglas de Ofertas",
+        "minimum": {
+          "title": "Oferta Mínima",
+          "text": "La plataforma aplica un monto mínimo de oferta dinámico"
+        },
+        "commission": {
+          "title": "Comisión de Plataforma",
+          "text": "Todas las ofertas están sujetas a una tarifa de plataforma del 10%"
+        },
+        "size": {
+          "title": "Tamaño del Espacio",
+          "text": "El tamaño del espacio se calcula logarítmicamente basado en el monto de la oferta para garantizar la equidad"
+        },
+        "displacement": {
+          "title": "Desplazamiento",
+          "text": "Otros usuarios pueden superar su espacio. Si es desplazado, se mueve a una nueva posición o sale del billboard."
+        },
+        "refund": {
+          "title": "Política de Reembolso",
+          "text": "Si su espacio es desplazado, recibe automáticamente el 90% de su oferta como reembolso. La tarifa de plataforma del 10% no es reembolsable."
+        },
+        "final": {
+          "title": "Ofertas Finales",
+          "text": "Las ofertas son finales e inmutables una vez realizadas. No puede editar o cancelar una oferta."
+        }
+      },
+      "content": {
+        "title": "Política de Contenido",
+        "intro": "Usted es el único responsable del contenido que carga. Al hacer una oferta, declara que su contenido no viola ninguna ley ni derechos de terceros.",
+        "prohibitedTitle": "Contenido Prohibido",
+        "prohibited": {
+          "pornography": "Pornografía o contenido sexualmente explícito",
+          "violence": "Violencia gráfica o gore",
+          "hate": "Discurso de odio, discriminación o acoso",
+          "malware": "Malware, enlaces de phishing o contenido malicioso",
+          "copyright": "Infracción de derechos de autor o marca registrada",
+          "illegal": "Bienes, servicios o actividades ilegales",
+          "spam": "Spam o contenido engañoso"
+        },
+        "removal": "Nos reservamos el derecho de eliminar contenido prohibido sin reembolso. Las violaciones repetidas pueden resultar en la terminación de la cuenta.",
+        "license": "Al cargar contenido, nos otorga una licencia no exclusiva, mundial para mostrarlo en el billboard."
+      },
+      "payment": {
+        "title": "Términos de Pago",
+        "stripe": "Todos los pagos se procesan a través de Stripe. Al hacer una oferta, acepta los Términos de Servicio de Stripe.",
+        "currency": "Todas las ofertas son en EUR (€). Pueden aplicarse tarifas de conversión de moneda.",
+        "noChargebacks": "Debido a la naturaleza del servicio (asignación instantánea de espacio), las contracargos están estrictamente prohibidos. Los cargos disputados resultarán en la terminación de la cuenta."
+      },
+      "liability": {
+        "title": "Limitación de Responsabilidad",
+        "platform": "The Last Billboard se proporciona \"tal cual\" sin garantías de ningún tipo. No garantizamos tiempo de actividad, disponibilidad o persistencia del espacio.",
+        "userContent": "No somos responsables del contenido generado por usuarios. Los usuarios son los únicos responsables de sus espacios.",
+        "payment": "No somos responsables de errores de procesamiento de pagos causados por Stripe o su proveedor de pagos.",
+        "noWarranty": "En la medida máxima permitida por la ley, rechazamos toda responsabilidad por daños indirectos, incidentales o consecuentes."
+      },
+      "indemnification": {
+        "title": "Indemnización",
+        "text": "Acepta indemnizarnos y mantenernos indemnes de cualquier reclamo, daño o gasto que surja de su uso del servicio, su contenido o su violación de estos términos."
+      },
+      "freeze": {
+        "title": "Congelamiento del Billboard",
+        "permanent": "Cuando termine la cuenta regresiva, el billboard se congela permanentemente. Todos los espacios se vuelven inmutables.",
+        "noRefunds": "No se emiten reembolsos para espacios activos en el momento de la congelación, independientemente de la duración de tenencia."
+      },
+      "termination": {
+        "title": "Terminación",
+        "text": "Nos reservamos el derecho de suspender o terminar cuentas que violen estos términos. Los espacios activos pueden ser eliminados sin reembolso en casos de violaciones graves."
+      },
+      "law": {
+        "title": "Ley Aplicable",
+        "text": "Estos términos se rigen por las leyes de [jurisdicción a especificar].",
+        "todoTitle": "TODO: Especificar Ley Aplicable",
+        "todoText": "Especificar ley aplicable (Suiza, Alemania, UE, etc.) antes del despliegue en producción"
+      },
+      "changes": {
+        "title": "Cambios en los Términos",
+        "text": "Podemos actualizar estos términos en cualquier momento. Los cambios materiales se anunciarán con 14 días de anticipación. El uso continuado constituye aceptación."
+      },
+      "severability": {
+        "title": "Divisibilidad",
+        "text": "Si alguna disposición de estos términos se considera inválida, las disposiciones restantes permanecen en pleno efecto."
+      },
+      "contact": {
+        "title": "Contacto",
+        "text": "Para preguntas sobre estos términos, contáctenos en:",
+        "emailLabel": "Correo electrónico",
+        "seeImprint": "Para detalles de contacto completos, consulte nuestro",
+        "imprintLink": "Aviso Legal",
+        "lastUpdated": "Última actualización"
+      }
+    }
   }
 }

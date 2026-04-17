@@ -2,14 +2,6 @@
 
 import { usePathname, useRouter } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
-import { Globe } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
 
 const languages = [
   { code: 'en', name: 'English' },
@@ -18,37 +10,60 @@ const languages = [
   { code: 'es', name: 'Español' },
 ] as const;
 
-export function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  variant?: 'full' | 'minimal';
+}
+
+export function LanguageSwitcher({ variant = 'full' }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
-
-  const currentLanguage = languages.find((lang) => lang.code === locale);
 
   const handleLanguageChange = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale });
   };
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage?.name}</span>
-          <span className="sm:hidden">{locale.toUpperCase()}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {languages.map((language) => (
-          <DropdownMenuItem
-            key={language.code}
-            onClick={() => handleLanguageChange(language.code)}
-            className={locale === language.code ? 'bg-accent' : ''}
-          >
-            {language.name}
-          </DropdownMenuItem>
+  // Minimal variant for footer - simple inline links
+  if (variant === 'minimal') {
+    return (
+      <div className="flex items-center gap-2 font-mono text-sm">
+        {languages.map((language, index) => (
+          <span key={language.code}>
+            {index > 0 && <span className="text-term-border-light mr-2">|</span>}
+            <button
+              onClick={() => handleLanguageChange(language.code)}
+              className={`transition-colors ${
+                locale === language.code
+                  ? 'text-term-text font-bold'
+                  : 'text-term-dim hover:text-term-muted'
+              }`}
+            >
+              {language.code}
+            </button>
+          </span>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </div>
+    );
+  }
+
+  // Full variant with dropdown - for other parts of the app
+  return (
+    <div className="flex items-center gap-2 font-mono text-sm">
+      {languages.map((language, index) => (
+        <span key={language.code}>
+          {index > 0 && <span className="text-term-border-light mr-2">|</span>}
+          <button
+            onClick={() => handleLanguageChange(language.code)}
+            className={`transition-colors ${
+              locale === language.code
+                ? 'text-term-text font-bold'
+                : 'text-term-dim hover:text-term-muted'
+            }`}
+          >
+            {language.code}
+          </button>
+        </span>
+      ))}
+    </div>
   );
 }

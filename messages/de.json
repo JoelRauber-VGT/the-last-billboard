@@ -1,10 +1,17 @@
 {
   "nav": {
-    "login": "Anmelden",
-    "logout": "Abmelden",
-    "dashboard": "Dashboard",
-    "admin": "Admin",
-    "about": "Über uns"
+    "login": "anmelden",
+    "logout": "abmelden",
+    "loggingOut": "wird abgemeldet...",
+    "dashboard": "dashboard",
+    "myBids": "meine gebote",
+    "settings": "einstellungen",
+    "admin": "admin",
+    "about": "über-uns",
+    "placeBid": "gebot-abgeben",
+    "rules": "regeln",
+    "signIn": "anmelden",
+    "bid": "bieten"
   },
   "landing": {
     "hero": {
@@ -16,6 +23,23 @@
       "title": "So funktioniert es",
       "text": "Werbetreibende bieten auf Platz auf einer gemeinsamen Leinwand. Ihre Anzeigengröße wächst logarithmisch mit Ihrem Gebot. Andere können Sie durch höhere Gebote verdrängen. Wenn der Countdown endet, friert das Billboard für immer ein."
     },
+    "onboarding": {
+      "step1": {
+        "title": "Platzieren Sie Ihr Gebot",
+        "description": "Jeder Werbetreibende erhält einen Platz auf dem Billboard. Ihre Blockgröße wächst logarithmisch mit Ihrem Gebot — selbst eine kleine Investition gibt Ihnen sichtbaren Raum."
+      },
+      "step2": {
+        "title": "Verdrängen Sie Konkurrenten",
+        "description": "Überbieten Sie einen bestehenden Platz, um ihn zu übernehmen. Der vorherige Besitzer erhält automatisch 90% zurückerstattet. Das Billboard ordnet sich in Echtzeit neu."
+      },
+      "step3": {
+        "title": "Das Einfrieren",
+        "description": "Wenn der Countdown auf Null geht, friert das Billboard dauerhaft ein. Keine Gebote mehr, keine Änderungen mehr. Ihr Platz bleibt für immer — oder Sie verlieren ihn endgültig."
+      },
+      "back": "Zurück",
+      "next": "Weiter",
+      "startBidding": "Jetzt bieten"
+    },
     "preview": {
       "placeholder": "Billboard-Vorschau – kommt in Phase 2"
     },
@@ -24,31 +48,624 @@
       "ended": "Billboard eingefroren"
     }
   },
+  "countdown": {
+    "title": "Zeit bis zum Einfrieren",
+    "frozen": "Billboard eingefroren",
+    "frozenMessage": "Dieses Billboard ist jetzt permanent und wird in seinem finalen Zustand bleiben.",
+    "days": "Tage",
+    "hours": "Stunden",
+    "minutes": "Minuten",
+    "seconds": "Sekunden",
+    "urgentWarning": "Beeilen Sie sich! Weniger als 1 Stunde verbleibend!"
+  },
+  "freeze": {
+    "title": "Billboard eingefroren",
+    "message": "Es können keine Gebote mehr abgegeben werden. Dieses Billboard ist jetzt in seinem finalen, permanenten Zustand.",
+    "linksStillWork": "Alle Slot-Links bleiben anklickbar."
+  },
   "auth": {
     "login": {
       "title": "Bei The Last Billboard anmelden",
+      "command": "auth",
       "email": "E-Mail-Adresse",
       "emailPlaceholder": "ihre@email.de",
       "submit": "Magic Link senden",
       "checkEmail": "Prüfen Sie Ihre E-Mail für den Magic Link!",
-      "error": "Fehler beim Senden des Magic Links. Bitte versuchen Sie es erneut."
+      "error": "Fehler beim Senden des Magic Links. Bitte versuchen Sie es erneut.",
+      "prompt": "Geben Sie Ihre E-Mail ein, um einen Magic Link zu erhalten",
+      "sendLink": "Link senden",
+      "sending": "sende",
+      "linkSent": "Link gesendet an {email}",
+      "checkInbox": "Prüfen Sie Ihr Postfach",
+      "waiting": "warte",
+      "invalidEmail": "Ungültiges E-Mail-Format",
+      "errorSending": "Fehler beim Senden des Links",
+      "unexpectedError": "Unerwarteter Fehler",
+      "errorPrefix": "Fehler"
     }
   },
   "dashboard": {
     "title": "Meine Gebote",
     "empty": "Sie haben noch keine Gebote abgegeben.",
-    "emptyAction": "Geben Sie Ihr erstes Gebot ab, um Platz auf dem Billboard zu beanspruchen."
+    "emptyAction": "Geben Sie Ihr erstes Gebot ab, um Platz auf dem Billboard zu beanspruchen.",
+    "placeBid": "Erstes Gebot abgeben"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "description": "Verwalten Sie Ihre Kontoeinstellungen und Präferenzen",
+    "profile": {
+      "title": "Profil",
+      "description": "Aktualisieren Sie Ihre Profilinformationen",
+      "email": "E-Mail-Adresse",
+      "emailHelp": "Ihre E-Mail-Adresse kann nicht geändert werden",
+      "displayName": "Anzeigename",
+      "displayNamePlaceholder": "Ihr Name oder Marke",
+      "displayNameHelp": "Dieser Name wird in Ihren Geboten angezeigt (optional, max. 50 Zeichen)"
+    },
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "success": "Einstellungen erfolgreich gespeichert!",
+    "errors": {
+      "notAuthenticated": "Sie müssen angemeldet sein",
+      "updateFailed": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "unexpected": "Unerwarteter Fehler aufgetreten"
+    }
   },
   "admin": {
-    "title": "Admin-Dashboard",
-    "placeholder": "Admin-Funktionen kommen in Phase 2"
+    "nav": {
+      "overview": "Übersicht",
+      "reports": "Meldungen",
+      "slots": "Slots",
+      "transactions": "Transaktionen",
+      "users": "Benutzer"
+    },
+    "overview": {
+      "title": "Admin-Dashboard",
+      "activeSlots": "Aktive Slots",
+      "openReports": "Offene Meldungen",
+      "totalRevenue": "Gesamtumsatz",
+      "totalBidVolume": "Gesamtes Gebotsvolumen",
+      "timeToFreeze": "Zeit bis zum Einfrieren",
+      "recentTransactions": "Letzte Transaktionen"
+    },
+    "reports": {
+      "title": "Meldungswarteschlange",
+      "viewSlot": "Slot anzeigen",
+      "dismiss": "Ablehnen",
+      "removeWithRefund": "Entfernen & Rückerstattung",
+      "removeNoRefund": "Entfernen (ohne Rückerstattung)",
+      "confirmRemove": "Möchten Sie diesen Slot wirklich entfernen?"
+    },
+    "slots": {
+      "title": "Slot-Verwaltung",
+      "hide": "Ausblenden",
+      "restore": "Wiederherstellen",
+      "viewHistory": "Verlauf anzeigen",
+      "confirmHide": "Möchten Sie diesen Slot wirklich ausblenden?",
+      "confirmRestore": "Diesen Slot wiederherstellen?"
+    },
+    "transactions": {
+      "title": "Transaktionsprotokoll",
+      "export": "CSV exportieren"
+    },
+    "users": {
+      "title": "Benutzerverwaltung",
+      "toggleAdmin": "Admin umschalten",
+      "viewBids": "Gebote anzeigen",
+      "confirmToggleAdmin": "Admin-Status für diesen Benutzer ändern?"
+    }
   },
   "about": {
     "title": "Über The Last Billboard",
-    "content": "The Last Billboard ist ein Experiment zu digitaler Knappheit und Werbewettbewerb."
+    "concept": {
+      "title": "Das Konzept",
+      "text": "The Last Billboard ist ein digitales Experiment, das Knappheit, Wettbewerb und Beständigkeit in der Werbung erforscht. Im Gegensatz zu herkömmlichen Werbetafeln, die Inhalte rotieren oder an mehreren Standorten existieren, gibt es nur ein Last Billboard, und es wird nur einmal angezeigt."
+    },
+    "howItWorks": {
+      "title": "So funktioniert es",
+      "step1": {
+        "title": "Konto erstellen",
+        "text": "Melden Sie sich mit Ihrer E-Mail über einen Magic Link an. Keine Passwörter erforderlich."
+      },
+      "step2": {
+        "title": "Gebot abgeben",
+        "text": "Wählen Sie Ihren Markennamen, laden Sie ein Bild hoch, legen Sie eine Link-URL fest und geben Sie Ihren Gebotsbetrag ein."
+      },
+      "step3": {
+        "title": "Ihr Slot wächst logarithmisch",
+        "text": "Die Größe Ihres Werbeslots wächst mit Ihrem Gebot, aber logarithmisch, um Fairness zu gewährleisten."
+      },
+      "step4": {
+        "title": "Konkurrieren Sie um Platz",
+        "text": "Andere können Sie überbieten und Ihren Slot verdrängen. Sie erhalten 90% Ihres Gebots als Rückerstattung, wenn Sie verdrängt werden."
+      },
+      "step5": {
+        "title": "Das Einfrieren",
+        "text": "Wenn der Countdown endet, friert das Billboard für immer in seinem finalen Zustand ein."
+      }
+    },
+    "pricing": {
+      "title": "Preise & Wirtschaftlichkeit",
+      "commission": "Wir erheben eine Plattformgebühr von 10% auf alle Gebote. Diese deckt Hosting, Zahlungsabwicklung und Moderation ab.",
+      "refund": "Wenn Ihr Slot durch ein höheres Gebot verdrängt wird, erhalten Sie automatisch 90% Ihres ursprünglichen Gebots als Rückerstattung auf Ihre Zahlungsmethode zurück.",
+      "example": "Beispiel: Sie bieten €100. Wenn Sie überboten werden, erhalten Sie €90 zurück. Die Plattform behält unabhängig vom Ergebnis €10 ein."
+    },
+    "freeze": {
+      "title": "Das Einfrieren",
+      "countdown": "Wenn der Countdown Null erreicht, tritt das Billboard in einen permanenten, eingefrorenen Zustand ein.",
+      "permanent": "Es können keine weiteren Änderungen vorgenommen werden. Der finale Zustand wird zu einem permanenten digitalen Artefakt, bewahrt als Momentaufnahme dieses einzigartigen Moments in der Werbegeschichte."
+    },
+    "technology": {
+      "title": "Technologie-Stack",
+      "intro": "Entwickelt mit modernen, skalierbaren Technologien:",
+      "nextjs": "Next.js 15 mit React Server Components für blitzschnelle Performance",
+      "supabase": "Supabase für Authentifizierung, Datenbank und Echtzeit-Updates",
+      "stripe": "Stripe für sichere Zahlungsabwicklung und automatische Rückerstattungen",
+      "vercel": "Vercel für Edge-optimiertes Hosting und globale Verteilung"
+    },
+    "specifications": {
+      "title": "Technische Spezifikationen",
+      "canvasSize": "Canvas-Größe: 10.000 × 10.000 Pixel",
+      "maxImageSize": "Maximale Bildgröße: 10 MB",
+      "imageFormats": "Unterstützte Formate: PNG, JPEG, WebP",
+      "minBlockSize": "Minimale Blockgröße: 40 × 40 Pixel"
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "q1": {
+        "question": "Was passiert, wenn ich überboten werde?",
+        "answer": "Sie erhalten automatisch 90% Ihres Gebotsbetrags als Rückerstattung auf Ihre ursprüngliche Zahlungsmethode. Die Plattform behält 10% als Provision ein."
+      },
+      "q2": {
+        "question": "Kann ich meinen Slot nach dem Bieten aktualisieren?",
+        "answer": "Nein. Einmal abgegeben, sind Gebote unveränderlich. Um Änderungen vorzunehmen, müssen Sie ein neues Gebot abgeben, das Ihren aktuellen Slot überbietet."
+      },
+      "q3": {
+        "question": "Was passiert nach dem Einfrieren?",
+        "answer": "Das Billboard wird permanent und unveränderlich. Alle Slot-Links bleiben anklickbar, aber es können keine neuen Gebote mehr abgegeben werden."
+      },
+      "q4": {
+        "question": "Welche Inhalte sind verboten?",
+        "answer": "Pornografie, Gewalt, Hassrede, Malware, Urheberrechtsverletzungen und illegale Inhalte sind streng verboten. Verstoßende Slots werden entfernt."
+      },
+      "q5": {
+        "question": "Ist meine Zahlung sicher?",
+        "answer": "Ja. Alle Zahlungen werden über Stripe abgewickelt, einen PCI-konformen Zahlungsabwickler. Wir speichern niemals Ihre Kreditkarteninformationen."
+      }
+    },
+    "philosophy": {
+      "title": "Warum das wichtig ist",
+      "text": "In einer Zeit unendlichen digitalen Raums und flüchtiger Inhalte bringt The Last Billboard das Konzept von Knappheit und Beständigkeit zurück. Es fragt: Was würden Sie sagen, wenn Sie wüssten, es würde für immer bewahrt? Was wären Sie bereit zu zahlen für wirklich dauerhafte Sichtbarkeit?"
+    }
   },
   "footer": {
-    "legal": "Rechtliches",
-    "privacy": "Datenschutz"
+    "imprint": "impressum",
+    "privacy": "datenschutz",
+    "terms": "agb",
+    "contact": "kontakt",
+    "live": "live",
+    "uptime": "Betriebszeit"
+  },
+  "bid": {
+    "frozen": {
+      "title": "Billboard eingefroren",
+      "message": "Die Gebotsphase ist beendet. Es können keine Gebote mehr abgegeben werden.",
+      "backToBoard": "Zurück zum Billboard"
+    },
+    "form": {
+      "title": "Ihr Gebot abgeben",
+      "titleOutbid": "Slot überbieten",
+      "outbiddingInfo": "Sie überbieten {name} (aktuelles Gebot: €{amount})",
+      "displayName": "Anzeigename",
+      "displayNamePlaceholder": "Ihre Marke oder Name",
+      "image": "Bild (optional)",
+      "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
+      "linkUrl": "Link-URL",
+      "linkUrlPlaceholder": "https://ihre-website.de",
+      "brandColor": "Markenfarbe",
+      "bidAmount": "Gebotsbetrag (€)",
+      "bidAmountHelp": "Minimum: €{min}",
+      "submit": "Zur Zahlung",
+      "submitting": "Verarbeiten...",
+      "uploadingImage": "Bild wird hochgeladen..."
+    },
+    "validation": {
+      "displayNameRequired": "Anzeigename ist erforderlich",
+      "displayNameTooLong": "Anzeigename darf maximal 50 Zeichen lang sein",
+      "imageTooBig": "Bild darf maximal 10MB groß sein",
+      "imageInvalidType": "Nur PNG, JPEG, WEBP erlaubt",
+      "linkRequired": "Link-URL ist erforderlich",
+      "linkInvalid": "Muss eine gültige HTTPS-URL sein",
+      "colorInvalid": "Ungültiges Farbformat",
+      "bidTooLow": "Gebot muss mindestens €{min} sein",
+      "bidInvalid": "Ungültiger Gebotsbetrag"
+    },
+    "errors": {
+      "uploadFailed": "Bild-Upload fehlgeschlagen, bitte versuchen Sie es erneut",
+      "sessionFailed": "Fehler beim Erstellen der Zahlungssitzung",
+      "unauthorized": "Sie müssen angemeldet sein, um zu bieten",
+      "slotNotFound": "Slot nicht gefunden",
+      "bidTooLowForOutbid": "Ihr Gebot muss höher als das aktuelle Gebot sein"
+    },
+    "success": {
+      "title": "Zahlung erfolgreich",
+      "message": "Ihr Gebot wird bearbeitet.",
+      "viewBillboard": "Billboard ansehen"
+    },
+    "cancel": {
+      "title": "Zahlung abgebrochen",
+      "message": "Sie können es erneut versuchen oder zum Billboard zurückkehren.",
+      "tryAgain": "Erneut versuchen",
+      "backToBillboard": "Zurück zum Billboard"
+    }
+  },
+  "errors": {
+    "generic": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut.",
+    "unauthorized": "Sie müssen angemeldet sein, um dies zu tun.",
+    "forbidden": "Sie haben keine Berechtigung dafür.",
+    "rateLimit": "Zu viele Anfragen. Bitte warten Sie und versuchen Sie es erneut.",
+    "serverError": "Serverfehler. Wir wurden benachrichtigt und arbeiten daran.",
+    "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "notFound": "Seite nicht gefunden",
+    "tryAgain": "Erneut versuchen",
+    "retry": "Wiederholen",
+    "contactSupport": "Support kontaktieren",
+    "imageUpload": {
+      "tooLarge": "Datei zu groß (max. 10MB)",
+      "invalidType": "Ungültiger Dateityp. Verwenden Sie PNG, JPEG oder WebP.",
+      "uploadFailed": "Upload fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "bid": {
+      "submitFailed": "Gebotabgabe fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "amountTooLow": "Gebotsbetrag muss mindestens €{min} betragen."
+    },
+    "report": {
+      "submitFailed": "Meldung konnte nicht abgeschickt werden.",
+      "rateLimitReached": "Sie haben die maximale Anzahl an Meldungen pro Stunde erreicht."
+    },
+    "admin": {
+      "actionFailed": "Aktion fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "loadFailed": "Daten konnten nicht geladen werden.",
+      "cannotDemoteSelf": "Sie können sich nicht selbst degradieren, da Sie der letzte Admin sind."
+    },
+    "stripe": {
+      "sessionCreationFailed": "Fehler beim Erstellen der Zahlungssitzung",
+      "invalidAmount": "Ungültiger Gebotsbetrag",
+      "unauthorized": "Sie müssen angemeldet sein, um zu bieten"
+    }
+  },
+  "billboard": {
+    "emptyState": "Noch keine Gebote. Seien Sie der Erste.",
+    "loading": "Billboard wird geladen...",
+    "slotDetail": {
+      "title": "Slot-Details",
+      "currentBid": "Aktuelles Gebot",
+      "history": "Historie",
+      "loading": "Lade Historie...",
+      "outbid": "Diesen Slot überbieten",
+      "report": "Melden",
+      "reportTooltip": "Demnächst verfügbar",
+      "ownedBy": "Besitz von {name}",
+      "from": "von",
+      "to": "bis",
+      "displacedBy": "verdrängt von {name}",
+      "currentOwner": "aktueller Besitzer"
+    }
+  },
+  "ticker": {
+    "title": "Live-Aktivität",
+    "empty": "Noch keine Aktivität",
+    "enteredFor": "ist dem Billboard beigetreten für",
+    "outbidFor": "hat überboten für",
+    "displaced": "verdrängt",
+    "justNow": "gerade eben"
+  },
+  "report": {
+    "button": "Slot melden",
+    "title": "Diesen Slot melden",
+    "reason": {
+      "label": "Grund",
+      "inappropriate": "Unangemessener Inhalt (Erwachseneninhalte, Gewalt, Hassrede)",
+      "misleading": "Irreführend oder Betrug",
+      "copyright": "Urheberrechtsverletzung",
+      "malware": "Malware oder Phishing-Link",
+      "spam": "Spam",
+      "other": "Sonstiges"
+    },
+    "details": {
+      "label": "Zusätzliche Details (optional)",
+      "placeholder": "Bitte geben Sie weitere Informationen an...",
+      "maxLength": "Maximal 500 Zeichen"
+    },
+    "submit": "Meldung absenden",
+    "success": "Meldung erfolgreich eingereicht. Vielen Dank!",
+    "error": "Meldung konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
+    "rateLimit": "Sie haben die maximale Anzahl an Meldungen pro Stunde erreicht. Bitte versuchen Sie es später erneut.",
+    "removed": {
+      "title": "Slot wird überprüft",
+      "message": "Dieser Slot wurde gemeldet und wird überprüft. Kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist.",
+      "contactSupport": "Support kontaktieren"
+    }
+  },
+  "meta": {
+    "landing": {
+      "title": "The Last Billboard — Sichern Sie sich Ihren Platz im letzten Werbegitter des Internets",
+      "description": "Konkurrieren Sie um Sichtbarkeit auf dem finalen Billboard. Bieten Sie logarithmisch, verdrängen Sie andere, der Gewinner bekommt alles wenn die Zeit abläuft."
+    },
+    "about": {
+      "title": "Über The Last Billboard",
+      "description": "Erfahren Sie mehr über The Last Billboard - die letzte Werbefläche, auf der Werbetreibende um ewige Sichtbarkeit konkurrieren."
+    },
+    "bid": {
+      "title": "Geben Sie Ihr Gebot ab — The Last Billboard",
+      "description": "Sichern Sie sich Ihren Platz auf dem finalen Billboard. Wählen Sie Ihr Bild, legen Sie Ihr Gebot fest und konkurrieren Sie um Sichtbarkeit."
+    },
+    "dashboard": {
+      "title": "Mein Dashboard — The Last Billboard",
+      "description": "Verwalten Sie Ihre Gebote auf The Last Billboard."
+    },
+    "settings": {
+      "title": "Einstellungen — The Last Billboard",
+      "description": "Verwalten Sie Ihre Kontoeinstellungen auf The Last Billboard."
+    }
+  },
+  "legal": {
+    "cookieBanner": {
+      "message": "Wir verwenden nur essenzielle Cookies für Authentifizierung und Einstellungen. Kein Tracking oder Analytics.",
+      "accept": "Verstanden",
+      "learnMore": "Mehr erfahren"
+    },
+    "imprint": {
+      "title": "Impressum",
+      "operator": {
+        "title": "Betreiberinformationen",
+        "placeholder": "Informationen gemäß gesetzlichen Anforderungen (§5 TMG / ECG / etc.)",
+        "todoTitle": "TODO: Mit tatsächlichen Betreiberdetails ersetzen",
+        "todoItems": {
+          "name": "Vollständiger rechtlicher Name / Firmenname",
+          "address": "Vollständige Adresse (Straße, Postleitzahl, Stadt, Land)",
+          "email": "E-Mail-Adresse",
+          "phone": "Telefonnummer (falls zutreffend)",
+          "vat": "Umsatzsteuer-ID / Steuer-ID (falls zutreffend)",
+          "register": "Registereintrag (falls Firma)"
+        }
+      },
+      "contact": {
+        "title": "Kontakt",
+        "emailLabel": "E-Mail",
+        "placeholder": "TODO: Mit tatsächlicher Kontakt-E-Mail ersetzen"
+      },
+      "disclaimer": {
+        "title": "Haftungsausschluss",
+        "liability": "Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich.",
+        "externalLinks": "Externe Links zu Websites Dritter liegen außerhalb unserer Kontrolle. Wir distanzieren uns von allen Inhalten auf verlinkten Seiten und übernehmen hierfür keine Haftung.",
+        "copyright": "Alle Inhalte und Werke auf dieser Website unterliegen dem Urheberrecht. Eine Vervielfältigung bedarf der schriftlichen Genehmigung."
+      },
+      "disputeResolution": {
+        "title": "Streitbeilegung",
+        "text": "Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit. Wir sind weder bereit noch verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen."
+      }
+    },
+    "privacy": {
+      "title": "Datenschutzerklärung",
+      "introduction": {
+        "title": "Einleitung",
+        "text": "Wir nehmen den Schutz Ihrer persönlichen Daten ernst. Diese Datenschutzerklärung erläutert, welche Daten wir sammeln, wie wir sie verwenden und Ihre Rechte gemäß DSGVO."
+      },
+      "dataCollection": {
+        "title": "Von uns erfasste Daten",
+        "intro": "Wir erfassen die folgenden Arten von Daten:",
+        "personal": {
+          "title": "Von Ihnen bereitgestellte persönliche Daten",
+          "emailLabel": "E-Mail-Adresse",
+          "email": "Erforderlich für Authentifizierung und Kontoverwaltung",
+          "paymentLabel": "Zahlungsdaten",
+          "payment": "Sicher verarbeitet von Stripe (wir speichern niemals Kreditkartendaten)",
+          "bidsLabel": "Gebotsdaten",
+          "bids": "Anzeigename, Link-URL, Markenfarbe und Gebotsbetrag für Ihre Slots",
+          "imagesLabel": "Hochgeladene Bilder",
+          "images": "Bilder, die Sie für Ihre Werbeslots hochladen"
+        },
+        "automatic": {
+          "title": "Automatisch erfasste Daten",
+          "cookiesLabel": "Cookies",
+          "cookies": "Nur essenzielle Cookies für Authentifizierung und Spracheinstellungen",
+          "ipLabel": "IP-Adresse",
+          "ip": "Vorübergehend protokolliert für Sicherheit und Missbrauchsprävention",
+          "browserLabel": "Browserdaten",
+          "browser": "User-Agent und Browserinformationen für Kompatibilität"
+        }
+      },
+      "dataUsage": {
+        "title": "Wie wir Ihre Daten verwenden",
+        "intro": "Wir verwenden Ihre Daten für die folgenden Zwecke:",
+        "authentication": "Benutzerauthentifizierung und Kontoverwaltung",
+        "processing": "Verarbeitung von Geboten und Zahlungen",
+        "display": "Anzeige Ihrer Werbeslots auf dem Billboard",
+        "moderation": "Inhaltsmoderation und Missbrauchsprävention",
+        "legal": "Einhaltung gesetzlicher Verpflichtungen (Steuern, Buchhaltung)"
+      },
+      "processors": {
+        "title": "Datenverarbeiter (Drittanbieter)",
+        "intro": "Wir teilen Ihre Daten mit den folgenden vertrauenswürdigen Verarbeitern:",
+        "supabase": "Authentifizierung, Datenbank und Dateispeicherung (EU/US-Server, DSGVO-konform)",
+        "stripe": "Zahlungsabwicklung und Rückerstattungen (PCI-DSS Level 1 zertifiziert)",
+        "vercel": "Hosting und Content Delivery (globales Edge-Netzwerk)",
+        "privacyPolicy": "Datenschutzerklärung"
+      },
+      "rights": {
+        "title": "Ihre Rechte gemäß DSGVO",
+        "intro": "Sie haben die folgenden Rechte:",
+        "access": {
+          "title": "Auskunftsrecht",
+          "text": "Fordern Sie eine Kopie aller Daten an, die wir über Sie gespeichert haben"
+        },
+        "rectification": {
+          "title": "Recht auf Berichtigung",
+          "text": "Fordern Sie die Korrektur unrichtiger Daten an"
+        },
+        "erasure": {
+          "title": "Recht auf Löschung",
+          "text": "Fordern Sie die Löschung Ihres Kontos und Ihrer Daten an (ausgenommen gesetzlich erforderliche Aufzeichnungen)"
+        },
+        "portability": {
+          "title": "Recht auf Datenübertragbarkeit",
+          "text": "Erhalten Sie Ihre Daten in einem strukturierten, maschinenlesbaren Format"
+        },
+        "objection": {
+          "title": "Widerspruchsrecht",
+          "text": "Widersprechen Sie der Verarbeitung aufgrund berechtigten Interesses"
+        },
+        "complaint": {
+          "title": "Beschwerderecht",
+          "text": "Reichen Sie eine Beschwerde bei Ihrer nationalen Datenschutzbehörde ein"
+        },
+        "contact": "Um Ihre Rechte auszuüben, kontaktieren Sie uns unter",
+        "todoEmail": "TODO: privacy@example.com durch tatsächliche Kontakt-E-Mail ersetzen"
+      },
+      "cookies": {
+        "title": "Cookies",
+        "essential": "Wir verwenden nur essenzielle Cookies:",
+        "authLabel": "Authentifizierungs-Cookies",
+        "auth": "Sitzungsverwaltung (läuft nach Abmeldung ab)",
+        "preferencesLabel": "Präferenz-Cookies",
+        "preferences": "Sprachauswahl und UI-Präferenzen",
+        "noTracking": "Wir verwenden KEINE Tracking-Cookies, Analytics-Cookies oder Werbe-Cookies."
+      },
+      "retention": {
+        "title": "Datenspeicherung",
+        "accounts": "Kontodaten und Gebote werden so lange gespeichert, wie Ihr Konto aktiv ist.",
+        "transactions": "Transaktionsaufzeichnungen werden 10 Jahre lang aufbewahrt, um steuerliche und buchhalterische Vorschriften einzuhalten.",
+        "logs": "Serverprotokolle (IP-Adressen) werden nach 90 Tagen gelöscht."
+      },
+      "security": {
+        "title": "Sicherheitsmaßnahmen",
+        "text": "Wir implementieren branchenübliche Sicherheitsmaßnahmen einschließlich Verschlüsselung (TLS/SSL), sichere Authentifizierung (Magic Links), Datenbankverschlüsselung im Ruhezustand und regelmäßige Sicherheitsaudits."
+      },
+      "international": {
+        "title": "Internationale Datenübertragungen",
+        "text": "Ihre Daten können in der EU und den USA verarbeitet werden. Alle Verarbeiter sind DSGVO-konform und bieten angemessenen Schutz durch Privacy Shield, Standardvertragsklauseln oder gleichwertige Mechanismen."
+      },
+      "updates": {
+        "title": "Richtlinienaktualisierungen",
+        "text": "Wir können diese Richtlinie gelegentlich aktualisieren. Wesentliche Änderungen werden per E-Mail mitgeteilt.",
+        "lastUpdated": "Zuletzt aktualisiert"
+      },
+      "contact": {
+        "title": "Kontakt",
+        "text": "Bei datenschutzbezogenen Fragen kontaktieren Sie uns unter:",
+        "emailLabel": "E-Mail",
+        "seeImprint": "Für vollständige Kontaktdaten siehe unser",
+        "imprintLink": "Impressum"
+      }
+    },
+    "terms": {
+      "title": "Nutzungsbedingungen",
+      "acceptance": {
+        "title": "Annahme der Bedingungen",
+        "text": "Durch den Zugriff auf oder die Nutzung von The Last Billboard erklären Sie sich mit diesen Nutzungsbedingungen einverstanden. Wenn Sie nicht einverstanden sind, nutzen Sie den Service nicht."
+      },
+      "service": {
+        "title": "Servicebeschreibung",
+        "description": "The Last Billboard ist eine digitale Werbeplattform, auf der Benutzer auf Platz auf einer gemeinsamen Leinwand bieten. Slots werden basierend auf dem Gebotsbetrag zugewiesen, wobei die Größe logarithmisch wächst.",
+        "freeze": "Nach Ablauf des Countdowns tritt das Billboard in einen permanenten eingefrorenen Zustand ein und es sind keine weiteren Änderungen möglich."
+      },
+      "account": {
+        "title": "Kontoregistrierung",
+        "magicLink": "Sie müssen ein Konto mit E-Mail-Authentifizierung (Magic Link) erstellen, um Gebote abzugeben.",
+        "responsibility": "Sie sind verantwortlich für die Wahrung der Vertraulichkeit Ihres Kontos und aller damit verbundenen Aktivitäten."
+      },
+      "bidding": {
+        "title": "Gebotsregeln",
+        "minimum": {
+          "title": "Mindestgebot",
+          "text": "Die Plattform setzt einen dynamischen Mindestgebotsbetrag durch"
+        },
+        "commission": {
+          "title": "Plattformgebühr",
+          "text": "Alle Gebote unterliegen einer Plattformgebühr von 10%"
+        },
+        "size": {
+          "title": "Slot-Größe",
+          "text": "Die Slot-Größe wird logarithmisch basierend auf dem Gebotsbetrag berechnet, um Fairness zu gewährleisten"
+        },
+        "displacement": {
+          "title": "Verdrängung",
+          "text": "Andere Benutzer können Ihren Slot überbieten. Wenn Sie verdrängt werden, wechseln Sie zu einer neuen Position oder verlassen das Billboard."
+        },
+        "refund": {
+          "title": "Rückerstattungsrichtlinie",
+          "text": "Wenn Ihr Slot verdrängt wird, erhalten Sie automatisch 90% Ihres Gebots als Rückerstattung. Die 10% Plattformgebühr ist nicht erstattungsfähig."
+        },
+        "final": {
+          "title": "Endgültige Gebote",
+          "text": "Gebote sind endgültig und unveränderlich, sobald sie abgegeben wurden. Sie können ein Gebot nicht bearbeiten oder stornieren."
+        }
+      },
+      "content": {
+        "title": "Inhaltsrichtlinie",
+        "intro": "Sie sind allein verantwortlich für die von Ihnen hochgeladenen Inhalte. Durch Abgabe eines Gebots versichern Sie, dass Ihr Inhalt keine Gesetze oder Rechte Dritter verletzt.",
+        "prohibitedTitle": "Verbotene Inhalte",
+        "prohibited": {
+          "pornography": "Pornografie oder sexuell explizite Inhalte",
+          "violence": "Grafische Gewalt oder Gore",
+          "hate": "Hassrede, Diskriminierung oder Belästigung",
+          "malware": "Malware, Phishing-Links oder bösartige Inhalte",
+          "copyright": "Urheber- oder Markenverletzung",
+          "illegal": "Illegale Waren, Dienstleistungen oder Aktivitäten",
+          "spam": "Spam oder irreführende Inhalte"
+        },
+        "removal": "Wir behalten uns das Recht vor, verbotene Inhalte ohne Rückerstattung zu entfernen. Wiederholte Verstöße können zur Kontosperrung führen.",
+        "license": "Durch das Hochladen von Inhalten gewähren Sie uns eine nicht-exklusive, weltweite Lizenz zur Anzeige auf dem Billboard."
+      },
+      "payment": {
+        "title": "Zahlungsbedingungen",
+        "stripe": "Alle Zahlungen werden über Stripe abgewickelt. Durch Bieten stimmen Sie den Nutzungsbedingungen von Stripe zu.",
+        "currency": "Alle Gebote erfolgen in EUR (€). Währungsumrechnungsgebühren können anfallen.",
+        "noChargebacks": "Aufgrund der Art des Service (sofortige Slot-Zuweisung) sind Rückbuchungen strengstens untersagt. Angefochtene Gebühren führen zur Kontosperrung."
+      },
+      "liability": {
+        "title": "Haftungsbeschränkung",
+        "platform": "The Last Billboard wird \"wie besehen\" ohne jegliche Garantie bereitgestellt. Wir garantieren keine Betriebszeit, Verfügbarkeit oder Slot-Persistenz.",
+        "userContent": "Wir haften nicht für benutzergenerierte Inhalte. Benutzer sind allein verantwortlich für ihre Slots.",
+        "payment": "Wir haften nicht für Zahlungsverarbeitungsfehler, die durch Stripe oder Ihren Zahlungsanbieter verursacht werden.",
+        "noWarranty": "Im gesetzlich maximal zulässigen Umfang lehnen wir jegliche Haftung für indirekte, zufällige oder Folgeschäden ab."
+      },
+      "indemnification": {
+        "title": "Schadloshaltung",
+        "text": "Sie verpflichten sich, uns von allen Ansprüchen, Schäden oder Kosten freizustellen, die sich aus Ihrer Nutzung des Service, Ihren Inhalten oder Ihrer Verletzung dieser Bedingungen ergeben."
+      },
+      "freeze": {
+        "title": "Billboard-Einfrierung",
+        "permanent": "Wenn der Countdown endet, friert das Billboard dauerhaft ein. Alle Slots werden unveränderlich.",
+        "noRefunds": "Für zum Zeitpunkt des Einfrierens aktive Slots werden unabhängig von der Besitzdauer keine Rückerstattungen gewährt."
+      },
+      "termination": {
+        "title": "Kündigung",
+        "text": "Wir behalten uns das Recht vor, Konten, die gegen diese Bedingungen verstoßen, zu sperren oder zu kündigen. Aktive Slots können bei schwerwiegenden Verstößen ohne Rückerstattung entfernt werden."
+      },
+      "law": {
+        "title": "Anwendbares Recht",
+        "text": "Diese Bedingungen unterliegen den Gesetzen von [Jurisdiktion anzugeben].",
+        "todoTitle": "TODO: Anwendbares Recht angeben",
+        "todoText": "Anwendbares Recht (Schweiz, Deutschland, EU usw.) vor Produktionsbereitstellung angeben"
+      },
+      "changes": {
+        "title": "Änderungen der Bedingungen",
+        "text": "Wir können diese Bedingungen jederzeit aktualisieren. Wesentliche Änderungen werden mit 14-tägiger Frist angekündigt. Die fortgesetzte Nutzung gilt als Zustimmung."
+      },
+      "severability": {
+        "title": "Salvatorische Klausel",
+        "text": "Sollte eine Bestimmung dieser Bedingungen ungültig sein, bleiben die übrigen Bestimmungen in vollem Umfang gültig."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "text": "Bei Fragen zu diesen Bedingungen kontaktieren Sie uns unter:",
+        "emailLabel": "E-Mail",
+        "seeImprint": "Für vollständige Kontaktdaten siehe unser",
+        "imprintLink": "Impressum",
+        "lastUpdated": "Zuletzt aktualisiert"
+      }
+    }
   }
 }

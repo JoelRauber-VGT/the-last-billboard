@@ -1,10 +1,17 @@
 {
   "nav": {
-    "login": "Connexion",
-    "logout": "Déconnexion",
-    "dashboard": "Tableau de bord",
-    "admin": "Admin",
-    "about": "À propos"
+    "login": "connexion",
+    "logout": "déconnexion",
+    "loggingOut": "déconnexion...",
+    "dashboard": "dashboard",
+    "myBids": "mes enchères",
+    "settings": "paramètres",
+    "admin": "admin",
+    "about": "à-propos",
+    "placeBid": "placer-enchère",
+    "rules": "règles",
+    "signIn": "se connecter",
+    "bid": "enchérir"
   },
   "landing": {
     "hero": {
@@ -16,6 +23,23 @@
       "title": "Comment ça marche",
       "text": "Les annonceurs enchérissent pour de l'espace sur une toile partagée. La taille de votre annonce croît logarithmiquement avec votre enchère. D'autres peuvent vous déplacer en enchérissant plus haut. Quand le compte à rebours se termine, le billboard se fige pour toujours."
     },
+    "onboarding": {
+      "step1": {
+        "title": "Placez votre enchère",
+        "description": "Chaque annonceur obtient un emplacement sur le billboard. La taille de votre bloc croît logarithmiquement avec votre enchère — même un petit investissement vous donne de l'espace visible."
+      },
+      "step2": {
+        "title": "Déplacez les concurrents",
+        "description": "Surenchérissez sur un emplacement existant pour le prendre. L'ancien propriétaire reçoit automatiquement 90% de remboursement. Le billboard se réorganise en temps réel."
+      },
+      "step3": {
+        "title": "Le gel",
+        "description": "Quand le compte à rebours atteint zéro, le billboard se fige définitivement. Plus d'enchères, plus de changements. Votre emplacement reste pour toujours — ou vous le perdez pour de bon."
+      },
+      "back": "Retour",
+      "next": "Suivant",
+      "startBidding": "Commencer à enchérir"
+    },
     "preview": {
       "placeholder": "Aperçu du Billboard — à venir en Phase 2"
     },
@@ -24,31 +48,624 @@
       "ended": "Billboard figé"
     }
   },
+  "countdown": {
+    "title": "Temps avant le gel",
+    "frozen": "Billboard gelé",
+    "frozenMessage": "Ce billboard est maintenant permanent et restera dans son état final.",
+    "days": "Jours",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "seconds": "Secondes",
+    "urgentWarning": "Dépêchez-vous! Moins d'1 heure restante!"
+  },
+  "freeze": {
+    "title": "Billboard gelé",
+    "message": "Aucune enchère ne peut plus être placée. Ce billboard est maintenant dans son état final et permanent.",
+    "linksStillWork": "Tous les liens des slots restent cliquables."
+  },
   "auth": {
     "login": {
       "title": "Connexion à The Last Billboard",
+      "command": "auth",
       "email": "Adresse e-mail",
       "emailPlaceholder": "votre@email.com",
       "submit": "Envoyer le lien magique",
       "checkEmail": "Consultez votre e-mail pour le lien magique !",
-      "error": "Échec de l'envoi du lien magique. Veuillez réessayer."
+      "error": "Échec de l'envoi du lien magique. Veuillez réessayer.",
+      "prompt": "entrez votre e-mail pour recevoir un lien magique",
+      "sendLink": "envoyer le lien",
+      "sending": "envoi en cours",
+      "linkSent": "lien envoyé à {email}",
+      "checkInbox": "consultez votre boîte de réception",
+      "waiting": "en attente",
+      "invalidEmail": "format d'e-mail invalide",
+      "errorSending": "erreur lors de l'envoi du lien",
+      "unexpectedError": "erreur inattendue",
+      "errorPrefix": "erreur"
     }
   },
   "dashboard": {
     "title": "Mes enchères",
     "empty": "Vous n'avez pas encore placé d'enchères.",
-    "emptyAction": "Placez votre première enchère pour revendiquer de l'espace sur le billboard."
+    "emptyAction": "Placez votre première enchère pour revendiquer de l'espace sur le billboard.",
+    "placeBid": "Placer votre première enchère"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Gérez les paramètres et préférences de votre compte",
+    "profile": {
+      "title": "Profil",
+      "description": "Mettez à jour vos informations de profil",
+      "email": "Adresse e-mail",
+      "emailHelp": "Votre adresse e-mail ne peut pas être modifiée",
+      "displayName": "Nom d'affichage",
+      "displayNamePlaceholder": "Votre nom ou marque",
+      "displayNameHelp": "Ce nom sera affiché sur vos enchères (optionnel, max 50 caractères)"
+    },
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "success": "Paramètres enregistrés avec succès !",
+    "errors": {
+      "notAuthenticated": "Vous devez être connecté",
+      "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
+      "unexpected": "Erreur inattendue"
+    }
   },
   "admin": {
-    "title": "Tableau de bord administrateur",
-    "placeholder": "Fonctionnalités admin à venir en Phase 2"
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "reports": "Signalements",
+      "slots": "Emplacements",
+      "transactions": "Transactions",
+      "users": "Utilisateurs"
+    },
+    "overview": {
+      "title": "Tableau de bord administrateur",
+      "activeSlots": "Emplacements actifs",
+      "openReports": "Signalements ouverts",
+      "totalRevenue": "Revenu total",
+      "totalBidVolume": "Volume total d'enchères",
+      "timeToFreeze": "Temps avant le gel",
+      "recentTransactions": "Transactions récentes"
+    },
+    "reports": {
+      "title": "File de signalements",
+      "viewSlot": "Voir l'emplacement",
+      "dismiss": "Rejeter",
+      "removeWithRefund": "Supprimer et rembourser",
+      "removeNoRefund": "Supprimer (sans remboursement)",
+      "confirmRemove": "Êtes-vous sûr de vouloir supprimer cet emplacement ?"
+    },
+    "slots": {
+      "title": "Gestion des emplacements",
+      "hide": "Masquer",
+      "restore": "Restaurer",
+      "viewHistory": "Voir l'historique",
+      "confirmHide": "Êtes-vous sûr de vouloir masquer cet emplacement ?",
+      "confirmRestore": "Restaurer cet emplacement ?"
+    },
+    "transactions": {
+      "title": "Journal des transactions",
+      "export": "Exporter en CSV"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "toggleAdmin": "Basculer admin",
+      "viewBids": "Voir les enchères",
+      "confirmToggleAdmin": "Modifier le statut administrateur de cet utilisateur ?"
+    }
   },
   "about": {
     "title": "À propos de The Last Billboard",
-    "content": "The Last Billboard est une expérience sur la rareté numérique et la compétition publicitaire."
+    "concept": {
+      "title": "Le Concept",
+      "text": "The Last Billboard est une expérience numérique explorant la rareté, la compétition et la permanence dans la publicité. Contrairement aux panneaux publicitaires traditionnels qui font tourner le contenu ou existent à plusieurs endroits, il n'y a qu'un seul Last Billboard, et il ne s'affichera qu'une seule fois."
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "step1": {
+        "title": "Créer un compte",
+        "text": "Connectez-vous avec votre e-mail via un lien magique. Aucun mot de passe requis."
+      },
+      "step2": {
+        "title": "Placer votre enchère",
+        "text": "Choisissez votre nom de marque, téléchargez une image, définissez une URL de lien et saisissez le montant de votre enchère."
+      },
+      "step3": {
+        "title": "Votre emplacement croît logarithmiquement",
+        "text": "La taille de votre emplacement publicitaire croît avec votre enchère, mais de manière logarithmique pour garantir l'équité."
+      },
+      "step4": {
+        "title": "Concurrence pour l'espace",
+        "text": "D'autres peuvent vous surenchérir, déplaçant votre emplacement. Vous recevrez 90% de votre enchère en remboursement si vous êtes déplacé."
+      },
+      "step5": {
+        "title": "Le Gel",
+        "text": "Lorsque le compte à rebours se termine, le billboard se fige pour toujours dans son état final."
+      }
+    },
+    "pricing": {
+      "title": "Tarification & Économie",
+      "commission": "Nous facturons des frais de plateforme de 10% sur toutes les enchères. Cela couvre l'hébergement, le traitement des paiements et la modération.",
+      "refund": "Si votre emplacement est déplacé par un enchérisseur plus élevé, vous recevez automatiquement 90% de votre enchère originale en remboursement sur votre méthode de paiement.",
+      "example": "Exemple : Vous enchérissez 100€. Si vous êtes surenchéri, vous récupérez 90€. La plateforme conserve 10€ quel que soit le résultat."
+    },
+    "freeze": {
+      "title": "Le Gel",
+      "countdown": "Lorsque le compte à rebours atteint zéro, le billboard entre dans un état permanent, figé.",
+      "permanent": "Aucun changement supplémentaire ne peut être effectué. L'état final devient un artefact numérique permanent, préservé comme un instantané de ce moment unique dans l'histoire de la publicité."
+    },
+    "technology": {
+      "title": "Stack Technologique",
+      "intro": "Construit avec des technologies modernes et évolutives :",
+      "nextjs": "Next.js 15 avec React Server Components pour des performances ultra-rapides",
+      "supabase": "Supabase pour l'authentification, la base de données et les mises à jour en temps réel",
+      "stripe": "Stripe pour le traitement sécurisé des paiements et les remboursements automatiques",
+      "vercel": "Vercel pour l'hébergement optimisé edge et la distribution mondiale"
+    },
+    "specifications": {
+      "title": "Spécifications Techniques",
+      "canvasSize": "Taille du Canvas : 10 000 × 10 000 pixels",
+      "maxImageSize": "Taille Max d'Image : 10 Mo",
+      "imageFormats": "Formats Supportés : PNG, JPEG, WebP",
+      "minBlockSize": "Taille Min de Bloc : 40 × 40 pixels"
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "q1": {
+        "question": "Que se passe-t-il si je suis surenchéri ?",
+        "answer": "Vous recevrez automatiquement 90% du montant de votre enchère en remboursement sur votre méthode de paiement originale. La plateforme conserve 10% comme commission."
+      },
+      "q2": {
+        "question": "Puis-je mettre à jour mon emplacement après l'enchère ?",
+        "answer": "Non. Une fois placées, les enchères sont immuables. Pour effectuer des modifications, vous devrez placer une nouvelle enchère qui surenchérit votre emplacement actuel."
+      },
+      "q3": {
+        "question": "Que se passe-t-il après le gel ?",
+        "answer": "Le billboard devient permanent et immuable. Tous les liens d'emplacements restent cliquables, mais aucune nouvelle enchère ne peut être placée."
+      },
+      "q4": {
+        "question": "Quel contenu est interdit ?",
+        "answer": "La pornographie, la violence, les discours haineux, les logiciels malveillants, les violations de droits d'auteur et le contenu illégal sont strictement interdits. Les emplacements en violation seront supprimés."
+      },
+      "q5": {
+        "question": "Mon paiement est-il sécurisé ?",
+        "answer": "Oui. Tous les paiements sont traités via Stripe, un processeur de paiement conforme PCI. Nous ne stockons jamais vos informations de carte de crédit."
+      }
+    },
+    "philosophy": {
+      "title": "Pourquoi c'est important",
+      "text": "À une époque d'espace numérique infini et de contenu éphémère, The Last Billboard ramène le concept de rareté et de permanence. Il pose la question : que diriez-vous si vous saviez que ce serait préservé pour toujours ? Que seriez-vous prêt à payer pour une visibilité vraiment durable ?"
+    }
   },
   "footer": {
-    "legal": "Mentions légales",
-    "privacy": "Confidentialité"
+    "imprint": "mentions-légales",
+    "privacy": "confidentialité",
+    "terms": "cgu",
+    "contact": "contact",
+    "live": "en direct",
+    "uptime": "temps de fonctionnement"
+  },
+  "bid": {
+    "frozen": {
+      "title": "Billboard gelé",
+      "message": "La période d'enchères est terminée. Aucune enchère ne peut plus être placée.",
+      "backToBoard": "Retour au Billboard"
+    },
+    "form": {
+      "title": "Placer votre enchère",
+      "titleOutbid": "Surenchérir sur le slot",
+      "outbiddingInfo": "Vous surenchérissez sur {name} (enchère actuelle: €{amount})",
+      "displayName": "Nom d'affichage",
+      "displayNamePlaceholder": "Votre marque ou nom",
+      "image": "Image (optionnel)",
+      "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
+      "linkUrl": "URL du lien",
+      "linkUrlPlaceholder": "https://votre-site.com",
+      "brandColor": "Couleur de marque",
+      "bidAmount": "Montant de l'enchère (€)",
+      "bidAmountHelp": "Minimum: €{min}",
+      "submit": "Procéder au paiement",
+      "submitting": "Traitement...",
+      "uploadingImage": "Téléchargement de l'image..."
+    },
+    "validation": {
+      "displayNameRequired": "Le nom d'affichage est requis",
+      "displayNameTooLong": "Le nom d'affichage doit faire maximum 50 caractères",
+      "imageTooBig": "L'image doit faire maximum 10MB",
+      "imageInvalidType": "Seuls PNG, JPEG, WEBP sont autorisés",
+      "linkRequired": "L'URL du lien est requise",
+      "linkInvalid": "Doit être une URL HTTPS valide",
+      "colorInvalid": "Format de couleur invalide",
+      "bidTooLow": "L'enchère doit être d'au moins €{min}",
+      "bidInvalid": "Montant d'enchère invalide"
+    },
+    "errors": {
+      "uploadFailed": "Échec du téléchargement de l'image, veuillez réessayer",
+      "sessionFailed": "Échec de la création de la session de paiement",
+      "unauthorized": "Vous devez être connecté pour enchérir",
+      "slotNotFound": "Slot non trouvé",
+      "bidTooLowForOutbid": "Votre enchère doit être supérieure à l'enchère actuelle"
+    },
+    "success": {
+      "title": "Paiement réussi",
+      "message": "Votre enchère est en cours de traitement.",
+      "viewBillboard": "Voir le Billboard"
+    },
+    "cancel": {
+      "title": "Paiement annulé",
+      "message": "Vous pouvez réessayer ou retourner au billboard.",
+      "tryAgain": "Réessayer",
+      "backToBillboard": "Retour au Billboard"
+    }
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "unauthorized": "Vous devez être connecté pour faire cela.",
+    "forbidden": "Vous n'avez pas la permission de faire cela.",
+    "rateLimit": "Trop de requêtes. Veuillez patienter et réessayer.",
+    "serverError": "Erreur serveur. Nous avons été notifiés et travaillons dessus.",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "notFound": "Page non trouvée",
+    "tryAgain": "Réessayer",
+    "retry": "Réessayer",
+    "contactSupport": "Contacter le support",
+    "imageUpload": {
+      "tooLarge": "Fichier trop volumineux (max 10MB)",
+      "invalidType": "Type de fichier invalide. Utilisez PNG, JPEG ou WebP.",
+      "uploadFailed": "Échec du téléchargement. Veuillez réessayer."
+    },
+    "bid": {
+      "submitFailed": "Échec de l'enchère. Veuillez réessayer.",
+      "amountTooLow": "Le montant de l'enchère doit être d'au moins €{min}."
+    },
+    "report": {
+      "submitFailed": "Échec de l'envoi du signalement.",
+      "rateLimitReached": "Vous avez atteint le nombre maximum de signalements par heure."
+    },
+    "admin": {
+      "actionFailed": "Action échouée. Veuillez réessayer.",
+      "loadFailed": "Échec du chargement des données.",
+      "cannotDemoteSelf": "Vous ne pouvez pas vous rétrograder car vous êtes le dernier admin."
+    },
+    "stripe": {
+      "sessionCreationFailed": "Échec de la création de la session de paiement",
+      "invalidAmount": "Montant d'enchère invalide",
+      "unauthorized": "Vous devez être connecté pour enchérir"
+    }
+  },
+  "billboard": {
+    "emptyState": "Pas encore d'enchères. Soyez le premier.",
+    "loading": "Chargement du billboard...",
+    "slotDetail": {
+      "title": "Détails du slot",
+      "currentBid": "Enchère actuelle",
+      "history": "Historique",
+      "loading": "Chargement de l'historique...",
+      "outbid": "Surenchérir sur ce slot",
+      "report": "Signaler",
+      "reportTooltip": "Bientôt disponible",
+      "ownedBy": "Possédé par {name}",
+      "from": "de",
+      "to": "à",
+      "displacedBy": "déplacé par {name}",
+      "currentOwner": "propriétaire actuel"
+    }
+  },
+  "ticker": {
+    "title": "Activité en direct",
+    "empty": "Aucune activité",
+    "enteredFor": "a rejoint le billboard pour",
+    "outbidFor": "a surenchéri pour",
+    "displaced": "déplacé",
+    "justNow": "à l'instant"
+  },
+  "report": {
+    "button": "Signaler le slot",
+    "title": "Signaler ce slot",
+    "reason": {
+      "label": "Raison",
+      "inappropriate": "Contenu inapproprié (adulte, violence, discours haineux)",
+      "misleading": "Trompeur ou arnaque",
+      "copyright": "Violation du droit d'auteur",
+      "malware": "Logiciel malveillant ou lien d'hameçonnage",
+      "spam": "Spam",
+      "other": "Autre"
+    },
+    "details": {
+      "label": "Détails supplémentaires (optionnel)",
+      "placeholder": "Veuillez fournir plus d'informations...",
+      "maxLength": "Maximum 500 caractères"
+    },
+    "submit": "Soumettre le signalement",
+    "success": "Signalement soumis avec succès. Merci !",
+    "error": "Échec de la soumission du signalement. Veuillez réessayer.",
+    "rateLimit": "Vous avez atteint le nombre maximum de signalements par heure. Veuillez réessayer plus tard.",
+    "removed": {
+      "title": "Slot en cours d'examen",
+      "message": "Ce slot a été signalé et est en cours d'examen. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
+      "contactSupport": "Contacter le support"
+    }
+  },
+  "meta": {
+    "landing": {
+      "title": "The Last Billboard — Revendiquez votre espace sur la dernière grille publicitaire d'Internet",
+      "description": "Rivalisez pour la visibilité sur le billboard final. Enchérissez logarithmiquement, déplacez les autres, le gagnant rafle tout quand le temps expire."
+    },
+    "about": {
+      "title": "À propos de The Last Billboard",
+      "description": "Découvrez The Last Billboard - le dernier espace publicitaire où les annonceurs rivalisent pour une visibilité éternelle."
+    },
+    "bid": {
+      "title": "Placez votre enchère — The Last Billboard",
+      "description": "Revendiquez votre espace sur le billboard final. Choisissez votre image, fixez votre enchère et rivalisez pour la visibilité."
+    },
+    "dashboard": {
+      "title": "Mon tableau de bord — The Last Billboard",
+      "description": "Gérez vos enchères sur The Last Billboard."
+    },
+    "settings": {
+      "title": "Paramètres — The Last Billboard",
+      "description": "Gérez les paramètres de votre compte sur The Last Billboard."
+    }
+  },
+  "legal": {
+    "cookieBanner": {
+      "message": "Nous utilisons uniquement des cookies essentiels pour l'authentification et les préférences. Aucun suivi ni analyse.",
+      "accept": "Compris",
+      "learnMore": "En savoir plus"
+    },
+    "imprint": {
+      "title": "Mentions légales",
+      "operator": {
+        "title": "Informations sur l'opérateur",
+        "placeholder": "Informations conformément aux exigences légales (§5 TMG / ECG / etc.)",
+        "todoTitle": "TODO: Remplacer par les détails réels de l'opérateur",
+        "todoItems": {
+          "name": "Nom légal complet / Nom de l'entreprise",
+          "address": "Adresse complète (rue, code postal, ville, pays)",
+          "email": "Adresse e-mail",
+          "phone": "Numéro de téléphone (le cas échéant)",
+          "vat": "Numéro de TVA / ID fiscal (le cas échéant)",
+          "register": "Inscription au registre (si entreprise)"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "emailLabel": "E-mail",
+        "placeholder": "TODO: Remplacer par l'e-mail de contact réel"
+      },
+      "disclaimer": {
+        "title": "Clause de non-responsabilité",
+        "liability": "Malgré un contrôle minutieux du contenu, nous n'assumons aucune responsabilité pour le contenu des liens externes. Les opérateurs des pages liées sont seuls responsables de leur contenu.",
+        "externalLinks": "Les liens externes vers des sites Web tiers échappent à notre contrôle. Nous nous distançons de tout contenu sur les pages liées et n'assumons aucune responsabilité à cet égard.",
+        "copyright": "Tout le contenu et les œuvres sur ce site Web sont soumis au droit d'auteur. La reproduction nécessite une autorisation écrite."
+      },
+      "disputeResolution": {
+        "title": "Résolution des litiges",
+        "text": "La Commission européenne fournit une plateforme de résolution des litiges en ligne (RLL). Nous ne sommes ni disposés ni obligés de participer à des procédures de règlement des litiges devant un conseil d'arbitrage des consommateurs."
+      }
+    },
+    "privacy": {
+      "title": "Politique de confidentialité",
+      "introduction": {
+        "title": "Introduction",
+        "text": "Nous prenons la protection de vos données personnelles au sérieux. Cette politique de confidentialité explique quelles données nous collectons, comment nous les utilisons et vos droits en vertu du RGPD."
+      },
+      "dataCollection": {
+        "title": "Données que nous collectons",
+        "intro": "Nous collectons les types de données suivants :",
+        "personal": {
+          "title": "Données personnelles que vous fournissez",
+          "emailLabel": "Adresse e-mail",
+          "email": "Requise pour l'authentification et la gestion du compte",
+          "paymentLabel": "Données de paiement",
+          "payment": "Traitées en toute sécurité par Stripe (nous ne stockons jamais les détails de carte de crédit)",
+          "bidsLabel": "Données d'enchères",
+          "bids": "Nom d'affichage, URL du lien, couleur de marque et montant d'enchère pour vos slots",
+          "imagesLabel": "Images téléchargées",
+          "images": "Images que vous téléchargez pour vos emplacements publicitaires"
+        },
+        "automatic": {
+          "title": "Données collectées automatiquement",
+          "cookiesLabel": "Cookies",
+          "cookies": "Cookies essentiels pour l'authentification et les préférences linguistiques uniquement",
+          "ipLabel": "Adresse IP",
+          "ip": "Enregistrée temporairement pour la sécurité et la prévention des abus",
+          "browserLabel": "Données de navigateur",
+          "browser": "Agent utilisateur et informations de navigateur pour la compatibilité"
+        }
+      },
+      "dataUsage": {
+        "title": "Comment nous utilisons vos données",
+        "intro": "Nous utilisons vos données aux fins suivantes :",
+        "authentication": "Authentification de l'utilisateur et gestion du compte",
+        "processing": "Traitement des enchères et des paiements",
+        "display": "Affichage de vos emplacements publicitaires sur le billboard",
+        "moderation": "Modération de contenu et prévention des abus",
+        "legal": "Conformité aux obligations légales (taxes, comptabilité)"
+      },
+      "processors": {
+        "title": "Processeurs de données (tiers)",
+        "intro": "Nous partageons vos données avec les processeurs de confiance suivants :",
+        "supabase": "Authentification, base de données et stockage de fichiers (serveurs UE/US, conforme RGPD)",
+        "stripe": "Traitement des paiements et remboursements (certifié PCI-DSS niveau 1)",
+        "vercel": "Hébergement et diffusion de contenu (réseau edge mondial)",
+        "privacyPolicy": "Politique de confidentialité"
+      },
+      "rights": {
+        "title": "Vos droits en vertu du RGPD",
+        "intro": "Vous disposez des droits suivants :",
+        "access": {
+          "title": "Droit d'accès",
+          "text": "Demander une copie de toutes les données que nous détenons à votre sujet"
+        },
+        "rectification": {
+          "title": "Droit de rectification",
+          "text": "Demander la correction de données inexactes"
+        },
+        "erasure": {
+          "title": "Droit à l'effacement",
+          "text": "Demander la suppression de votre compte et de vos données (à l'exception des enregistrements légalement requis)"
+        },
+        "portability": {
+          "title": "Droit à la portabilité des données",
+          "text": "Recevoir vos données dans un format structuré et lisible par machine"
+        },
+        "objection": {
+          "title": "Droit d'opposition",
+          "text": "S'opposer au traitement basé sur un intérêt légitime"
+        },
+        "complaint": {
+          "title": "Droit de déposer une plainte",
+          "text": "Déposer une plainte auprès de votre autorité nationale de protection des données"
+        },
+        "contact": "Pour exercer vos droits, contactez-nous à",
+        "todoEmail": "TODO: Remplacer privacy@example.com par l'e-mail de contact réel"
+      },
+      "cookies": {
+        "title": "Cookies",
+        "essential": "Nous utilisons uniquement des cookies essentiels :",
+        "authLabel": "Cookies d'authentification",
+        "auth": "Gestion de session (expire après la déconnexion)",
+        "preferencesLabel": "Cookies de préférences",
+        "preferences": "Sélection de langue et préférences d'interface",
+        "noTracking": "Nous N'utilisons PAS de cookies de suivi, de cookies d'analyse ou de cookies publicitaires."
+      },
+      "retention": {
+        "title": "Conservation des données",
+        "accounts": "Les données de compte et les enchères sont conservées tant que votre compte est actif.",
+        "transactions": "Les enregistrements de transactions sont conservés pendant 10 ans pour se conformer aux réglementations fiscales et comptables.",
+        "logs": "Les journaux de serveur (adresses IP) sont supprimés après 90 jours."
+      },
+      "security": {
+        "title": "Mesures de sécurité",
+        "text": "Nous mettons en œuvre des mesures de sécurité standard de l'industrie, notamment le cryptage (TLS/SSL), l'authentification sécurisée (liens magiques), le cryptage de base de données au repos et des audits de sécurité réguliers."
+      },
+      "international": {
+        "title": "Transferts internationaux de données",
+        "text": "Vos données peuvent être traitées dans l'UE et aux États-Unis. Tous les processeurs sont conformes au RGPD et fournissent une protection adéquate via Privacy Shield, des clauses contractuelles types ou des mécanismes équivalents."
+      },
+      "updates": {
+        "title": "Mises à jour de la politique",
+        "text": "Nous pouvons mettre à jour cette politique occasionnellement. Les modifications importantes seront communiquées par e-mail.",
+        "lastUpdated": "Dernière mise à jour"
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "Pour les questions liées à la confidentialité, contactez-nous à :",
+        "emailLabel": "E-mail",
+        "seeImprint": "Pour les coordonnées complètes, consultez nos",
+        "imprintLink": "Mentions légales"
+      }
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "acceptance": {
+        "title": "Acceptation des conditions",
+        "text": "En accédant ou en utilisant The Last Billboard, vous acceptez d'être lié par ces conditions d'utilisation. Si vous n'êtes pas d'accord, n'utilisez pas le service."
+      },
+      "service": {
+        "title": "Description du service",
+        "description": "The Last Billboard est une plateforme publicitaire numérique où les utilisateurs enchérissent pour de l'espace sur une toile partagée. Les emplacements sont attribués en fonction du montant de l'enchère, la taille augmentant de manière logarithmique.",
+        "freeze": "Après l'expiration du compte à rebours, le billboard entre dans un état gelé permanent et aucun autre changement n'est possible."
+      },
+      "account": {
+        "title": "Inscription de compte",
+        "magicLink": "Vous devez créer un compte en utilisant l'authentification par e-mail (lien magique) pour placer des enchères.",
+        "responsibility": "Vous êtes responsable du maintien de la confidentialité de votre compte et de toutes les activités qui s'y rapportent."
+      },
+      "bidding": {
+        "title": "Règles d'enchères",
+        "minimum": {
+          "title": "Enchère minimale",
+          "text": "La plateforme applique un montant d'enchère minimal dynamique"
+        },
+        "commission": {
+          "title": "Commission de plateforme",
+          "text": "Toutes les enchères sont soumises à des frais de plateforme de 10%"
+        },
+        "size": {
+          "title": "Taille de l'emplacement",
+          "text": "La taille de l'emplacement est calculée de manière logarithmique en fonction du montant de l'enchère pour garantir l'équité"
+        },
+        "displacement": {
+          "title": "Déplacement",
+          "text": "D'autres utilisateurs peuvent surenchérir sur votre emplacement. Si vous êtes déplacé, vous passez à une nouvelle position ou quittez le billboard."
+        },
+        "refund": {
+          "title": "Politique de remboursement",
+          "text": "Si votre emplacement est déplacé, vous recevez automatiquement 90% de votre enchère en remboursement. Les frais de plateforme de 10% ne sont pas remboursables."
+        },
+        "final": {
+          "title": "Enchères finales",
+          "text": "Les enchères sont définitives et immuables une fois placées. Vous ne pouvez pas modifier ou annuler une enchère."
+        }
+      },
+      "content": {
+        "title": "Politique de contenu",
+        "intro": "Vous êtes seul responsable du contenu que vous téléchargez. En plaçant une enchère, vous déclarez que votre contenu ne viole aucune loi ni aucun droit de tiers.",
+        "prohibitedTitle": "Contenu interdit",
+        "prohibited": {
+          "pornography": "Pornographie ou contenu sexuellement explicite",
+          "violence": "Violence graphique ou gore",
+          "hate": "Discours haineux, discrimination ou harcèlement",
+          "malware": "Logiciels malveillants, liens d'hameçonnage ou contenu malveillant",
+          "copyright": "Violation de droits d'auteur ou de marque",
+          "illegal": "Biens, services ou activités illégaux",
+          "spam": "Spam ou contenu trompeur"
+        },
+        "removal": "Nous nous réservons le droit de supprimer le contenu interdit sans remboursement. Les violations répétées peuvent entraîner la résiliation du compte.",
+        "license": "En téléchargeant du contenu, vous nous accordez une licence non exclusive, mondiale pour l'afficher sur le billboard."
+      },
+      "payment": {
+        "title": "Conditions de paiement",
+        "stripe": "Tous les paiements sont traités via Stripe. En enchérissant, vous acceptez les conditions d'utilisation de Stripe.",
+        "currency": "Toutes les enchères sont en EUR (€). Des frais de conversion de devises peuvent s'appliquer.",
+        "noChargebacks": "En raison de la nature du service (allocation instantanée d'emplacement), les rétrofacturations sont strictement interdites. Les frais contestés entraîneront la résiliation du compte."
+      },
+      "liability": {
+        "title": "Limitation de responsabilité",
+        "platform": "The Last Billboard est fourni \"tel quel\" sans garantie d'aucune sorte. Nous ne garantissons pas le temps de disponibilité, la disponibilité ou la persistance des emplacements.",
+        "userContent": "Nous ne sommes pas responsables du contenu généré par les utilisateurs. Les utilisateurs sont seuls responsables de leurs emplacements.",
+        "payment": "Nous ne sommes pas responsables des erreurs de traitement des paiements causées par Stripe ou votre fournisseur de paiement.",
+        "noWarranty": "Dans la mesure maximale permise par la loi, nous déclinons toute responsabilité pour les dommages indirects, accessoires ou consécutifs."
+      },
+      "indemnification": {
+        "title": "Indemnisation",
+        "text": "Vous acceptez d'indemniser et de nous dégager de toute réclamation, dommage ou dépense découlant de votre utilisation du service, de votre contenu ou de votre violation de ces conditions."
+      },
+      "freeze": {
+        "title": "Gel du billboard",
+        "permanent": "Lorsque le compte à rebours se termine, le billboard se fige de façon permanente. Tous les emplacements deviennent immuables.",
+        "noRefunds": "Aucun remboursement n'est émis pour les emplacements actifs au moment du gel, quelle que soit la durée de détention."
+      },
+      "termination": {
+        "title": "Résiliation",
+        "text": "Nous nous réservons le droit de suspendre ou de résilier les comptes qui violent ces conditions. Les emplacements actifs peuvent être supprimés sans remboursement en cas de violations graves."
+      },
+      "law": {
+        "title": "Loi applicable",
+        "text": "Ces conditions sont régies par les lois de [juridiction à spécifier].",
+        "todoTitle": "TODO: Spécifier la loi applicable",
+        "todoText": "Spécifier la loi applicable (suisse, allemande, UE, etc.) avant le déploiement en production"
+      },
+      "changes": {
+        "title": "Modifications des conditions",
+        "text": "Nous pouvons mettre à jour ces conditions à tout moment. Les modifications importantes seront annoncées avec un préavis de 14 jours. L'utilisation continue constitue une acceptation."
+      },
+      "severability": {
+        "title": "Divisibilité",
+        "text": "Si une disposition de ces conditions est jugée invalide, les dispositions restantes restent pleinement en vigueur."
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "Pour des questions sur ces conditions, contactez-nous à :",
+        "emailLabel": "E-mail",
+        "seeImprint": "Pour les coordonnées complètes, consultez nos",
+        "imprintLink": "Mentions légales",
+        "lastUpdated": "Dernière mise à jour"
+      }
+    }
   }
 }

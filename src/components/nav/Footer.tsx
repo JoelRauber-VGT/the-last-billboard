@@ -1,41 +1,44 @@
-import { getTranslations } from 'next-intl/server';
+'use client'
+
 import { Link } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
-export async function Footer() {
-  const t = await getTranslations();
-  const currentYear = new Date().getFullYear();
+export function Footer() {
+  const t = useTranslations('footer');
+
+  // Calculate uptime from launch date (example: April 1, 2026)
+  const launchDate = new Date('2026-04-01');
+  const now = new Date();
+  const diffMs = now.getTime() - launchDate.getTime();
+  const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
   return (
-    <footer className="border-t bg-background mt-auto">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
-            <nav className="flex gap-6">
-              <Link
-                href="/about"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {t('nav.about')}
-              </Link>
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {t('footer.legal')}
-              </a>
-              <a
-                href="#"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {t('footer.privacy')}
-              </a>
-            </nav>
-            <p className="text-sm text-muted-foreground">
-              &copy; {currentYear} The Last Billboard
-            </p>
-          </div>
-          <LanguageSwitcher />
+    <footer className="bg-term-bg mt-auto">
+      <div className="px-6 py-3 flex items-center justify-between font-mono text-base">
+        {/* Left: Language switcher */}
+        <div>
+          <LanguageSwitcher variant="minimal" />
+        </div>
+
+        {/* Center: Live status */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#60a5fa' }} />
+          <span style={{ color: '#60a5fa' }}>{t('live')}</span>
+          <span className="text-term-border-light">·</span>
+          <span className="text-term-muted">{t('uptime')} {days}d {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}</span>
+        </div>
+
+        {/* Right: Legal links */}
+        <div className="flex items-center gap-5">
+          <Link href="/legal/terms" className="text-term-dim hover:text-term-muted transition-colors">
+            /{t('terms')}
+          </Link>
+          <Link href="/legal/contact" className="text-term-dim hover:text-term-muted transition-colors">
+            /{t('contact')}
+          </Link>
         </div>
       </div>
     </footer>

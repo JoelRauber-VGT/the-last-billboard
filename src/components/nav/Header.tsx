@@ -1,75 +1,76 @@
-import { createServerClient } from '@/lib/supabase/server';
-import { getTranslations } from 'next-intl/server';
+'use client'
+
 import { Link } from '@/i18n/routing';
-import { Button } from '@/components/ui/button';
-import { LanguageSwitcher } from './LanguageSwitcher';
-import { LogOut } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { UserMenu } from './UserMenu';
 
-export async function Header() {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const t = await getTranslations('nav');
+interface HeaderProps {
+  user: any;
+  isAdmin: boolean;
+  onOpenRules?: () => void;
+  onOpenAuth?: () => void;
+}
 
-  let isAdmin = false;
-  if (user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single();
-    isAdmin = profile?.is_admin || false;
-  }
+export function Header({ user, isAdmin, onOpenRules, onOpenAuth }: HeaderProps) {
+  const t = useTranslations('nav');
 
   return (
-    <header className="border-b bg-background">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-              The Last Billboard
-            </Link>
-            <nav className="hidden md:flex gap-6">
-              <Link
-                href="/about"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {t('about')}
-              </Link>
-              {user && (
-                <Link
-                  href="/dashboard"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {t('dashboard')}
-                </Link>
-              )}
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {t('admin')}
-                </Link>
-              )}
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            {user ? (
-              <form action="/auth/signout" method="post">
-                <Button type="submit" variant="ghost" size="sm">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  {t('logout')}
-                </Button>
-              </form>
-            ) : (
-              <Button asChild size="sm">
-                <Link href="/auth/login">{t('login')}</Link>
-              </Button>
-            )}
-          </div>
+    <header className="sticky top-9 z-30 bg-term-bg py-4 px-6">
+      <div className="flex items-center justify-between">
+        {/* Left: Wordmark + Cursor */}
+        <div className="flex items-center">
+          <Link href="/" className="font-mono text-xl text-term-text hover:text-white transition-colors">
+            the_last_billboard
+          </Link>
+          <span className="font-mono text-xl font-bold animate-[blink_1s_step-end_infinite]" style={{ color: '#60a5fa' }}>_</span>
         </div>
+
+        {/* Right: Navigation */}
+        <nav className="flex items-center gap-6 font-mono text-lg">
+          <Link href="/about" className="text-term-text hover:text-white transition-colors">
+            /{t('about')}
+          </Link>
+
+          {onOpenRules && (
+            <button
+              onClick={onOpenRules}
+              className="text-term-text hover:text-white transition-colors focus:outline-none"
+            >
+              /{t('rules')}
+            </button>
+          )}
+
+          <span className="text-term-faint">|</span>
+
+          {user ? (
+            <>
+              {isAdmin && (
+                <Link href="/admin" className="text-term-text hover:text-white transition-colors">
+                  /{t('admin')}
+                </Link>
+              )}
+              <UserMenu user={user} />
+              <Link href="/bid" style={{ color: '#60a5fa' }} className="hover:text-white transition-colors">
+                [{t('bid')}]
+              </Link>
+            </>
+          ) : (
+            <>
+              {onOpenAuth ? (
+                <button
+                  onClick={onOpenAuth}
+                  className="text-term-text hover:text-white transition-colors focus:outline-none"
+                >
+                  {t('signIn')}
+                </button>
+              ) : (
+                <Link href="/login" className="text-term-text hover:text-white transition-colors focus:outline-none">
+                  {t('signIn')}
+                </Link>
+              )}
+            </>
+          )}
+        </nav>
       </div>
     </header>
   );

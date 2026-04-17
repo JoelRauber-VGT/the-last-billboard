@@ -1,10 +1,17 @@
 {
   "nav": {
-    "login": "Login",
-    "logout": "Logout",
-    "dashboard": "Dashboard",
-    "admin": "Admin",
-    "about": "About"
+    "login": "login",
+    "logout": "logout",
+    "loggingOut": "logging out...",
+    "dashboard": "dashboard",
+    "myBids": "my bids",
+    "settings": "settings",
+    "admin": "admin",
+    "about": "about",
+    "placeBid": "place-bid",
+    "rules": "rules",
+    "signIn": "sign in",
+    "bid": "bid"
   },
   "landing": {
     "hero": {
@@ -16,6 +23,23 @@
       "title": "How it works",
       "text": "Advertisers bid for space on a shared canvas. Your ad size grows logarithmically with your bid. Others can displace you by bidding higher. When the countdown ends, the billboard freezes forever."
     },
+    "onboarding": {
+      "step1": {
+        "title": "Place your bid",
+        "description": "Every advertiser gets a slot on the billboard. Your block size grows logarithmically with your bid — even a small investment gives you visible space."
+      },
+      "step2": {
+        "title": "Displace competitors",
+        "description": "Outbid an existing slot to take it over. The previous owner gets 90% refunded automatically. The billboard reshuffles in real time."
+      },
+      "step3": {
+        "title": "The freeze",
+        "description": "When the countdown hits zero, the billboard freezes permanently. No more bids, no more changes. Your slot stays forever — or you lose it for good."
+      },
+      "back": "Back",
+      "next": "Next",
+      "startBidding": "Start bidding"
+    },
     "preview": {
       "placeholder": "Billboard Preview — coming in Phase 2"
     },
@@ -24,31 +48,624 @@
       "ended": "Billboard frozen"
     }
   },
+  "countdown": {
+    "title": "Time until freeze",
+    "frozen": "Billboard Frozen",
+    "frozenMessage": "This billboard is now permanent and will remain in its final state.",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "urgentWarning": "Hurry! Less than 1 hour remaining!"
+  },
+  "freeze": {
+    "title": "Billboard Frozen",
+    "message": "No more bids can be placed. This billboard is now in its final, permanent state.",
+    "linksStillWork": "All slot links remain clickable."
+  },
   "auth": {
     "login": {
       "title": "Login to The Last Billboard",
+      "command": "auth",
       "email": "Email address",
       "emailPlaceholder": "your@email.com",
       "submit": "Send Magic Link",
       "checkEmail": "Check your email for the magic link!",
-      "error": "Failed to send magic link. Please try again."
+      "error": "Failed to send magic link. Please try again.",
+      "prompt": "enter your email to receive a magic link",
+      "sendLink": "send link",
+      "sending": "sending",
+      "linkSent": "link sent to {email}",
+      "checkInbox": "check your inbox",
+      "waiting": "waiting",
+      "invalidEmail": "invalid email format",
+      "errorSending": "error sending link",
+      "unexpectedError": "unexpected error",
+      "errorPrefix": "error"
     }
   },
   "dashboard": {
     "title": "My Bids",
     "empty": "You haven't placed any bids yet.",
-    "emptyAction": "Place your first bid to claim space on the billboard."
+    "emptyAction": "Place your first bid to claim space on the billboard.",
+    "placeBid": "Place Your First Bid"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings and preferences",
+    "profile": {
+      "title": "Profile",
+      "description": "Update your profile information",
+      "email": "Email Address",
+      "emailHelp": "Your email address cannot be changed",
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "Your name or brand",
+      "displayNameHelp": "This name will be displayed on your bids (optional, max 50 characters)"
+    },
+    "save": "Save",
+    "saving": "Saving...",
+    "success": "Settings saved successfully!",
+    "errors": {
+      "notAuthenticated": "You must be logged in",
+      "updateFailed": "Update failed. Please try again.",
+      "unexpected": "Unexpected error occurred"
+    }
   },
   "admin": {
-    "title": "Admin Dashboard",
-    "placeholder": "Admin features coming in Phase 2"
+    "nav": {
+      "overview": "Overview",
+      "reports": "Reports",
+      "slots": "Slots",
+      "transactions": "Transactions",
+      "users": "Users"
+    },
+    "overview": {
+      "title": "Admin Dashboard",
+      "activeSlots": "Active Slots",
+      "openReports": "Open Reports",
+      "totalRevenue": "Total Revenue",
+      "totalBidVolume": "Total Bid Volume",
+      "timeToFreeze": "Time to Freeze",
+      "recentTransactions": "Recent Transactions"
+    },
+    "reports": {
+      "title": "Reports Queue",
+      "viewSlot": "View Slot",
+      "dismiss": "Dismiss",
+      "removeWithRefund": "Remove & Refund",
+      "removeNoRefund": "Remove (No Refund)",
+      "confirmRemove": "Are you sure you want to remove this slot?"
+    },
+    "slots": {
+      "title": "Slot Management",
+      "hide": "Hide",
+      "restore": "Restore",
+      "viewHistory": "View History",
+      "confirmHide": "Are you sure you want to hide this slot?",
+      "confirmRestore": "Restore this slot?"
+    },
+    "transactions": {
+      "title": "Transactions Log",
+      "export": "Export CSV"
+    },
+    "users": {
+      "title": "User Management",
+      "toggleAdmin": "Toggle Admin",
+      "viewBids": "View Bids",
+      "confirmToggleAdmin": "Change admin status for this user?"
+    }
   },
   "about": {
     "title": "About The Last Billboard",
-    "content": "The Last Billboard is an experiment in digital scarcity and advertising competition."
+    "concept": {
+      "title": "The Concept",
+      "text": "The Last Billboard is a digital experiment exploring scarcity, competition, and permanence in advertising. Unlike traditional billboards that rotate content or exist in multiple locations, there is only one Last Billboard, and it will only display once."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Create an Account",
+        "text": "Sign in with your email using a magic link. No passwords required."
+      },
+      "step2": {
+        "title": "Place Your Bid",
+        "text": "Choose your brand name, upload an image, set a link URL, and enter your bid amount."
+      },
+      "step3": {
+        "title": "Your Slot Grows Logarithmically",
+        "text": "The size of your advertising slot grows with your bid, but logarithmically to ensure fairness."
+      },
+      "step4": {
+        "title": "Compete for Space",
+        "text": "Others can outbid you, displacing your slot. You'll receive 90% of your bid as a refund if displaced."
+      },
+      "step5": {
+        "title": "The Freeze",
+        "text": "When the countdown ends, the billboard freezes forever in its final state."
+      }
+    },
+    "pricing": {
+      "title": "Pricing & Economics",
+      "commission": "We charge a 10% platform fee on all bids. This covers hosting, payment processing, and moderation.",
+      "refund": "If your slot is displaced by a higher bidder, you automatically receive 90% of your original bid as a refund to your payment method.",
+      "example": "Example: You bid €100. If outbid, you get €90 back. The platform retains €10 regardless of outcome."
+    },
+    "freeze": {
+      "title": "The Freeze",
+      "countdown": "When the countdown reaches zero, the billboard enters a permanent, frozen state.",
+      "permanent": "No more changes can be made. The final state becomes a permanent digital artifact, preserved as a snapshot of this unique moment in advertising history."
+    },
+    "technology": {
+      "title": "Technology Stack",
+      "intro": "Built with modern, scalable technologies:",
+      "nextjs": "Next.js 15 with React Server Components for blazing-fast performance",
+      "supabase": "Supabase for authentication, database, and real-time updates",
+      "stripe": "Stripe for secure payment processing and automatic refunds",
+      "vercel": "Vercel for edge-optimized hosting and global distribution"
+    },
+    "specifications": {
+      "title": "Technical Specifications",
+      "canvasSize": "Canvas Size: 10,000 × 10,000 pixels",
+      "maxImageSize": "Maximum Image Size: 10 MB",
+      "imageFormats": "Supported Formats: PNG, JPEG, WebP",
+      "minBlockSize": "Minimum Block Size: 40 × 40 pixels"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": {
+        "question": "What happens if I'm outbid?",
+        "answer": "You'll automatically receive 90% of your bid amount as a refund to your original payment method. The platform retains 10% as commission."
+      },
+      "q2": {
+        "question": "Can I update my slot after bidding?",
+        "answer": "No. Once placed, bids are immutable. To make changes, you'll need to place a new bid that outbids your current slot."
+      },
+      "q3": {
+        "question": "What happens after the freeze?",
+        "answer": "The billboard becomes permanent and unchangeable. All slot links remain clickable, but no new bids can be placed."
+      },
+      "q4": {
+        "question": "What content is prohibited?",
+        "answer": "Pornography, violence, hate speech, malware, copyright violations, and illegal content are strictly prohibited. Violating slots will be removed."
+      },
+      "q5": {
+        "question": "Is my payment secure?",
+        "answer": "Yes. All payments are processed through Stripe, a PCI-compliant payment processor. We never store your credit card information."
+      }
+    },
+    "philosophy": {
+      "title": "Why This Matters",
+      "text": "In an age of infinite digital space and ephemeral content, The Last Billboard brings back the concept of scarcity and permanence. It asks: what would you say if you knew it would be preserved forever? What would you be willing to pay for truly lasting visibility?"
+    }
   },
   "footer": {
-    "legal": "Legal",
-    "privacy": "Privacy"
+    "imprint": "imprint",
+    "privacy": "privacy",
+    "terms": "terms",
+    "contact": "contact",
+    "live": "live",
+    "uptime": "uptime"
+  },
+  "bid": {
+    "frozen": {
+      "title": "Billboard Frozen",
+      "message": "The bidding period has ended. No more bids can be placed.",
+      "backToBoard": "Back to Billboard"
+    },
+    "form": {
+      "title": "Place Your Bid",
+      "titleOutbid": "Outbid Slot",
+      "outbiddingInfo": "You are outbidding {name} (current bid: €{amount})",
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "Your brand or name",
+      "image": "Image (optional)",
+      "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
+      "linkUrl": "Link URL",
+      "linkUrlPlaceholder": "https://your-website.com",
+      "brandColor": "Brand Color",
+      "bidAmount": "Bid Amount (€)",
+      "bidAmountHelp": "Minimum: €{min}",
+      "submit": "Proceed to Payment",
+      "submitting": "Processing...",
+      "uploadingImage": "Uploading image..."
+    },
+    "validation": {
+      "displayNameRequired": "Display name is required",
+      "displayNameTooLong": "Display name must be max 50 characters",
+      "imageTooBig": "Image must be max 10MB",
+      "imageInvalidType": "Only PNG, JPEG, WEBP allowed",
+      "linkRequired": "Link URL is required",
+      "linkInvalid": "Must be a valid HTTPS URL",
+      "colorInvalid": "Invalid color format",
+      "bidTooLow": "Bid must be at least €{min}",
+      "bidInvalid": "Invalid bid amount"
+    },
+    "errors": {
+      "uploadFailed": "Image upload failed, please try again",
+      "sessionFailed": "Failed to create payment session",
+      "unauthorized": "You must be logged in to bid",
+      "slotNotFound": "Slot not found",
+      "bidTooLowForOutbid": "Your bid must be higher than the current bid"
+    },
+    "success": {
+      "title": "Payment Successful",
+      "message": "Your bid is being processed.",
+      "viewBillboard": "View Billboard"
+    },
+    "cancel": {
+      "title": "Payment Cancelled",
+      "message": "You can try again or return to the billboard.",
+      "tryAgain": "Try Again",
+      "backToBillboard": "Back to Billboard"
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "unauthorized": "You must be logged in to do that.",
+    "forbidden": "You don't have permission to do that.",
+    "rateLimit": "Too many requests. Please wait and try again.",
+    "serverError": "Server error. We've been notified and are working on it.",
+    "networkError": "Network error. Please check your connection.",
+    "notFound": "Page not found",
+    "tryAgain": "Try again",
+    "retry": "Retry",
+    "contactSupport": "Contact Support",
+    "imageUpload": {
+      "tooLarge": "File too large (max 10MB)",
+      "invalidType": "Invalid file type. Use PNG, JPEG, or WebP.",
+      "uploadFailed": "Upload failed. Please try again."
+    },
+    "bid": {
+      "submitFailed": "Failed to submit bid. Please try again.",
+      "amountTooLow": "Bid amount must be at least €{min}."
+    },
+    "report": {
+      "submitFailed": "Failed to submit report.",
+      "rateLimitReached": "You've reached the maximum number of reports per hour."
+    },
+    "admin": {
+      "actionFailed": "Action failed. Please try again.",
+      "loadFailed": "Failed to load data.",
+      "cannotDemoteSelf": "Cannot demote yourself as you are the last admin."
+    },
+    "stripe": {
+      "sessionCreationFailed": "Failed to create payment session",
+      "invalidAmount": "Invalid bid amount",
+      "unauthorized": "You must be logged in to bid"
+    }
+  },
+  "billboard": {
+    "emptyState": "No bids yet. Be the first.",
+    "loading": "Loading billboard...",
+    "slotDetail": {
+      "title": "Slot Details",
+      "currentBid": "Current Bid",
+      "history": "History",
+      "loading": "Loading history...",
+      "outbid": "Outbid this slot",
+      "report": "Report",
+      "reportTooltip": "Coming soon",
+      "ownedBy": "Owned by {name}",
+      "from": "from",
+      "to": "to",
+      "displacedBy": "displaced by {name}",
+      "currentOwner": "current owner"
+    }
+  },
+  "ticker": {
+    "title": "Live Activity",
+    "empty": "No activity yet",
+    "enteredFor": "entered the billboard for",
+    "outbidFor": "outbid a slot for",
+    "displaced": "displaced",
+    "justNow": "just now"
+  },
+  "report": {
+    "button": "Report Slot",
+    "title": "Report this slot",
+    "reason": {
+      "label": "Reason",
+      "inappropriate": "Inappropriate content (adult, violence, hate speech)",
+      "misleading": "Misleading or scam",
+      "copyright": "Copyright violation",
+      "malware": "Malware or phishing link",
+      "spam": "Spam",
+      "other": "Other"
+    },
+    "details": {
+      "label": "Additional details (optional)",
+      "placeholder": "Please provide more information...",
+      "maxLength": "Maximum 500 characters"
+    },
+    "submit": "Submit Report",
+    "success": "Report submitted successfully. Thank you!",
+    "error": "Failed to submit report. Please try again.",
+    "rateLimit": "You've reached the maximum number of reports per hour. Please try again later.",
+    "removed": {
+      "title": "Slot Under Review",
+      "message": "This slot was reported and is under review. Contact support if you think this is a mistake.",
+      "contactSupport": "Contact Support"
+    }
+  },
+  "meta": {
+    "landing": {
+      "title": "The Last Billboard — Claim Your Space on the Internet's Final Advertising Grid",
+      "description": "Compete for visibility on the final billboard. Bid logarithmically, displace others, winner takes all when time runs out."
+    },
+    "about": {
+      "title": "About The Last Billboard",
+      "description": "Learn about The Last Billboard - the final advertising space where advertisers compete for eternal visibility."
+    },
+    "bid": {
+      "title": "Place Your Bid — The Last Billboard",
+      "description": "Claim your space on the final billboard. Choose your image, set your bid, and compete for visibility."
+    },
+    "dashboard": {
+      "title": "My Dashboard — The Last Billboard",
+      "description": "Manage your bids on The Last Billboard."
+    },
+    "settings": {
+      "title": "Settings — The Last Billboard",
+      "description": "Manage your account settings on The Last Billboard."
+    }
+  },
+  "legal": {
+    "cookieBanner": {
+      "message": "We only use essential cookies for authentication and preferences. No tracking or analytics.",
+      "accept": "Understood",
+      "learnMore": "Learn more"
+    },
+    "imprint": {
+      "title": "Imprint",
+      "operator": {
+        "title": "Operator Information",
+        "placeholder": "Information according to legal requirements (§5 TMG / ECG / etc.)",
+        "todoTitle": "TODO: Replace with actual operator details",
+        "todoItems": {
+          "name": "Full legal name / Company name",
+          "address": "Full address (street, postal code, city, country)",
+          "email": "Email address",
+          "phone": "Phone number (if applicable)",
+          "vat": "VAT ID / Tax ID (if applicable)",
+          "register": "Register entry (if company)"
+        }
+      },
+      "contact": {
+        "title": "Contact",
+        "emailLabel": "Email",
+        "placeholder": "TODO: Replace with actual contact email"
+      },
+      "disclaimer": {
+        "title": "Disclaimer",
+        "liability": "Despite careful content control, we assume no liability for the content of external links. The operators of the linked pages are solely responsible for their content.",
+        "externalLinks": "External links to third-party websites are beyond our control. We distance ourselves from all content on linked pages and assume no liability for it.",
+        "copyright": "All content and works on this website are subject to copyright. Reproduction requires written permission."
+      },
+      "disputeResolution": {
+        "title": "Dispute Resolution",
+        "text": "The European Commission provides a platform for online dispute resolution (ODR). We are neither willing nor obliged to participate in dispute resolution proceedings before a consumer arbitration board."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "introduction": {
+        "title": "Introduction",
+        "text": "We take the protection of your personal data seriously. This privacy policy explains what data we collect, how we use it, and your rights under GDPR."
+      },
+      "dataCollection": {
+        "title": "Data We Collect",
+        "intro": "We collect the following types of data:",
+        "personal": {
+          "title": "Personal Data You Provide",
+          "emailLabel": "Email address",
+          "email": "Required for authentication and account management",
+          "paymentLabel": "Payment data",
+          "payment": "Processed securely by Stripe (we never store credit card details)",
+          "bidsLabel": "Bid data",
+          "bids": "Display name, link URL, brand color, and bid amount for your slots",
+          "imagesLabel": "Uploaded images",
+          "images": "Images you upload for your advertising slots"
+        },
+        "automatic": {
+          "title": "Automatically Collected Data",
+          "cookiesLabel": "Cookies",
+          "cookies": "Essential cookies for authentication and language preferences only",
+          "ipLabel": "IP address",
+          "ip": "Temporarily logged for security and abuse prevention",
+          "browserLabel": "Browser data",
+          "browser": "User agent and browser information for compatibility"
+        }
+      },
+      "dataUsage": {
+        "title": "How We Use Your Data",
+        "intro": "We use your data for the following purposes:",
+        "authentication": "User authentication and account management",
+        "processing": "Processing bids and payments",
+        "display": "Displaying your advertising slots on the billboard",
+        "moderation": "Content moderation and abuse prevention",
+        "legal": "Compliance with legal obligations (tax, accounting)"
+      },
+      "processors": {
+        "title": "Data Processors (Third Parties)",
+        "intro": "We share your data with the following trusted processors:",
+        "supabase": "Authentication, database, and file storage (EU/US servers, GDPR-compliant)",
+        "stripe": "Payment processing and refunds (PCI-DSS Level 1 certified)",
+        "vercel": "Hosting and content delivery (global edge network)",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "rights": {
+        "title": "Your Rights Under GDPR",
+        "intro": "You have the following rights:",
+        "access": {
+          "title": "Right to Access",
+          "text": "Request a copy of all data we hold about you"
+        },
+        "rectification": {
+          "title": "Right to Rectification",
+          "text": "Request correction of inaccurate data"
+        },
+        "erasure": {
+          "title": "Right to Erasure",
+          "text": "Request deletion of your account and data (excluding legally required records)"
+        },
+        "portability": {
+          "title": "Right to Data Portability",
+          "text": "Receive your data in a structured, machine-readable format"
+        },
+        "objection": {
+          "title": "Right to Object",
+          "text": "Object to processing based on legitimate interest"
+        },
+        "complaint": {
+          "title": "Right to Lodge a Complaint",
+          "text": "File a complaint with your national data protection authority"
+        },
+        "contact": "To exercise your rights, contact us at",
+        "todoEmail": "TODO: Replace privacy@example.com with actual contact email"
+      },
+      "cookies": {
+        "title": "Cookies",
+        "essential": "We only use essential cookies:",
+        "authLabel": "Authentication cookies",
+        "auth": "Session management (expires after logout)",
+        "preferencesLabel": "Preference cookies",
+        "preferences": "Language selection and UI preferences",
+        "noTracking": "We do NOT use tracking cookies, analytics cookies, or advertising cookies."
+      },
+      "retention": {
+        "title": "Data Retention",
+        "accounts": "Account data and bids are retained as long as your account is active.",
+        "transactions": "Transaction records are retained for 10 years to comply with tax and accounting regulations.",
+        "logs": "Server logs (IP addresses) are deleted after 90 days."
+      },
+      "security": {
+        "title": "Security Measures",
+        "text": "We implement industry-standard security measures including encryption (TLS/SSL), secure authentication (magic links), database encryption at rest, and regular security audits."
+      },
+      "international": {
+        "title": "International Data Transfers",
+        "text": "Your data may be processed in the EU and US. All processors are GDPR-compliant and provide adequate protection through Privacy Shield, Standard Contractual Clauses, or equivalent mechanisms."
+      },
+      "updates": {
+        "title": "Policy Updates",
+        "text": "We may update this policy occasionally. Material changes will be communicated via email.",
+        "lastUpdated": "Last updated"
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "For privacy-related questions, contact us at:",
+        "emailLabel": "Email",
+        "seeImprint": "For full contact details, see our",
+        "imprintLink": "Imprint"
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "text": "By accessing or using The Last Billboard, you agree to be bound by these Terms of Service. If you do not agree, do not use the service."
+      },
+      "service": {
+        "title": "Service Description",
+        "description": "The Last Billboard is a digital advertising platform where users bid for space on a shared canvas. Slots are allocated based on bid amount, with size growing logarithmically.",
+        "freeze": "After the countdown expires, the billboard enters a permanent frozen state and no further changes are possible."
+      },
+      "account": {
+        "title": "Account Registration",
+        "magicLink": "You must create an account using email authentication (magic link) to place bids.",
+        "responsibility": "You are responsible for maintaining the confidentiality of your account and all activities under it."
+      },
+      "bidding": {
+        "title": "Bidding Rules",
+        "minimum": {
+          "title": "Minimum Bid",
+          "text": "The platform enforces a dynamic minimum bid amount"
+        },
+        "commission": {
+          "title": "Platform Commission",
+          "text": "All bids are subject to a 10% platform fee"
+        },
+        "size": {
+          "title": "Slot Size",
+          "text": "Slot size is calculated logarithmically based on bid amount to ensure fairness"
+        },
+        "displacement": {
+          "title": "Displacement",
+          "text": "Other users can outbid your slot. If displaced, you move to a new position or exit the billboard."
+        },
+        "refund": {
+          "title": "Refund Policy",
+          "text": "If your slot is displaced, you automatically receive 90% of your bid as a refund. The 10% platform fee is non-refundable."
+        },
+        "final": {
+          "title": "Final Bids",
+          "text": "Bids are final and immutable once placed. You cannot edit or cancel a bid."
+        }
+      },
+      "content": {
+        "title": "Content Policy",
+        "intro": "You are solely responsible for the content you upload. By placing a bid, you represent that your content does not violate any laws or third-party rights.",
+        "prohibitedTitle": "Prohibited Content",
+        "prohibited": {
+          "pornography": "Pornography or sexually explicit content",
+          "violence": "Graphic violence or gore",
+          "hate": "Hate speech, discrimination, or harassment",
+          "malware": "Malware, phishing links, or malicious content",
+          "copyright": "Copyright or trademark infringement",
+          "illegal": "Illegal goods, services, or activities",
+          "spam": "Spam or misleading content"
+        },
+        "removal": "We reserve the right to remove prohibited content without refund. Repeat violations may result in account termination.",
+        "license": "By uploading content, you grant us a non-exclusive, worldwide license to display it on the billboard."
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "stripe": "All payments are processed through Stripe. By bidding, you agree to Stripe's Terms of Service.",
+        "currency": "All bids are in EUR (€). Currency conversion fees may apply.",
+        "noChargebacks": "Due to the nature of the service (instant slot allocation), chargebacks are strictly prohibited. Disputed charges will result in account termination."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "platform": "The Last Billboard is provided \"as-is\" without warranties of any kind. We do not guarantee uptime, availability, or slot persistence.",
+        "userContent": "We are not liable for user-generated content. Users are solely responsible for their slots.",
+        "payment": "We are not liable for payment processing errors caused by Stripe or your payment provider.",
+        "noWarranty": "To the maximum extent permitted by law, we disclaim all liability for indirect, incidental, or consequential damages."
+      },
+      "indemnification": {
+        "title": "Indemnification",
+        "text": "You agree to indemnify and hold us harmless from any claims, damages, or expenses arising from your use of the service, your content, or your violation of these terms."
+      },
+      "freeze": {
+        "title": "Billboard Freeze",
+        "permanent": "When the countdown ends, the billboard freezes permanently. All slots become immutable.",
+        "noRefunds": "No refunds are issued for slots active at the time of freeze, regardless of duration held."
+      },
+      "termination": {
+        "title": "Termination",
+        "text": "We reserve the right to suspend or terminate accounts that violate these terms. Active slots may be removed without refund in cases of severe violations."
+      },
+      "law": {
+        "title": "Governing Law",
+        "text": "These terms are governed by the laws of [jurisdiction to be specified].",
+        "todoTitle": "TODO: Specify Governing Law",
+        "todoText": "Specify applicable law (Swiss, German, EU, etc.) before production deployment"
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "text": "We may update these terms at any time. Material changes will be announced with 14 days notice. Continued use constitutes acceptance."
+      },
+      "severability": {
+        "title": "Severability",
+        "text": "If any provision of these terms is found invalid, the remaining provisions remain in full effect."
+      },
+      "contact": {
+        "title": "Contact",
+        "text": "For questions about these terms, contact us at:",
+        "emailLabel": "Email",
+        "seeImprint": "For full contact details, see our",
+        "imprintLink": "Imprint",
+        "lastUpdated": "Last updated"
+      }
+    }
   }
 }

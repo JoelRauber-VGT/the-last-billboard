@@ -3,10 +3,14 @@ import { Inter, Space_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Toaster } from 'sonner';
 import { routing } from '@/i18n/routing';
-import { Header } from '@/components/nav/Header';
+import { createServerClient } from '@/lib/supabase/server';
+import { Tickertape } from '@/components/layout/Tickertape';
+import { LayoutClient } from '@/components/layout/LayoutClient';
 import { Footer } from '@/components/nav/Footer';
-import './globals.css';
+import { CookieBanner } from '@/components/legal/CookieBanner';
+import '../globals.css';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,10 +23,28 @@ const spaceMono = Space_Mono({
   variable: '--font-space-mono',
 });
 
-export const metadata: Metadata = {
-  title: 'The Last Billboard',
-  description: 'The final advertising space. Compete for visibility. Winner takes all.',
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+  return {
+    title: {
+      default: 'The Last Billboard',
+      template: '%s | The Last Billboard',
+    },
+    description: 'The final advertising space. Compete for visibility. Winner takes all.',
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages: {
+        'en': `${baseUrl}/en`,
+        'de': `${baseUrl}/de`,
+        'fr': `${baseUrl}/fr`,
+        'es': `${baseUrl}/es`,
+      },
+    },
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -42,13 +64,31 @@ export default async function RootLayout({
 
   const messages = await getMessages();
 
+  // Get user data for Header
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+    isAdmin = profile?.is_admin || false;
+  }
+
   return (
     <html lang={locale} className={`${inter.variable} ${spaceMono.variable}`}>
-      <body className="min-h-screen flex flex-col font-sans antialiased">
+      <body className="h-screen flex flex-col font-mono antialiased bg-term-bg text-white overflow-hidden">
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="flex-1">{children}</main>
+          <Tickertape />
+          <LayoutClient user={user} isAdmin={isAdmin}>
+            {children}
+          </LayoutClient>
           <Footer />
+          <CookieBanner />
+          <Toaster position="top-right" richColors />
         </NextIntlClientProvider>
       </body>
     </html>

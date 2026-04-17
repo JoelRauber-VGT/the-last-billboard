@@ -1,27 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { createBrowserClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-
-const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
 
 interface LoginFormProps {
   redirectTo?: string
@@ -29,18 +10,20 @@ interface LoginFormProps {
 
 export function LoginForm({ redirectTo }: LoginFormProps) {
   const t = useTranslations("auth.login")
+  const locale = useLocale()
+  const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-    },
-  })
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
 
-  async function onSubmit(values: LoginFormValues) {
+    if (!email || !email.includes('@')) {
+      setError(t('invalidEmail'))
+      return
+    }
+
     setIsLoading(true)
     setError(null)
     setIsSuccess(false)
@@ -48,23 +31,22 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
     try {
       const supabase = createBrowserClient()
       const { error: signInError } = await supabase.auth.signInWithOtp({
-        email: values.email,
+        email: email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback${
+          emailRedirectTo: `${window.location.origin}/${locale}/auth/callback${
             redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""
           }`,
         },
       })
 
       if (signInError) {
-        setError(t("error"))
+        setError(t('errorSending'))
         console.error("Magic link error:", signInError)
       } else {
         setIsSuccess(true)
-        form.reset()
       }
     } catch (err) {
-      setError(t("error"))
+      setError(t('unexpectedError'))
       console.error("Unexpected error:", err)
     } finally {
       setIsLoading(false)
@@ -73,44 +55,46 @@ export function LoginForm({ redirectTo }: LoginFormProps) {
 
   if (isSuccess) {
     return (
-      <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-green-800">
-        <p className="text-center font-medium">{t("checkEmail")}</p>
+      <div className="font-mono text-base text-term-text space-y-2">
+        <p>&gt; {t('linkSent', { email })}</p>
+        <p>&gt; {t('checkInbox')}</p>
+        <p className="flex items-center gap-1 text-term-muted">
+          {t('waiting')}<span className="animate-[blink_1s_step-end_infinite]">_</span>
+        </p>
       </div>
     )
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("email")}</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder={t("emailPlaceholder")}
-                  disabled={isLoading}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+    <div className="font-mono text-base">
+      <p className="text-term-text mb-4">&gt; {t('prompt')}</p>
+
+      <form onSubmit={onSubmit} className="space-y-4">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value)
+            setError(null)
+          }}
+          placeholder={t('emailPlaceholder')}
+          disabled={isLoading}
+          className="w-full bg-term-bg border border-term-border-light text-white px-3 py-2 font-mono text-base focus:outline-none focus:border-term-accent transition-colors disabled:opacity-50"
+          autoFocus
         />
 
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-            {error}
-          </div>
+          <p className="text-term-danger">&gt; {t('errorPrefix')}: {error}</p>
         )}
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Sending..." : t("submit")}
-        </Button>
+        <button
+          type="submit"
+          disabled={isLoading || !email}
+          className="w-full px-4 py-3 border border-term-border-light text-term-text hover:border-term-accent hover:text-term-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-1 focus:ring-term-accent focus:ring-offset-2 focus:ring-offset-term-bg"
+        >
+          {isLoading ? `> ${t('sending')}_` : `> [${t('sendLink')}]`}
+        </button>
       </form>
-    </Form>
+    </div>
   )
 }

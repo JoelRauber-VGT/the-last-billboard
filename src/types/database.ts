@@ -250,6 +250,44 @@ export interface Database {
           }
         ]
       }
+      admin_audit_log: {
+        Row: {
+          id: string
+          admin_id: string
+          action: string
+          target_type: string | null
+          target_id: string | null
+          details: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          admin_id: string
+          action: string
+          target_type?: string | null
+          target_id?: string | null
+          details?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          admin_id?: string
+          action?: string
+          target_type?: string | null
+          target_id?: string | null
+          details?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -345,3 +383,11 @@ export type Enums<
   : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
   ? Database["public"]["Enums"][PublicEnumNameOrOptions]
   : never
+
+// Type aliases for convenient access
+export type Slot = Tables<'slots'>
+export type SlotHistory = Tables<'slot_history'>
+export type Profile = Tables<'profiles'>
+export type Transaction = Tables<'transactions'>
+export type Report = Tables<'reports'>
+export type AdminAuditLog = Tables<'admin_audit_log'>
