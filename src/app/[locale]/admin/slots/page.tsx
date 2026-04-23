@@ -99,7 +99,7 @@ export default function AdminSlotsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-zinc-600">Loading slots...</p>
+        <p className="text-muted-foreground">Loading slots...</p>
       </div>
     )
   }
@@ -108,7 +108,7 @@ export default function AdminSlotsPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             {t('title')}
           </h1>
         </div>
@@ -163,11 +163,11 @@ export default function AdminSlotsPage() {
                           className="size-12 rounded object-cover"
                         />
                       ) : (
-                        <div className="size-12 rounded bg-zinc-200" />
+                        <div className="size-12 rounded bg-muted" />
                       )}
                     </TableCell>
                     <TableCell className="font-medium">{slot.display_name}</TableCell>
-                    <TableCell className="text-sm text-zinc-600">{slot.owner_email}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{slot.owner_email}</TableCell>
                     <TableCell className="font-mono">€{slot.current_bid_eur.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge
@@ -182,7 +182,7 @@ export default function AdminSlotsPage() {
                         {slot.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(slot.created_at).toLocaleDateString(locale)}
                     </TableCell>
                     <TableCell className="text-right">
@@ -221,7 +221,7 @@ export default function AdminSlotsPage() {
                                         <TableCell className="text-sm">{h.owner_email}</TableCell>
                                         <TableCell className="text-sm">{h.display_name}</TableCell>
                                         <TableCell className="font-mono text-sm">€{h.bid_eur.toFixed(2)}</TableCell>
-                                        <TableCell className="text-sm text-zinc-600">
+                                        <TableCell className="text-sm text-muted-foreground">
                                           {new Date(h.started_at).toLocaleDateString(locale)}
                                           {h.ended_at && ` - ${new Date(h.ended_at).toLocaleDateString(locale)}`}
                                         </TableCell>
@@ -230,7 +230,7 @@ export default function AdminSlotsPage() {
                                   </TableBody>
                                 </Table>
                               ) : (
-                                <p className="py-4 text-center text-sm text-zinc-600">No history yet</p>
+                                <p className="py-4 text-center text-sm text-muted-foreground">No history yet</p>
                               )}
                             </div>
                           </DialogContent>
@@ -292,7 +292,7 @@ export default function AdminSlotsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="py-12 text-center text-sm text-zinc-600">
+            <p className="py-12 text-center text-sm text-muted-foreground">
               No slots found
             </p>
           )}

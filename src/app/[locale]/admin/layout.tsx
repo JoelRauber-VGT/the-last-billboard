@@ -58,16 +58,16 @@ export default async function AdminLayout({
   ]
 
   return (
-    <div className="flex min-h-screen bg-zinc-50">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-zinc-200 bg-white">
+      <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-border bg-card">
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="border-b border-zinc-200 px-6 py-4">
-            <Link href={`/${locale}`} className="text-lg font-bold text-zinc-900">
+          <div className="border-b border-border px-6 py-4">
+            <Link href={`/${locale}`} className="text-lg font-bold text-foreground">
               The Last Billboard
             </Link>
-            <p className="mt-1 text-sm text-zinc-600">Admin Dashboard</p>
+            <p className="mt-1 text-sm text-muted-foreground">Admin Dashboard</p>
           </div>
 
           {/* Navigation */}
@@ -78,9 +78,9 @@ export default async function AdminLayout({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+                  className="group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
-                  <Icon className="size-5 text-zinc-500 transition-colors group-hover:text-zinc-900" />
+                  <Icon className="size-5 text-muted-foreground transition-colors group-hover:text-accent-foreground" />
                   {item.name}
                 </Link>
               )
@@ -88,10 +88,10 @@ export default async function AdminLayout({
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-zinc-200 px-6 py-4">
+          <div className="border-t border-border px-6 py-4">
             <Link
               href={`/${locale}`}
-              className="text-sm text-zinc-600 hover:text-zinc-900"
+              className="text-sm text-muted-foreground hover:text-foreground"
             >
               Back to Billboard
             </Link>

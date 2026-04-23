@@ -88,7 +88,19 @@
     "title": "My Bids",
     "empty": "You haven't placed any bids yet.",
     "emptyAction": "Place your first bid to claim space on the billboard.",
-    "placeBid": "Place Your First Bid"
+    "placeBid": "New bid",
+    "activeSection": "Active",
+    "outbidSection": "Outbid",
+    "removedSection": "Removed",
+    "statusActive": "live",
+    "statusOutbid": "outbid",
+    "statusRemoved": "removed",
+    "yourBid": "Your bid",
+    "currentBid": "Current",
+    "rebid": "Bid again",
+    "contactSupport": "Contact support",
+    "pixels": "pixels",
+    "since": "since"
   },
   "settings": {
     "title": "Settings",

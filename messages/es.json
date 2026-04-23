@@ -88,7 +88,19 @@
     "title": "Mis ofertas",
     "empty": "Aún no has realizado ninguna oferta.",
     "emptyAction": "Realiza tu primera oferta para reclamar espacio en el billboard.",
-    "placeBid": "Realizar tu primera oferta"
+    "placeBid": "Nueva oferta",
+    "activeSection": "Activas",
+    "outbidSection": "Superadas",
+    "removedSection": "Eliminadas",
+    "statusActive": "activa",
+    "statusOutbid": "superada",
+    "statusRemoved": "eliminada",
+    "yourBid": "Tu oferta",
+    "currentBid": "Actual",
+    "rebid": "Pujar de nuevo",
+    "contactSupport": "Contactar soporte",
+    "pixels": "píxeles",
+    "since": "desde"
   },
   "settings": {
     "title": "Configuración",

@@ -133,7 +133,7 @@ export default function AdminReportsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-zinc-600">Loading reports...</p>
+        <p className="text-muted-foreground">Loading reports...</p>
       </div>
     )
   }
@@ -167,7 +167,7 @@ export default function AdminReportsPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             {t('title')}
           </h1>
         </div>
@@ -221,7 +221,7 @@ export default function AdminReportsPage() {
               <TableBody>
                 {filteredReports.map((report) => (
                   <TableRow key={report.id}>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(report.created_at).toLocaleString(locale)}
                     </TableCell>
                     <TableCell>
@@ -237,7 +237,7 @@ export default function AdminReportsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="text-sm">{report.reason}</TableCell>
-                    <TableCell className="text-sm text-zinc-600">{report.reporter_email}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{report.reporter_email}</TableCell>
                     <TableCell>
                       <Badge variant={report.report_count > 1 ? 'warning' : 'outline'}>
                         {report.report_count}
@@ -315,7 +315,7 @@ export default function AdminReportsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="py-12 text-center text-sm text-zinc-600">
+            <p className="py-12 text-center text-sm text-muted-foreground">
               No reports found
             </p>
           )}

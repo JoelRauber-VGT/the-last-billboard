@@ -43,6 +43,11 @@ export interface Database {
           display_name: string
           brand_color: string | null
           status: 'active' | 'frozen' | 'removed'
+          layout_width: number
+          layout_height: number
+          pan_x: number
+          pan_y: number
+          zoom: number
           created_at: string
           updated_at: string
         }
@@ -55,6 +60,11 @@ export interface Database {
           display_name: string
           brand_color?: string | null
           status?: 'active' | 'frozen' | 'removed'
+          layout_width: number
+          layout_height: number
+          pan_x?: number
+          pan_y?: number
+          zoom?: number
           created_at?: string
           updated_at?: string
         }
@@ -67,6 +77,11 @@ export interface Database {
           display_name?: string
           brand_color?: string | null
           status?: 'active' | 'frozen' | 'removed'
+          layout_width?: number
+          layout_height?: number
+          pan_x?: number
+          pan_y?: number
+          zoom?: number
           created_at?: string
           updated_at?: string
         }
@@ -201,6 +216,7 @@ export interface Database {
           slot_id: string
           reporter_id: string | null
           reason: string
+          details: string | null
           status: 'open' | 'resolved' | 'dismissed'
           created_at: string
           resolved_at: string | null
@@ -211,6 +227,7 @@ export interface Database {
           slot_id: string
           reporter_id?: string | null
           reason: string
+          details?: string | null
           status?: 'open' | 'resolved' | 'dismissed'
           created_at?: string
           resolved_at?: string | null
@@ -221,6 +238,7 @@ export interface Database {
           slot_id?: string
           reporter_id?: string | null
           reason?: string
+          details?: string | null
           status?: 'open' | 'resolved' | 'dismissed'
           created_at?: string
           resolved_at?: string | null

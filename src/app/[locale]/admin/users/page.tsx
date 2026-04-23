@@ -93,7 +93,7 @@ export default function AdminUsersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-zinc-600">Loading users...</p>
+        <p className="text-muted-foreground">Loading users...</p>
       </div>
     )
   }
@@ -101,13 +101,13 @@ export default function AdminUsersPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t('title')}
         </h1>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
           {error}
         </div>
       )}
@@ -131,10 +131,10 @@ export default function AdminUsersPage() {
                 {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.email}</TableCell>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {user.display_name || '-'}
                     </TableCell>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(user.created_at).toLocaleDateString(locale)}
                     </TableCell>
                     <TableCell>
@@ -188,7 +188,7 @@ export default function AdminUsersPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="py-12 text-center text-sm text-zinc-600">
+            <p className="py-12 text-center text-sm text-muted-foreground">
               No users found
             </p>
           )}

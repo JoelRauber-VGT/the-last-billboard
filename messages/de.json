@@ -88,7 +88,19 @@
     "title": "Meine Gebote",
     "empty": "Sie haben noch keine Gebote abgegeben.",
     "emptyAction": "Geben Sie Ihr erstes Gebot ab, um Platz auf dem Billboard zu beanspruchen.",
-    "placeBid": "Erstes Gebot abgeben"
+    "placeBid": "Neues Gebot",
+    "activeSection": "Aktiv",
+    "outbidSection": "Überboten",
+    "removedSection": "Entfernt",
+    "statusActive": "live",
+    "statusOutbid": "überboten",
+    "statusRemoved": "entfernt",
+    "yourBid": "Ihr Gebot",
+    "currentBid": "Aktuell",
+    "rebid": "Erneut bieten",
+    "contactSupport": "Support kontaktieren",
+    "pixels": "Pixel",
+    "since": "seit"
   },
   "settings": {
     "title": "Einstellungen",

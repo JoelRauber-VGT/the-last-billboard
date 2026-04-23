@@ -14,7 +14,24 @@ const bidFormSchema = z.object({
   brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format'),
   bid_eur: z.number().positive('Bid must be positive').multipleOf(0.01, 'Bid must be in cents'),
   outbid_slot_id: z.string().uuid().optional(),
-});
+  layout_width: z.number().int().positive('Layout width must be positive'),
+  layout_height: z.number().int().positive('Layout height must be positive'),
+  pan_x: z.number().min(0).max(1).default(0.5),
+  pan_y: z.number().min(0).max(1).default(0.5),
+  zoom: z.number().min(1.0).max(3.0).default(1.0),
+}).refine(
+  (data) => {
+    // Validate that layout_width * layout_height equals pixel count (bid_eur / price_per_pixel)
+    // Assuming 1 EUR = 1 pixel
+    const expectedPixels = Math.round(data.bid_eur);
+    const actualPixels = data.layout_width * data.layout_height;
+    return actualPixels === expectedPixels;
+  },
+  {
+    message: 'Layout dimensions must match pixel count',
+    path: ['layout_width'],
+  }
+);
 
 type BidFormData = z.infer<typeof bidFormSchema>;
 
@@ -232,6 +249,11 @@ export async function createBidCheckoutSession(
         link_url: data.link_url,
         display_name: data.display_name,
         brand_color: data.brand_color,
+        layout_width: data.layout_width.toString(),
+        layout_height: data.layout_height.toString(),
+        pan_x: data.pan_x.toString(),
+        pan_y: data.pan_y.toString(),
+        zoom: data.zoom.toString(),
       },
     });
 

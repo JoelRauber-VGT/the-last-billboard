@@ -88,7 +88,19 @@
     "title": "Mes enchères",
     "empty": "Vous n'avez pas encore placé d'enchères.",
     "emptyAction": "Placez votre première enchère pour revendiquer de l'espace sur le billboard.",
-    "placeBid": "Placer votre première enchère"
+    "placeBid": "Nouvelle enchère",
+    "activeSection": "Actives",
+    "outbidSection": "Surenchéries",
+    "removedSection": "Supprimées",
+    "statusActive": "en ligne",
+    "statusOutbid": "surenchérie",
+    "statusRemoved": "supprimé",
+    "yourBid": "Votre offre",
+    "currentBid": "Actuelle",
+    "rebid": "Enchérir à nouveau",
+    "contactSupport": "Contacter le support",
+    "pixels": "pixels",
+    "since": "depuis"
   },
   "settings": {
     "title": "Paramètres",

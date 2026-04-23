@@ -56,7 +56,7 @@ export default async function AdminOverviewPage({ params }: { params: Promise<{ 
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t('title')}
         </h1>
       </div>
@@ -133,7 +133,7 @@ export default async function AdminOverviewPage({ params }: { params: Promise<{ 
               <TableBody>
                 {recentTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(transaction.created_at).toLocaleString(locale)}
                     </TableCell>
                     <TableCell className="text-sm">
@@ -152,7 +152,7 @@ export default async function AdminOverviewPage({ params }: { params: Promise<{ 
               </TableBody>
             </Table>
           ) : (
-            <p className="py-4 text-center text-sm text-zinc-600">No transactions yet</p>
+            <p className="py-4 text-center text-sm text-muted-foreground">No transactions yet</p>
           )}
         </CardContent>
       </Card>

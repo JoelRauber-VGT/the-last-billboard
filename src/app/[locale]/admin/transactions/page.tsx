@@ -74,7 +74,7 @@ export default function AdminTransactionsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-zinc-600">Loading transactions...</p>
+        <p className="text-muted-foreground">Loading transactions...</p>
       </div>
     )
   }
@@ -83,7 +83,7 @@ export default function AdminTransactionsPage() {
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
             {t('title')}
           </h1>
         </div>
@@ -95,7 +95,7 @@ export default function AdminTransactionsPage() {
 
       <div className="mb-4 flex gap-2">
         <div className="flex gap-2">
-          <span className="text-sm text-zinc-600">Type:</span>
+          <span className="text-sm text-muted-foreground">Type:</span>
           <Button
             variant={typeFilter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -119,7 +119,7 @@ export default function AdminTransactionsPage() {
           </Button>
         </div>
         <div className="ml-4 flex gap-2">
-          <span className="text-sm text-zinc-600">Status:</span>
+          <span className="text-sm text-muted-foreground">Status:</span>
           <Button
             variant={statusFilter === 'all' ? 'default' : 'outline'}
             size="sm"
@@ -162,7 +162,7 @@ export default function AdminTransactionsPage() {
               <TableBody>
                 {filteredTransactions.map((transaction) => (
                   <TableRow key={transaction.id}>
-                    <TableCell className="text-sm text-zinc-600">
+                    <TableCell className="text-sm text-muted-foreground">
                       {new Date(transaction.created_at).toLocaleString(locale)}
                     </TableCell>
                     <TableCell className="text-sm">{transaction.user_email}</TableCell>
@@ -189,7 +189,7 @@ export default function AdminTransactionsPage() {
                           <ExternalLinkIcon className="size-3" />
                         </a>
                       ) : (
-                        <span className="text-sm text-zinc-400">-</span>
+                        <span className="text-sm text-muted-foreground">-</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -212,7 +212,7 @@ export default function AdminTransactionsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="py-12 text-center text-sm text-zinc-600">
+            <p className="py-12 text-center text-sm text-muted-foreground">
               No transactions found
             </p>
           )}

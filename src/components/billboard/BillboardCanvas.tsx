@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useMemo, useRef, useEffect, useState } from 'react'
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react'
+import { TransformWrapper, TransformComponent, type ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 import { hierarchy, treemap, treemapSquarify } from 'd3-hierarchy'
 import { useTranslations } from 'next-intl'
 import type { Slot } from '@/types/database'
@@ -54,6 +54,7 @@ export function BillboardCanvas({
 }: BillboardCanvasProps) {
   const t = useTranslations('billboard')
   const containerRef = useRef<HTMLDivElement>(null)
+  const transformRef = useRef<ReactZoomPanPinchRef>(null)
   const [hoveredSlotId, setHoveredSlotId] = useState<string | null>(null)
   const [viewportRect, setViewportRect] = useState({ x: 0, y: 0, width: 0, height: 0 })
 
@@ -126,21 +127,54 @@ export function BillboardCanvas({
     onSlotHover?.(slot)
   }
 
-  const handleTransformChange = (ref: { state: { positionX: number; positionY: number; scale: number } }) => {
+  const handleTransformChange = useCallback((ref: ReactZoomPanPinchRef) => {
     if (!containerRef.current) return
 
     const { positionX, positionY, scale } = ref.state
     const containerWidth = containerRef.current.offsetWidth
     const containerHeight = containerRef.current.offsetHeight
 
+    // Calculate the scaled canvas size
+    const scaledWidth = config.canvasWidth * scale
+    const scaledHeight = config.canvasHeight * scale
+
+    // Calculate bounds
+    let boundedX = positionX
+    let boundedY = positionY
+
+    if (scaledWidth > containerWidth) {
+      // Canvas is larger than container - constrain to edges
+      const minX = -(scaledWidth - containerWidth)
+      const maxX = 0
+      boundedX = Math.max(minX, Math.min(maxX, positionX))
+    } else {
+      // Canvas is smaller than container - center it
+      boundedX = (containerWidth - scaledWidth) / 2
+    }
+
+    if (scaledHeight > containerHeight) {
+      // Canvas is larger than container - constrain to edges
+      const minY = -(scaledHeight - containerHeight)
+      const maxY = 0
+      boundedY = Math.max(minY, Math.min(maxY, positionY))
+    } else {
+      // Canvas is smaller than container - center it
+      boundedY = (containerHeight - scaledHeight) / 2
+    }
+
+    // Apply bounds if position changed
+    if (boundedX !== positionX || boundedY !== positionY) {
+      ref.setTransform(boundedX, boundedY, scale, 0)
+    }
+
     // Calculate viewport in canvas coordinates
     setViewportRect({
-      x: -positionX / scale,
-      y: -positionY / scale,
+      x: -boundedX / scale,
+      y: -boundedY / scale,
       width: containerWidth / scale,
       height: containerHeight / scale,
     })
-  }
+  }, [])
 
   // Filter blocks that are too small to render (virtualization)
   const visibleBlocks = useMemo(() => {
@@ -163,18 +197,21 @@ export function BillboardCanvas({
   }
 
   return (
-    <div ref={containerRef} className={`relative w-full h-full bg-neutral-100 rounded-lg overflow-hidden ${isFrozen ? 'opacity-90' : ''}`}>
+    <div ref={containerRef} className={`relative w-full h-full bg-neutral-100 rounded-lg ${isFrozen ? 'opacity-90' : ''}`} style={{ overflow: 'hidden' }}>
       {isFrozen && (
         <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-accent text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-mono">
           FROZEN
         </div>
       )}
       <TransformWrapper
+        ref={transformRef}
         initialScale={initialZoom}
         minScale={0.05}
         maxScale={10}
-        limitToBounds={false}
+        limitToBounds={true}
         centerOnInit={true}
+        centerZoomedOut={true}
+        disablePadding={true}
         onTransformed={handleTransformChange}
         onInit={handleTransformChange}
         doubleClick={{
@@ -184,6 +221,7 @@ export function BillboardCanvas({
         panning={{
           disabled: false,
           velocityDisabled: false,
+          excluded: [],
         }}
         wheel={{
           disabled: false,
@@ -196,10 +234,12 @@ export function BillboardCanvas({
               wrapperStyle={{
                 width: '100%',
                 height: '100%',
+                overflow: 'hidden',
+                cursor: 'grab',
               }}
               contentStyle={{
-                width: '100%',
-                height: '100%',
+                width: `${config.canvasWidth}px`,
+                height: `${config.canvasHeight}px`,
               }}
             >
               <svg
@@ -239,6 +279,7 @@ export function BillboardCanvas({
                         }
                       }}
                     >
+                      {/* Background color */}
                       <rect
                         x={node.x0}
                         y={node.y0}
@@ -248,15 +289,28 @@ export function BillboardCanvas({
                         stroke={borderColor}
                         strokeWidth={1}
                       />
+                      {/* Image overlay with pan/zoom support */}
                       {slot.image_url && (
-                        <image
-                          x={node.x0}
-                          y={node.y0}
-                          width={width}
-                          height={height}
-                          href={slot.image_url}
-                          preserveAspectRatio="xMidYMid meet"
-                        />
+                        <g clipPath={`url(#clip-${slot.id})`}>
+                          <defs>
+                            <clipPath id={`clip-${slot.id}`}>
+                              <rect
+                                x={node.x0}
+                                y={node.y0}
+                                width={width}
+                                height={height}
+                              />
+                            </clipPath>
+                          </defs>
+                          <image
+                            x={node.x0 - (width * (slot.zoom - 1) * slot.pan_x)}
+                            y={node.y0 - (height * (slot.zoom - 1) * slot.pan_y)}
+                            width={width * slot.zoom}
+                            height={height * slot.zoom}
+                            href={slot.image_url}
+                            preserveAspectRatio="xMidYMid slice"
+                          />
+                        </g>
                       )}
                       {/* Display name for large blocks */}
                       {width > 200 && height > 100 && (
@@ -299,6 +353,7 @@ export function BillboardCanvas({
 
                   return (
                     <g key={slot.id}>
+                      {/* Background color */}
                       <rect
                         x={node.x0}
                         y={node.y0}
@@ -308,6 +363,7 @@ export function BillboardCanvas({
                         stroke="#ffffff"
                         strokeWidth={10}
                       />
+                      {/* Image overlay */}
                       {slot.image_url && (
                         <image
                           x={node.x0}

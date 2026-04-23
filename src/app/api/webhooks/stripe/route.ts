@@ -126,7 +126,12 @@ export async function POST(request: NextRequest) {
         p_image_url: metadata.image_url || null,
         p_link_url: metadata.link_url,
         p_display_name: metadata.display_name,
-        p_brand_color: metadata.brand_color
+        p_brand_color: metadata.brand_color,
+        p_layout_width: parseInt(metadata.layout_width || '1', 10),
+        p_layout_height: parseInt(metadata.layout_height || '1', 10),
+        p_pan_x: parseFloat(metadata.pan_x || '0.5'),
+        p_pan_y: parseFloat(metadata.pan_y || '0.5'),
+        p_zoom: parseFloat(metadata.zoom || '1.0')
       });
 
       if (bidError) {

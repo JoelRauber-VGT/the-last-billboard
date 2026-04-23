@@ -8,7 +8,7 @@ export function HowItWorksButton({ onClick }: HowItWorksButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="px-4 py-2.5 bg-term-surface border border-term-border-light font-mono text-sm text-term-text hover:border-term-accent hover:text-term-accent transition-colors focus:outline-none focus:ring-1 focus:ring-term-accent"
+      className="px-4 py-2.5 bg-neutral-900 border border-neutral-600 font-mono text-sm text-neutral-400 hover:border-blue-400 hover:text-blue-400 transition-colors focus:outline-none focus:ring-1 focus:ring-blue-400"
     >
       [how it works]
     </button>

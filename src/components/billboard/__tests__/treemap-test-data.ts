@@ -8,15 +8,27 @@ export function generateTestSlots(count: number): Slot[] {
   const slots: Slot[] = []
 
   for (let i = 0; i < count; i++) {
+    const bidAmount = Math.pow(10, Math.random() * 3); // Random bids from 1 to 1000 EUR
+    const pixelCount = Math.round(bidAmount);
+
+    // Calculate default layout dimensions (square-ish)
+    const layoutWidth = Math.ceil(Math.sqrt(pixelCount));
+    const layoutHeight = Math.ceil(pixelCount / layoutWidth);
+
     slots.push({
       id: `slot-${i}`,
       current_owner_id: `user-${i}`,
-      current_bid_eur: Math.pow(10, Math.random() * 3), // Random bids from 1 to 1000 EUR
+      current_bid_eur: bidAmount,
       image_url: i % 3 === 0 ? `https://picsum.photos/seed/${i}/400/300` : null,
       link_url: `https://example-${i}.com`,
       display_name: `Brand ${i}`,
       brand_color: `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
       status: 'active' as const,
+      layout_width: layoutWidth,
+      layout_height: layoutHeight,
+      pan_x: 0.5,
+      pan_y: 0.5,
+      zoom: 1.0,
       created_at: new Date(Date.now() - i * 86400000).toISOString(),
       updated_at: new Date().toISOString(),
     })
