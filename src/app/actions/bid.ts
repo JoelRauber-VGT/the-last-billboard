@@ -5,6 +5,7 @@ import { config } from '@/lib/config';
 import { throwIfFrozen } from '@/lib/freeze/checkFrozen';
 import { getStripe } from '@/lib/stripe/server';
 import { z } from 'zod';
+import { getLocale } from 'next-intl/server';
 
 // Validation schema for bid data
 const bidFormSchema = z.object({
@@ -220,6 +221,7 @@ export async function createBidCheckoutSession(
     // Create Stripe Checkout Session
     const stripe = getStripe();
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const locale = (await getLocale()) || config.defaultLocale;
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -237,8 +239,8 @@ export async function createBidCheckoutSession(
           quantity: 1,
         },
       ],
-      success_url: `${appUrl}/en/bid/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/en/bid/cancel`,
+      success_url: `${appUrl}/${locale}/bid/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/${locale}/bid/cancel`,
       metadata: {
         transaction_id: transaction.id,
         user_id: user.id,

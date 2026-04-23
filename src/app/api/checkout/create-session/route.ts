@@ -4,6 +4,32 @@ import { getStripe } from '@/lib/stripe/server';
 import { config } from '@/lib/config';
 import { throwIfFrozen } from '@/lib/freeze/checkFrozen';
 
+/**
+ * Resolve the caller's locale so Stripe redirects land on the right
+ * language. Route handlers don't inherit next-intl's request locale,
+ * so we (1) accept an explicit `locale` in the body, (2) fall back
+ * to parsing the Referer path, and (3) default to config.defaultLocale.
+ */
+function resolveLocale(request: NextRequest, bodyLocale: unknown): string {
+  const allowed = config.locales as readonly string[];
+  if (typeof bodyLocale === 'string' && allowed.includes(bodyLocale)) {
+    return bodyLocale;
+  }
+  const referer = request.headers.get('referer');
+  if (referer) {
+    try {
+      const path = new URL(referer).pathname;
+      const segment = path.split('/').filter(Boolean)[0];
+      if (segment && allowed.includes(segment)) {
+        return segment;
+      }
+    } catch {
+      // fallthrough
+    }
+  }
+  return config.defaultLocale;
+}
+
 // Request body schema
 interface CreateSessionRequest {
   mode: 'new' | 'outbid';
@@ -13,6 +39,7 @@ interface CreateSessionRequest {
   link_url: string;
   display_name: string;
   brand_color: string;
+  locale?: string;
 }
 
 /**
@@ -48,6 +75,7 @@ export async function POST(request: NextRequest) {
     // Parse and validate request body
     const body: CreateSessionRequest = await request.json();
     const { mode, slot_id, bid_eur, image_url, link_url, display_name, brand_color } = body;
+    const locale = resolveLocale(request, body.locale);
 
     // Validation: mode
     if (!mode || !['new', 'outbid'].includes(mode)) {
@@ -196,8 +224,8 @@ export async function POST(request: NextRequest) {
           quantity: 1,
         },
       ],
-      success_url: `${appUrl}/en/bid/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/en/bid/cancel`,
+      success_url: `${appUrl}/${locale}/bid/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/${locale}/bid/cancel`,
       metadata: {
         transaction_id: transaction.id,
         user_id: user.id,
