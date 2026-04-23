@@ -2,6 +2,39 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { getStripe } from '@/lib/stripe/server';
 import Stripe from 'stripe';
+import { z } from 'zod';
+
+// Stripe metadata values arrive as strings. We coerce and validate
+// with Zod so malformed values (NaN, out-of-range zoom, negative
+// layout dims) never reach the process_bid RPC.
+const webhookMetadataSchema = z
+  .object({
+    transaction_id: z.string().uuid(),
+    user_id: z.string().uuid(),
+    mode: z.enum(['new', 'outbid']),
+    slot_id: z
+      .string()
+      .optional()
+      .transform((v) => (!v ? null : v))
+      .pipe(z.string().uuid().nullable()),
+    bid_eur: z.coerce.number().positive(),
+    image_url: z
+      .string()
+      .optional()
+      .transform((v) => (!v ? null : v)),
+    link_url: z.string().url(),
+    display_name: z.string().min(1).max(50),
+    brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+    layout_width: z.coerce.number().int().positive().default(1),
+    layout_height: z.coerce.number().int().positive().default(1),
+    pan_x: z.coerce.number().min(0).max(1).default(0.5),
+    pan_y: z.coerce.number().min(0).max(1).default(0.5),
+    zoom: z.coerce.number().min(1.0).max(3.0).default(1.0),
+  })
+  .refine((d) => d.mode !== 'outbid' || d.slot_id !== null, {
+    path: ['slot_id'],
+    message: 'slot_id is required for outbid mode',
+  });
 
 /**
  * POST /api/webhooks/stripe
@@ -91,17 +124,27 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ received: true });
       }
 
-      // Extract metadata
-      const metadata = session.metadata as Record<string, string>;
-      const transactionId = metadata?.transaction_id;
+      // Validate metadata with Zod before any DB mutation. Malformed
+      // values (e.g. non-numeric zoom, negative layout dims, missing
+      // fields) are rejected before they reach process_bid.
+      const rawMetadata = (session.metadata ?? {}) as Record<string, string>;
+      const parsed = webhookMetadataSchema.safeParse(rawMetadata);
 
-      if (!transactionId) {
-        console.error('Missing transaction_id in session metadata');
+      if (!parsed.success) {
+        console.error(
+          'Invalid session metadata:',
+          parsed.error.issues,
+          'raw:',
+          rawMetadata
+        );
         return NextResponse.json(
-          { error: 'Missing transaction_id in metadata' },
+          { error: 'Invalid session metadata', details: parsed.error.issues },
           { status: 400 }
         );
       }
+
+      const metadata = parsed.data;
+      const transactionId = metadata.transaction_id;
 
       // Update transaction with payment intent ID (status will be updated by process_bid)
       const { error: updateError } = await supabase
@@ -119,24 +162,22 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      console.log('Metadata:', metadata);
-
       // Process the bid atomically using Postgres function
       const { data: bidResult, error: bidError } = await supabase.rpc('process_bid', {
         p_transaction_id: transactionId,
         p_user_id: metadata.user_id,
         p_mode: metadata.mode,
-        p_slot_id: metadata.slot_id || null,
-        p_bid_eur: parseFloat(metadata.bid_eur),
-        p_image_url: metadata.image_url || null,
+        p_slot_id: metadata.slot_id,
+        p_bid_eur: metadata.bid_eur,
+        p_image_url: metadata.image_url,
         p_link_url: metadata.link_url,
         p_display_name: metadata.display_name,
         p_brand_color: metadata.brand_color,
-        p_layout_width: parseInt(metadata.layout_width || '1', 10),
-        p_layout_height: parseInt(metadata.layout_height || '1', 10),
-        p_pan_x: parseFloat(metadata.pan_x || '0.5'),
-        p_pan_y: parseFloat(metadata.pan_y || '0.5'),
-        p_zoom: parseFloat(metadata.zoom || '1.0')
+        p_layout_width: metadata.layout_width,
+        p_layout_height: metadata.layout_height,
+        p_pan_x: metadata.pan_x,
+        p_pan_y: metadata.pan_y,
+        p_zoom: metadata.zoom,
       });
 
       if (bidError) {
