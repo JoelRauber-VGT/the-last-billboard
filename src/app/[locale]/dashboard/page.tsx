@@ -81,7 +81,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                       {slot.image_url ? (
                         <img src={slot.image_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full" style={{ background: slot.brand_color ?? '#555' }} />
+                        <div className="w-full h-full bg-[#1a1a1a]" />
                       )}
                     </div>
 

@@ -39,10 +39,13 @@ export function SettingsForm({ email, displayName }: SettingsFormProps) {
         return
       }
 
-      // Update profile
-      // @ts-ignore - Type inference issue with Supabase client
-      const { error: updateError } = await supabase
-        .from('profiles')
+      // Update profile — Supabase's generated type narrows `.update()`
+      // to `never` for some chains. Cast the builder to sidestep that here.
+      const { error: updateError } = await (supabase.from('profiles') as unknown as {
+        update: (values: { display_name: string | null }) => {
+          eq: (column: string, value: string) => Promise<{ error: unknown }>
+        }
+      })
         .update({ display_name: newDisplayName || null })
         .eq('id', user.id)
 

@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { Plus, Minus } from 'lucide-react'
+import { useCallback, useRef, useState } from 'react'
 import { useBillboardData } from '@/hooks/useBillboardData'
+import { useBillboardViewport } from '@/hooks/useBillboardViewport'
 import { BillboardCanvas } from './BillboardCanvas'
+import { Minimap } from './Minimap'
+import { ZoomControls } from './ZoomControls'
+import { SlotTooltip } from './SlotTooltip'
 import { SlotDetailModal } from './SlotDetailModal'
 import { HowItWorksButton } from './HowItWorksButton'
 import { OnboardingModal, useOnboarding } from '../onboarding/OnboardingModal'
@@ -18,77 +21,131 @@ export function FullscreenBillboard({
   initialSlots = [],
   isFrozen = false,
 }: FullscreenBillboardProps) {
-  const { slots, loading } = useBillboardData(initialSlots)
+  const { slots } = useBillboardData(initialSlots)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [zoom, setZoom] = useState(1)
+  const [hoveredSlot, setHoveredSlot] = useState<Slot | null>(null)
+  const [cursor, setCursor] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   const { isOpen: onboardingOpen, open: openOnboarding, close: closeOnboarding } = useOnboarding()
 
-  const handleSlotClick = (slot: Slot) => {
-    setSelectedSlot(slot)
-    setModalOpen(true)
-  }
+  const containerRef = useRef<HTMLDivElement>(null)
+  const slotsRef = useRef<Slot[]>(slots)
+  slotsRef.current = slots
 
-  const handleZoomIn = () => {
-    setZoom(prev => Math.min(prev + 0.2, 3))
-  }
+  // Click handling is wired from inside the viewport hook: a qualifying
+  // pointerup (no pan) calls us with the original pointerdown target. Walk
+  // the DOM for a data-slot-id to map to a slot.
+  const handleClick = useCallback(
+    (_x: number, _y: number, target: EventTarget | null) => {
+      if (isFrozen) return
+      if (!(target instanceof Element)) return
+      const slotEl = target.closest('[data-slot-id]') as HTMLElement | null
+      if (!slotEl) return
+      const slotId = slotEl.dataset.slotId
+      if (!slotId) return
+      const slot = slotsRef.current.find((s) => s.id === slotId)
+      if (!slot) return
+      setSelectedSlot(slot)
+      setModalOpen(true)
+    },
+    [isFrozen]
+  )
 
-  const handleZoomOut = () => {
-    setZoom(prev => Math.max(prev - 0.2, 0.5))
-  }
+  const handlePanStart = useCallback(() => setHoveredSlot(null), [])
+
+  const {
+    viewport,
+    size,
+    isPanning,
+    pointerHandlers,
+    zoomBy,
+    reset,
+    animateTo,
+    setPanImmediate,
+  } = useBillboardViewport(containerRef, {
+    onClick: handleClick,
+    onPanStart: handlePanStart,
+  })
+
+  const handleSlotHover = useCallback((slot: Slot | null, clientX: number, clientY: number) => {
+    setHoveredSlot(slot)
+    if (slot) setCursor({ x: clientX, y: clientY })
+  }, [])
+
+  const handleCenterAt = useCallback(
+    (panX: number, panY: number) => {
+      animateTo({ panX, panY }, 200)
+    },
+    [animateTo]
+  )
+
+  const cursorStyle = isFrozen
+    ? 'default'
+    : isPanning
+      ? 'grabbing'
+      : viewport.zoom > 1.0001
+        ? 'grab'
+        : 'default'
 
   return (
     <>
-      {/* Main fullscreen billboard container */}
-      <div className="relative w-full h-full bg-term-bg overflow-hidden">
-        {/* Billboard Canvas with scroll */}
-        <div className="absolute inset-0 overflow-auto">
-          <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left', width: `${100 / zoom}%`, height: `${100 / zoom}%` }}>
-            <BillboardCanvas
-              slots={slots}
-              onSlotClick={handleSlotClick}
-              isFrozen={isFrozen}
-            />
-          </div>
-        </div>
+      <div
+        ref={containerRef}
+        {...pointerHandlers}
+        className="relative w-full h-full bg-term-bg overflow-hidden touch-none"
+        style={{ cursor: cursorStyle }}
+      >
+        <BillboardCanvas
+          slots={slots}
+          viewport={viewport}
+          size={size}
+          isPanning={isPanning}
+          isFrozen={isFrozen}
+          onSlotHover={handleSlotHover}
+        />
 
-        {/* How It Works Button (bottom left) - fixed position */}
-        <div className="absolute bottom-6 left-6 z-10">
+        {/* Zoom controls (bottom-left) */}
+        <ZoomControls
+          zoom={viewport.zoom}
+          onZoomIn={() => zoomBy(0.25)}
+          onZoomOut={() => zoomBy(-0.25)}
+          onReset={reset}
+        />
+
+        {/* Minimap (bottom-right) */}
+        {slots.length > 0 && (
+          <Minimap
+            slots={slots}
+            viewport={viewport}
+            canvasSize={size}
+            onSetPan={setPanImmediate}
+            onCenterAt={handleCenterAt}
+          />
+        )}
+
+        {/* How It Works (top-right; bottom-left is ZoomControls, bottom-right is Minimap) */}
+        <div className="absolute top-4 right-4 z-20">
           <HowItWorksButton onClick={openOnboarding} />
-        </div>
-
-        {/* Zoom Controls (bottom right) - fixed position */}
-        <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-0 overflow-hidden bg-term-surface border border-term-border-light">
-          <button
-            onClick={handleZoomIn}
-            className="px-3 py-2 hover:bg-term-bg transition-colors border-b border-term-border-light"
-            aria-label="Zoom in"
-          >
-            <Plus className="w-4 h-4 text-term-text" />
-          </button>
-          <button
-            onClick={handleZoomOut}
-            className="px-3 py-2 hover:bg-term-bg transition-colors"
-            aria-label="Zoom out"
-          >
-            <Minus className="w-4 h-4 text-term-text" />
-          </button>
         </div>
       </div>
 
-      {/* Slot Detail Modal */}
+      {/* Hover tooltip — portaled to fixed position */}
+      <SlotTooltip
+        slot={hoveredSlot}
+        clientX={cursor.x}
+        clientY={cursor.y}
+        isPanning={isPanning}
+      />
+
       <SlotDetailModal
         slot={selectedSlot}
         open={modalOpen}
         onOpenChange={(open) => {
           setModalOpen(open)
-          if (!open) {
-            setSelectedSlot(null)
-          }
+          if (!open) setSelectedSlot(null)
         }}
       />
 
-      {/* Onboarding Modal */}
       <OnboardingModal isOpen={onboardingOpen} onClose={closeOnboarding} />
     </>
   )

@@ -20,11 +20,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Check } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { ImageUpload } from '@/components/bid/ImageUpload';
-import { ColorPicker } from '@/components/bid/ColorPicker';
-import { LayoutPicker } from '@/components/bid/LayoutPicker';
-import { ImagePreview } from '@/components/bid/ImagePreview';
+import { ImagePositioner } from '@/components/bid/ImagePositioner';
 
-type Step = 'image' | 'amount' | 'layout' | 'confirm';
+type Step = 'image' | 'amount' | 'position' | 'confirm';
 
 type SlotInfo = {
   id: string;
@@ -75,8 +73,6 @@ export default function BidPage({
       .number()
       .min(minBid, `Minimum bid is €${minBid}`)
       .refine((val) => val % 5 === 0, 'Bid must be in 5 EUR increments (€5, €10, €15, ...)'),
-    layout_width: z.number().int().positive(),
-    layout_height: z.number().int().positive(),
     pan_x: z.number().min(0).max(1),
     pan_y: z.number().min(0).max(1),
     zoom: z.number().min(1.0).max(3.0),
@@ -88,9 +84,6 @@ export default function BidPage({
       .string()
       .url(tValidation('linkInvalid'))
       .startsWith('https://', tValidation('linkInvalid')),
-    brand_color: z
-      .string()
-      .regex(/^#[0-9A-Fa-f]{6}$/, tValidation('colorInvalid')),
   });
 
   type BidFormValues = z.infer<typeof bidFormSchema>;
@@ -99,14 +92,11 @@ export default function BidPage({
     resolver: zodResolver(bidFormSchema),
     defaultValues: {
       bid_eur: minBid,
-      layout_width: 1,
-      layout_height: 1,
       pan_x: 0.5,
       pan_y: 0.5,
       zoom: 1.0,
       display_name: '',
       link_url: '',
-      brand_color: '#888888',
     },
     mode: 'onChange',
   });
@@ -158,7 +148,7 @@ export default function BidPage({
     init();
   }, [searchParams, router, tErrors, form]);
 
-  const steps: Step[] = ['image', 'amount', 'layout', 'confirm'];
+  const steps: Step[] = ['image', 'amount', 'position', 'confirm'];
   const currentStepIndex = steps.indexOf(currentStep);
 
   const canProceedToNext = () => {
@@ -170,8 +160,8 @@ export default function BidPage({
       case 'amount':
         const bid = values.bid_eur;
         return bid >= minBid && bid % 5 === 0;
-      case 'layout':
-        return values.layout_width > 0 && values.layout_height > 0;
+      case 'position':
+        return values.zoom >= 1 && values.zoom <= 3;
       case 'confirm':
         return true;
       default:
@@ -225,10 +215,15 @@ export default function BidPage({
         display_name: values.display_name,
         image_url: uploadedImageUrl,
         link_url: values.link_url,
-        brand_color: values.brand_color,
+        // brand_color column is deprecated in UI; send a neutral value that
+        // satisfies the server-side validator until the migration drops it.
+        brand_color: '#1a1a1a',
         bid_eur: values.bid_eur,
-        layout_width: values.layout_width,
-        layout_height: values.layout_height,
+        // Treemap rendering ignores layout_width / layout_height; server
+        // still validates `width * height === round(bid_eur)`, so send a
+        // trivial 1 × bid strip until the migration drops the column.
+        layout_width: Math.round(values.bid_eur),
+        layout_height: 1,
         pan_x: values.pan_x,
         pan_y: values.pan_y,
         zoom: values.zoom,
@@ -385,36 +380,19 @@ export default function BidPage({
                 />
               )}
 
-              {/* Step 3: Layout Picker */}
-              {currentStep === 'layout' && uploadedImageUrl && form.getValues('image') && (
-                <div className="space-y-4">
-                  <LayoutPicker
-                    pixelCount={Math.round(form.watch('bid_eur'))}
-                    imageFile={form.getValues('image')!}
-                    imageUrl={uploadedImageUrl}
-                    value={{ width: form.watch('layout_width'), height: form.watch('layout_height') }}
-                    onChange={(layout) => {
-                      form.setValue('layout_width', layout.width);
-                      form.setValue('layout_height', layout.height);
-                      // Reset pan/zoom when layout changes
-                      form.setValue('pan_x', 0.5);
-                      form.setValue('pan_y', 0.5);
-                      form.setValue('zoom', 1.0);
-                    }}
-                  />
-
-                  <ImagePreview
-                    imageUrl={uploadedImageUrl}
-                    layout={{ width: form.watch('layout_width'), height: form.watch('layout_height') }}
-                    pan={{ x: form.watch('pan_x'), y: form.watch('pan_y') }}
-                    zoom={form.watch('zoom')}
-                    onPanChange={(pan) => {
-                      form.setValue('pan_x', pan.x);
-                      form.setValue('pan_y', pan.y);
-                    }}
-                    onZoomChange={(zoom) => form.setValue('zoom', zoom)}
-                  />
-                </div>
+              {/* Step 3: Position image (focal point + zoom) */}
+              {currentStep === 'position' && uploadedImageUrl && (
+                <ImagePositioner
+                  imageUrl={uploadedImageUrl}
+                  pan={{ x: form.watch('pan_x'), y: form.watch('pan_y') }}
+                  zoom={form.watch('zoom')}
+                  onPanChange={(pan) => {
+                    form.setValue('pan_x', pan.x);
+                    form.setValue('pan_y', pan.y);
+                  }}
+                  onZoomChange={(zoom) => form.setValue('zoom', zoom)}
+                  disabled={isLoading}
+                />
               )}
 
               {/* Step 4: Confirm - Rest of fields */}
@@ -448,23 +426,6 @@ export default function BidPage({
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="brand_color"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-mono">brand color</FormLabel>
-                        <FormControl>
-                          <ColorPicker
-                            value={field.value}
-                            onChange={field.onChange}
-                            disabled={isLoading}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               )}
 

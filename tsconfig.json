@@ -37,6 +37,8 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/app/[locale]/bid/page 2.tsx",
+    "src/app/[locale]/bid/page-old-backup.tsx"
   ]
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { format } from 'date-fns'
 import { de, fr, es, enUS } from 'date-fns/locale'
@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { ReportDialog } from './ReportDialog'
 
 interface SlotDetailModalProps {
@@ -34,48 +33,54 @@ const localeMap = {
   es: es,
 }
 
+type LocaleKey = keyof typeof localeMap
+
+function truncateUrl(url: string, max = 50) {
+  if (url.length <= max) return url
+  return url.slice(0, max - 1) + '…'
+}
+
+function initialOf(name: string) {
+  const ch = name.trim().charAt(0)
+  return ch ? ch.toUpperCase() : '?'
+}
+
+function shortSlotId(id: string) {
+  // DB stores UUID. Show the first segment — readable + unique enough.
+  return id.split('-')[0].toUpperCase()
+}
+
 export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalProps) {
   const t = useTranslations('billboard.slotDetail')
   const router = useRouter()
   const [history, setHistory] = useState<HistoryEntry[]>([])
   const [loading, setLoading] = useState(false)
-  const [locale, setLocale] = useState<keyof typeof localeMap>('en')
+  const [locale, setLocale] = useState<LocaleKey>('en')
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
 
-  // Detect locale from URL or document
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname
       const match = path.match(/^\/(en|de|fr|es)/)
-      if (match) {
-        setLocale(match[1] as keyof typeof localeMap)
-      }
+      if (match) setLocale(match[1] as LocaleKey)
     }
   }, [])
 
-  // Fetch slot history when modal opens
   useEffect(() => {
-    if (slot && open) {
-      fetchSlotHistory(slot.id)
-    }
-  }, [slot, open])
+    if (slot && open) fetchSlotHistory(slot.id)
+  }, [slot, open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchSlotHistory = async (slotId: string) => {
     try {
       setLoading(true)
       const supabase = createBrowserClient()
-
-      // Fetch history entries
       const { data, error } = await supabase
         .from('slot_history')
         .select('*')
         .eq('slot_id', slotId)
         .order('started_at', { ascending: false })
-
       if (error) throw error
-
-      // Fetch displaced_by names for each entry
-      const enrichedHistory: HistoryEntry[] = await Promise.all(
+      const enriched: HistoryEntry[] = await Promise.all(
         (data || []).map(async (entry: SlotHistory) => {
           if (entry.displaced_by_id) {
             const { data: profileData } = await supabase
@@ -83,9 +88,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               .select('display_name')
               .eq('id', entry.displaced_by_id)
               .single()
-
             const profile = profileData as { display_name: string | null } | null
-
             return {
               ...entry,
               displaced_by_name: profile?.display_name || 'Unknown',
@@ -94,27 +97,26 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           return entry as HistoryEntry
         })
       )
-
-      setHistory(enrichedHistory)
-    } catch (error) {
-      console.error('Failed to fetch slot history:', error)
+      setHistory(enriched)
+    } catch (err) {
+      console.error('Failed to fetch slot history:', err)
     } finally {
       setLoading(false)
     }
   }
 
-  const formatDate = (dateString: string) => {
+  const formatShortDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'PPp', { locale: localeMap[locale] })
+      return format(new Date(dateString), 'MMM d, h:mm a', { locale: localeMap[locale] })
     } catch {
       return dateString
     }
   }
 
-  const formatCurrency = (amount: number) => {
+  const formatBidAmount = (amount: number) => {
     return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'EUR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(amount)
   }
 
@@ -126,143 +128,358 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
   }
 
   const handleReportSuccess = () => {
-    // Optionally refresh slot history or show success message
-    if (slot) {
-      fetchSlotHistory(slot.id)
-    }
+    if (slot) fetchSlotHistory(slot.id)
   }
+
+  const formattedBid = useMemo(() => {
+    if (!slot) return '0.00'
+    return formatBidAmount(slot.current_bid_eur)
+  }, [slot, locale]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!slot) return null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>
+      <DialogContent
+        showCloseButton={false}
+        className="w-full max-w-[440px] p-6 gap-5 rounded-sm border text-left"
+        style={{
+          background: '#0a0a0a',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderRadius: 4,
+          fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+        }}
+      >
+        <DialogHeader className="!mb-0 flex flex-row items-center justify-between gap-2 space-y-0">
+          <DialogTitle
+            className="font-normal tracking-wide"
+            style={{
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 14,
+              color: 'rgba(255,255,255,0.5)',
+            }}
+          >
+            {`// SLOT_#${shortSlotId(slot.id)}`}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
             {t('ownedBy', { name: slot.display_name })}
           </DialogDescription>
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            aria-label="Close"
+            className="transition-colors"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 16,
+              lineHeight: 1,
+              color: 'rgba(255,255,255,0.4)',
+              cursor: 'pointer',
+              padding: 4,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.4)')}
+          >
+            ×
+          </button>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Current Slot Display */}
-          <div className="space-y-4">
-            {slot.image_url && (
-              <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted">
-                <img
-                  src={slot.image_url}
-                  alt={slot.display_name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-
-            {/* Brand Info */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold">{slot.display_name}</h3>
-                {slot.link_url && (
-                  <a
-                    href={slot.link_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    {slot.link_url}
-                  </a>
-                )}
-              </div>
-              {slot.brand_color && (
-                <div
-                  className="w-12 h-12 rounded-full border-2 border-gray-300"
-                  style={{ backgroundColor: slot.brand_color }}
-                />
-              )}
-            </div>
-
-            {/* Current Bid */}
-            <div className="bg-accent/10 p-6 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">{t('currentBid')}</p>
-              <p className="text-4xl font-mono font-bold">
-                {formatCurrency(slot.current_bid_eur)}
-              </p>
-            </div>
+        {/* Image — original aspect ratio, contain, soft radial gradient bg */}
+        {slot.image_url && (
+          <div
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxHeight: 320,
+              height: 240,
+              borderRadius: 3,
+              border: '1px solid rgba(255,255,255,0.05)',
+              background: 'radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)',
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={slot.image_url}
+              alt={slot.display_name}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                userSelect: 'none',
+              }}
+            />
           </div>
+        )}
 
-          {/* History Section */}
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold">{t('history')}</h4>
-
-            {loading ? (
-              <p className="text-sm text-muted-foreground">{t('loading')}</p>
-            ) : history.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No history available</p>
-            ) : (
-              <div className="space-y-3">
-                {history.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="border rounded-lg p-4 bg-muted/30 space-y-2"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="font-semibold">{entry.display_name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatCurrency(entry.bid_eur)}
-                        </p>
-                      </div>
-                      {entry.image_url && (
-                        <img
-                          src={entry.image_url}
-                          alt={entry.display_name}
-                          className="w-16 h-16 object-cover rounded"
-                        />
-                      )}
-                    </div>
-                    <div className="text-xs text-muted-foreground space-y-1">
-                      <p>
-                        {t('from')}: {formatDate(entry.started_at)}
-                      </p>
-                      {entry.ended_at ? (
-                        <>
-                          <p>
-                            {t('to')}: {formatDate(entry.ended_at)}
-                          </p>
-                          {entry.displaced_by_name && (
-                            <p>
-                              {t('displacedBy', { name: entry.displaced_by_name })}
-                            </p>
-                          )}
-                        </>
-                      ) : (
-                        <p className="text-green-600 font-semibold">
-                          {t('currentOwner')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Owner block */}
+        <div className="flex items-center gap-3">
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              background: 'rgba(96,165,250,0.15)',
+              color: '#60a5fa',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 14,
+              fontWeight: 600,
+              flexShrink: 0,
+            }}
+          >
+            {initialOf(slot.display_name)}
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-            <Button onClick={handleOutbid} className="flex-1" size="lg">
-              {t('outbid')}
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1"
-              size="lg"
-              onClick={() => setReportDialogOpen(true)}
+          <div className="flex flex-col min-w-0">
+            <div
+              style={{
+                color: '#ffffff',
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 15,
+                fontWeight: 700,
+                lineHeight: 1.2,
+              }}
             >
-              {t('report')}
-            </Button>
+              {slot.display_name}
+            </div>
+            {slot.link_url && (
+              <a
+                href={slot.link_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  marginTop: 2,
+                  color: '#60a5fa',
+                  fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  fontSize: 12,
+                  lineHeight: 1.3,
+                  textDecoration: 'none',
+                  display: 'inline-block',
+                  width: 'fit-content',
+                }}
+                className="hover:underline"
+              >
+                [ visit ↗ ] {truncateUrl(slot.link_url, 50)}
+              </a>
+            )}
           </div>
         </div>
 
-        {/* Report Dialog */}
+        {/* Current bid hero */}
+        <div className="flex flex-col items-center" style={{ padding: '24px 0' }}>
+          <div
+            style={{
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 11,
+              letterSpacing: '0.1em',
+              color: 'rgba(255,255,255,0.4)',
+              textTransform: 'uppercase',
+              marginBottom: 10,
+            }}
+          >
+            CURRENT_BID
+          </div>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'baseline',
+              gap: 4,
+              position: 'relative',
+            }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 48,
+                fontWeight: 700,
+                color: 'rgba(255,255,255,0.6)',
+                lineHeight: 1,
+              }}
+            >
+              €
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 48,
+                fontWeight: 700,
+                color: '#ffffff',
+                lineHeight: 1,
+                position: 'relative',
+              }}
+            >
+              {formattedBid}
+              <span
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: -6,
+                  height: 2,
+                  background: '#60a5fa',
+                }}
+              />
+            </span>
+          </div>
+        </div>
+
+        {/* History timeline */}
+        <div>
+          <div
+            style={{
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 11,
+              color: 'rgba(255,255,255,0.4)',
+              letterSpacing: '0.05em',
+              marginBottom: 6,
+            }}
+          >
+            {'// HISTORY'}
+          </div>
+          {loading ? (
+            <p
+              style={{
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 12,
+                color: 'rgba(255,255,255,0.4)',
+              }}
+            >
+              {t('loading')}
+            </p>
+          ) : history.length === 0 ? (
+            <p
+              style={{
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 12,
+                color: 'rgba(255,255,255,0.4)',
+              }}
+            >
+              No history available
+            </p>
+          ) : (
+            <div
+              style={{
+                maxHeight: 180,
+                overflowY: 'auto',
+                paddingRight: 2,
+              }}
+              className="history-scroll"
+            >
+              {history.slice(0, 5).map((entry, idx) => {
+                const isCurrent = !entry.ended_at
+                return (
+                  <div
+                    key={entry.id}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'auto 1fr auto',
+                      alignItems: 'center',
+                      columnGap: 10,
+                      padding: '8px 0',
+                      borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                      fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                      fontSize: 12,
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {isCurrent ? '[$]' : '[→]'} €{formatBidAmount(entry.bid_eur)}
+                    </span>
+                    <span
+                      style={{
+                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.6)',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {entry.display_name}
+                    </span>
+                    <span
+                      style={{
+                        color: 'rgba(255,255,255,0.4)',
+                        whiteSpace: 'nowrap',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      {formatShortDate(entry.started_at)}
+                      {isCurrent && (
+                        <span style={{ color: '#22c55e', fontSize: 10 }}>◉ current</span>
+                      )}
+                      {!isCurrent && entry.displaced_by_name && (
+                        <span style={{ color: 'rgba(255,255,255,0.3)' }}>(displaced)</span>
+                      )}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Action footer */}
+        <div className="flex flex-col items-center gap-3">
+          <button
+            type="button"
+            onClick={handleOutbid}
+            className="transition-all"
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: '#60a5fa',
+              color: '#0a0a0a',
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 14,
+              fontWeight: 700,
+              border: 'none',
+              borderRadius: 3,
+              cursor: 'pointer',
+              letterSpacing: '0.02em',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#7db4fb'
+              e.currentTarget.style.boxShadow = '0 0 12px rgba(96,165,250,0.4)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#60a5fa'
+              e.currentTarget.style.boxShadow = 'none'
+            }}
+          >
+            [ OUTBID THIS SLOT ]
+          </button>
+          <button
+            type="button"
+            onClick={() => setReportDialogOpen(true)}
+            className="transition-colors"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 11,
+              color: 'rgba(255,255,255,0.3)',
+              cursor: 'pointer',
+              padding: '4px 8px',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+          >
+            report this slot
+          </button>
+        </div>
+
         {slot && (
           <ReportDialog
             slotId={slot.id}
