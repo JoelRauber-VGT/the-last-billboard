@@ -51,9 +51,9 @@ Getestet mit Locale-Prefix `/[locale]` (en, de, fr, es). Statische Analyse: Auth
 | `/admin/slots` | ✅ works | P1 | – | – | `src/app/[locale]/admin/slots/page.tsx` |
 | `/admin/transactions` | ✅ works | P1 | – | – | `src/app/[locale]/admin/transactions/page.tsx` |
 | `/admin/users` | ⚠️ partial | P1 | API hinter dieser Seite hat N+1-Query (Transactions pro User in Loop) → langsam bei vielen Usern | API `users/route.ts` auf Aggregation-Join umstellen | `src/app/[locale]/admin/users/page.tsx`, `src/app/api/admin/users/route.ts:25-47` |
-| `/legal/terms` | ⚠️ partial | P0 | Hardcoded Placeholder `legal@example.com`; TODO-Marker in Übersetzungen (`law.todoTitle`, `law.todoText`) | Kontakt-Mail aus `lib/config.ts`/env, Translation-TODOs füllen | `src/app/[locale]/legal/terms/page.tsx` |
-| `/legal/privacy` | ⚠️ partial | P0 | Hardcoded `privacy@example.com`; TODO-Marker `rights.todoEmail` | Mail aus config, Translation-TODOs füllen | `src/app/[locale]/legal/privacy/page.tsx` |
-| `/legal/imprint` | ❌ broken | P0 | Hardcoded `[YOUR-EMAIL@example.com]`; TODO-Marker `operator.placeholder`, `operator.todoTitle`, `operator.todoItems.*`, `contact.placeholder` — Pflichtangaben fehlen → DSGVO/TMG-Verstoss | Operator-Daten (Name, Adresse, Mail, Tel., USt-ID, Reg-Nr.) eintragen | `src/app/[locale]/legal/imprint/page.tsx` |
+| `/legal/terms` | ✅ works | P0 | Fixed-In-Commit 572243ce: Email aus `config.legal.legalEmail` (LEGAL_EMAIL/LEGAL_CONTACT_EMAIL); Jurisdiktion via LEGAL_GOVERNING_LAW; TODO-Prefixes aus Übersetzungen entfernt. | – | `src/app/[locale]/legal/terms/page.tsx` |
+| `/legal/privacy` | ✅ works | P0 | Fixed-In-Commit 572243ce: Email aus `config.legal.privacyEmail` (LEGAL_PRIVACY_EMAIL/LEGAL_CONTACT_EMAIL); TODO-Prefixes aus Übersetzungen entfernt. | – | `src/app/[locale]/legal/privacy/page.tsx` |
+| `/legal/imprint` | ✅ works | P0 | Fixed-In-Commit b5420821: env-driven operator data via `config.legal` (`LEGAL_OPERATOR_*`). TODO-Strings aus EN/DE/FR/ES-Translations entfernt. Pflichtangaben müssen vor Launch via env gesetzt werden. | – | `src/app/[locale]/legal/imprint/page.tsx` |
 | `/legal/contact` | ✅ works | P2 | Kein generateMetadata | Optional ergänzen | `src/app/[locale]/legal/contact/page.tsx` |
 
 **Backup-Dateien (P2 Cleanup, nicht löschen in diesem Auftrag — nur vermerken):**
@@ -77,7 +77,7 @@ Aesthetic-Check: Space Mono (`font-mono`), schwarzer Hintergrund, blue accent `#
 |---|---|---|---|---|---|---|---|
 | **AuthOverlay** | ✅ controlled (`isOpen`) | ✅ ESC, Click-Outside, `[esc]`-Button (guarded by `!isLoading`) | ✅ `signInWithOtp`, Loading-State, Error-Handling | ✅ inline `text-term-danger` | ✅ Space Mono, `bg-term-surface`, `text-term-accent`, `[esc]` | – | `src/components/auth/AuthOverlay.tsx` |
 | **LoginForm** | ✅ controlled, embedded | ⚠️ kein expliziter Close (Form-only) | ✅ `signInWithOtp`, Error-Handling, Loading | ✅ inline `text-term-danger` | ✅ Space Mono, `> [send link]` bracket-style | – | `src/components/auth/LoginForm.tsx` |
-| **ReportDialog** | ✅ controlled (`open`/`onOpenChange`) | ✅ ESC, Click-Outside, Cancel-Button | ❌ **BROKEN beim Absenden** — Schema-Match auf den ersten Blick OK (`{slot_id, reason, details}` matched Zod). Ursache muss runtime verifiziert werden — wahrscheinliche Root Causes: (a) Cookie-/Session nicht gesendet → 401, (b) `reports`-Tabelle hat keine RLS-Insert-Policy für `reporter_id = auth.uid()`, (c) Rate-Limit-Check trifft, (d) ungültige UUID. Schema-Validierung zwischen Client (`reportSchema` lokal) und Server (`/api/reports/route.ts:6-17`) ist inhaltlich identisch. | ✅ red box (line 200-202) | ❌ **non-konform**: Material/Tailwind-Style (`bg-red-50 text-red-800`), kein Space Mono, kein bracket-style. Bricht aesthetic der App. | (1) Submit-Bug: Browser-Test mit DevTools Network-Tab → tatsächlichen Status-Code festhalten; RLS-Policy auf `reports` prüfen. (2) Aesthetic-Refactor auf term-ui. | `src/components/billboard/ReportDialog.tsx`, `src/app/api/reports/route.ts` |
+| **ReportDialog** | ✅ controlled (`open`/`onOpenChange`) | ✅ ESC, Click-Outside, Cancel-Button | ✅ Fixed-In-Commit a7a38d40 | ✅ red box (line 200-202) | ⚠️ non-konform (P1 separate): Material/Tailwind-Style, kein term-Aesthetic — Auftrag 4 | Fixed-In-Commit a7a38d40: Root-Cause war unauth-User konnten den Dialog öffnen; Dialog prüft jetzt `supabase.auth.getUser()` und zeigt Sign-in-CTA statt Form. 401-Response mappt auf localisierten "Login required"-Error. `reason`-State auf `null` (vorher `''`) für Base-UI-Select-Kompatibilität. Aesthetic-Refactor bleibt P1 offen. | `src/components/billboard/ReportDialog.tsx`, `src/app/api/reports/route.ts` |
 | **SlotDetailModal** | ✅ controlled (`open`/`onOpenChange`) | ✅ Close-Button ×, Click-Outside | n/a (read-only + Outbid-Link) | n/a | ✅ Space Mono, `#0a0a0a` bg, `#60a5fa` accent, `[ visit ↗ ]` / `[ OUTBID THIS SLOT ]` | – | `src/components/billboard/SlotDetailModal.tsx` |
 | **OnboardingModal** | ✅ controlled (`isOpen`/`onClose`) | ✅ ESC, Click-Outside, `[esc]`-Button | n/a | n/a | ✅ Space Mono, `bg-[#1a1a1a]`, `#60a5fa` accent, bracket-style | Footer-Text `last updated 142d ago` (line 149) hardcoded | `src/components/onboarding/OnboardingModal.tsx` |
 | **SettingsForm** | n/a (eingebettetes Form) | n/a | ✅ Supabase `.update()` profile, Error-Handling, Loading, Success-Toast | ✅ rote Box `border-red-500/50 bg-red-500/10`, grüne Box auf Success | ⚠️ teilweise: `font-mono` + `#60a5fa`, aber kein bracket-style (`[save]`), Standard-Card-Styling | Aesthetic teilweise inkonsistent (P2) | `src/components/settings/SettingsForm.tsx` |
@@ -241,13 +241,13 @@ Race-Szenario (User-B und User-C parallel auf 100€ Slot):
 
 | Endpoint | Method | Test-Payload | Expected | Actual (Code-Analyse) | Status | Defect |
 |---|---|---|---|---|---|---|
-| `/api/checkout/create-session` | POST | `{mode:"new", bid_eur:5.00, image_url, link_url, display_name, brand_color}` | 200 + `{sessionId, url}`; 400/401/403 ansonsten | wie expected; deckt 400/401/403/404/500 manuell ab | ⚠️ | (1) **Race-Condition**: kein DB-Lock auf `slots.current_bid_eur` zwischen Lese und Session-Create (line 85-169). Mitigation via Webhook-RPC vorhanden (siehe Tabelle 5 Step 11). (2) Hardcoded Locale `en` in `success_url` (line 199). |
-| `/api/webhooks/stripe` | POST | raw Stripe-Event-Body + `stripe-signature` Header | 200 `{received:true}`; 400 bei Sig-Fail; 500 bei Crash | wie expected; Sig-Verifikation `stripe.webhooks.constructEvent` korrekt; Idempotenz prüft nur `status==='completed'` | ⚠️ | (1) **Idempotenz unvollständig**: `status='pending'` wird beim 2. Aufruf übersprungen → bid steckt fest. (2) Metadata-Felder `layout_width/height/pan_x/y/zoom` werden mit Fallbacks geparst, aber serverseitig in create-session NICHT validiert (Zod fehlt für diese Felder) → malformed Daten erreichen DB. |
+| `/api/checkout/create-session` | POST | `{mode:"new", bid_eur:5.00, image_url, link_url, display_name, brand_color, locale}` | 200 + `{sessionId, url}`; 400/401/403 ansonsten | wie expected; deckt 400/401/403/404/500 manuell ab | ⚠️ | (1) Race-Condition: weiterhin kein DB-Lock zwischen Lese und Session-Create — Mitigation via Webhook-RPC bleibt. (2) Fixed-In-Commit 681226e: Locale aus Body/Referer aufgelöst; `actions/bid.ts` gleichfalls via `getLocale()`. curl: no-auth → 401, bad-payload → 401 (auth-first). |
+| `/api/webhooks/stripe` | POST | raw Stripe-Event-Body + `stripe-signature` Header | 200 `{received:true}`; 400 bei Sig-Fail; 500 bei Crash | wie expected; Sig-Verifikation `stripe.webhooks.constructEvent` korrekt; Idempotenz prüft jetzt `status !== 'pending'`; Metadata via Zod validiert | ✅ | Fixed-In-Commits 468cadd (Idempotenz auf alle non-pending Statuses ausgeweitet) + e435c9c (Zod-Metadata-Validierung für layout_width/height/pan/zoom + slot_id-uuid + brand_color-regex; refine prüft `slot_id` bei `outbid`). curl-Tests von webhook brauchen `stripe-signature` — nicht ohne Stripe-CLI reproduzierbar. |
 | `/api/freeze-status` | GET | – | 200 `{isFrozen, endsAt, timeRemaining}` | wie expected | ✅ | – |
 | `/api/health` | GET | – | 200 `{status:"healthy", database, timestamp}` oder 503 | wie expected; nutzt `count: 'exact', head: true` (kein Full-Scan) | ✅ | – |
 | `/api/og` | GET | `?slot=<uuid>` (optional) | 200 + ImageResponse 1200×630 | static OG image für ALLE Requests; `slotId` extrahiert aber nicht verwendet (TODO line 12-15) | ⚠️ | Slot-spezifische OG-Generation nicht implementiert; auch keine UUID-Validierung am `slot`-Param |
-| `/api/reports` | POST | `{slot_id:"<uuid>", reason:"spam", details:"..."}` | 201 `{success, reportId}`; 400/401/404/429/500 | wie expected; Zod-Schema, Rate-Limit 5/h pro User, Slot-Existenz-Check | ❌ | **SEED-DEFEKT 3** (ReportDialog Submit-Fehler): Schema **ist** kompatibel zwischen Client (`ReportDialog.tsx:91-94`) und Server (`route.ts:6-17`). Bug muss runtime verifiziert werden. Plausible Ursachen: (a) RLS-Policy auf `reports`-Tabelle erlaubt `insert` nicht für authenticated user (Migration 001 zeigt `enable row level security` aber Insert-Policy für `reports` ist nicht im sichtbaren Grep — muss verifiziert werden), (b) Auth-Cookie nicht weitergereicht (gleicher Origin → sollte automatisch), (c) `reporter_id`-Foreign-Key bricht (Profile-Row für User fehlt). **Action**: Browser-Test mit Network-Tab → exakter Status-Code dokumentieren in Auftrag 2. |
-| `/api/auth/ensure-admin` | POST | – (Body leer) | 200 `{success, is_admin, message}`; 401 wenn nicht eingeloggt | wie expected (line 38 hat `await updateResult` — hier KEIN bug, anders als von einem Sub-Audit behauptet) | ⚠️ | **Security-Risiko**: Endpoint setzt JEDEN authentifizierten User als Admin, wenn aktuell kein Admin existiert (line 18-31). Wenn der einzige Admin gelöscht wird, kann der nächste eingeloggte Caller diesen Endpoint triggern und Admin werden. Kein Rate-Limit, kein Bootstrap-Token. |
+| `/api/reports` | POST | `{slot_id:"<uuid>", reason:"spam", details:"..."}` | 201 `{success, reportId}`; 400/401/404/429/500 | wie expected; Zod-Schema, Rate-Limit 5/h pro User, Slot-Existenz-Check. RLS-Policy 001:100 `reports_insert_authenticated` erlaubt Insert für jede `auth.uid() is not null`. | ✅ | Agent B (Review 2026-04-23): RLS verifiziert (Migration 001, line 100) — Insert-Policy existiert. Server-Side OK. Fixed-In-Commit a7a38d40: Root-Cause war unauth-Users → 401 im Client-UX statt verständlicher Message. curl: no-auth → 401. |
+| `/api/auth/ensure-admin` | POST | – (Body leer) | 200 `{success, is_admin, message}`; 401 wenn nicht eingeloggt | Bootstrap nur noch wenn `ADMIN_BOOTSTRAP_EMAIL` env gesetzt **und** User-Email matcht | ✅ | Fixed-In-Commit 7b709c6: Endpoint grantet Admin nur noch unter zwei Bedingungen (kein Admin vorhanden + User-Email == `ADMIN_BOOTSTRAP_EMAIL`). Ohne env-var ist der Endpoint read-only. curl: no-auth → 401, GET → 405. |
 
 ---
 
@@ -255,24 +255,24 @@ Race-Szenario (User-B und User-C parallel auf 100€ Slot):
 
 ### P0 (Launch-Blocker)
 
-1. **Tabelle 5** — Bid-Flow komplett (LayoutPicker nicht eingebunden, ColorPicker nicht eingebunden, sequenzielle Schritte mit Scrolling, hardcoded `layout_width=bid_eur, height=1`, hardcoded `brand_color`). → Rebuild Auftrag 3.
-2. **Tabelle 5 Step 11** — Race-Condition `create-session` (mitigiert, aber UX-Risiko).
-3. **Tabelle 5 Step 13** — Hardcoded Locale `en` in Stripe `success_url`.
-4. **Tabelle 5 Step 14** — `/api/auth/session` fehlt → Email auf Success-Page nicht angezeigt; keine Confirmation-Mail.
-5. **Tabelle 5 Step 16** — Webhook-Idempotenz nur auf `status='completed'` → `pending`-Hänger möglich.
-6. **Tabelle 7 / Tabelle 2 / SEED-DEFEKT 3** — ReportDialog Submit-Fehler (root cause runtime-verify).
-7. **Tabelle 1 `/legal/imprint`** — Hardcoded Placeholder-Email + leere Operator-Pflichtdaten → DSGVO/TMG-Verstoss.
-8. **Tabelle 1 `/legal/terms`, `/legal/privacy`** — Hardcoded Beispiel-Mails + TODO-Übersetzungen.
-9. **Tabelle 1 `/bid`** — Auth-Race (Client-only Check, leere Seite vor Redirect).
-10. **Tabelle 1 `/bid/success`** — Auth-Race + fehlender Endpoint.
-11. **Tabelle 7 `/api/checkout/create-session`** — Hardcoded Locale (s. Punkt 3).
-12. **Tabelle 7 `/api/webhooks/stripe`** — Idempotenz (s. Punkt 5).
-13. **Tabelle 7 `/api/webhooks/stripe`** — Metadata-Validierung fehlt für layout/pan/zoom-Felder.
-14. **Tabelle 7 `/api/auth/ensure-admin`** — Admin-Bootstrap-Endpoint exploitabel wenn Admin-Liste leer wird.
-15. (Composite of bid-flow steps — `LayoutPicker` orphan)
-16. (Composite of bid-flow steps — `ColorPicker` orphan)
-17. (Composite of bid-flow steps — Pan/Zoom nicht im Live-Bid-Preview)
-18. (Composite of bid-flow steps — Sequential-Step UX statt unified)
+1. **Tabelle 5** — Bid-Flow komplett → Rebuild Auftrag 3.
+2. **Tabelle 5 Step 11** — Race-Condition `create-session` (mitigiert; UX-Risiko) → Auftrag 3.
+3. **Tabelle 5 Step 13** — Hardcoded Locale `en` in Stripe `success_url` → Auftrag 3 (Tabelle 7 clone fixed in 681226e).
+4. **Tabelle 5 Step 14** — `/api/auth/session` fehlt → Auftrag 3.
+5. **Tabelle 5 Step 16** — Webhook-Idempotenz (Tabelle 7 clone fixed in 468cadd).
+6. ~~**Tabelle 7 / Tabelle 2 / SEED-DEFEKT 3**~~ — ReportDialog Submit-Fehler → Fixed-In-Commit a7a38d40.
+7. ~~**Tabelle 1 `/legal/imprint`**~~ → Fixed-In-Commit b5420821.
+8. ~~**Tabelle 1 `/legal/terms`, `/legal/privacy`**~~ → Fixed-In-Commit 572243ce.
+9. **Tabelle 1 `/bid`** — Auth-Race (part of Tabelle 5) → Auftrag 3.
+10. **Tabelle 1 `/bid/success`** — Auth-Race + fehlender Endpoint (part of Tabelle 5) → Auftrag 3.
+11. ~~**Tabelle 7 `/api/checkout/create-session`**~~ — Hardcoded Locale → Fixed-In-Commit 681226e.
+12. ~~**Tabelle 7 `/api/webhooks/stripe`**~~ — Idempotenz → Fixed-In-Commit 468cadd.
+13. ~~**Tabelle 7 `/api/webhooks/stripe`**~~ — Metadata-Validierung → Fixed-In-Commit e435c9c.
+14. ~~**Tabelle 7 `/api/auth/ensure-admin`**~~ — Bootstrap-Exploit → Fixed-In-Commit 7b709c6.
+15. (Composite — LayoutPicker orphan) → Auftrag 3.
+16. (Composite — ColorPicker orphan) → Auftrag 3.
+17. (Composite — Pan/Zoom nicht im Live-Bid-Preview) → Auftrag 3.
+18. (Composite — Sequential-Step UX) → Auftrag 3.
 
 ### P1 (wichtig)
 
@@ -319,3 +319,15 @@ Race-Szenario (User-B und User-C parallel auf 100€ Slot):
   - Tabelle 4 / SEED-DEFEKT 1 (Zoom-Button-Anker): war ❌, ist ✅, weil `cx = currentSize.width/2` die Container-Mitte (visible viewport) ist, nicht die Canvas-Content-Mitte — Verhalten entspricht der im Audit selbst akzeptierten Alternative "sichtbares Zentrum".
   - Tabelle 4 / SEED-DEFEKT 2 (Minimap-Sync-Math): war ❌, ist ✅, weil Coordinate-Model (`pan ∈ [0, container*(zoom-1)]`, content = container*zoom) sowohl Forward-Drag als auch Backward-Fraction mit dem gleichen Faktor `container*zoom` verwendet — konsistent. Die im ursprünglichen Audit vorgeschlagene "Korrektur" würde einen Overflow erzeugen.
   - Zusammenfassung Seed-Defekte-Liste und P1-Liste entsprechend aktualisiert.
+- 2026-04-23 Agent B (Phase 2): P0-Fixes ausserhalb Tabelle 5 abgeschlossen:
+  - b5420821 fix(legal): imprint operator data env-driven
+  - 572243ce fix(legal): terms/privacy emails + jurisdiction env-driven
+  - 468cadd fix(webhook): idempotency expanded to all non-pending statuses
+  - e435c9c fix(webhook): stripe session metadata zod-validated
+  - 7b709c6 fix(auth): ensure-admin gated behind ADMIN_BOOTSTRAP_EMAIL
+  - 681226e fix(checkout): stripe success/cancel URLs honor caller locale
+  - a7a38d4 fix(report): dialog gated behind auth + specific 401 handling
+  Für alle API-Änderungen curl-Tests ohne Auth durchgeführt (401/405 Szenarien). Authenticated-path-Tests (200, 400 mit valid session, webhook stripe-signature) erfordern Live-Session/Stripe-CLI und sind in der Audit-Zeile vermerkt.
+  Keine Änderung an `components/bid/*` oder `src/app/[locale]/bid/page.tsx` — Bid-Flow bleibt für Auftrag 3 reserviert.
+  Neue env-Vars in `.env.example` (gitignored) dokumentiert: LEGAL_OPERATOR_NAME, LEGAL_OPERATOR_ADDRESS, LEGAL_OPERATOR_PHONE, LEGAL_OPERATOR_VAT, LEGAL_OPERATOR_REGISTER, LEGAL_CONTACT_EMAIL, LEGAL_EMAIL, LEGAL_PRIVACY_EMAIL, LEGAL_GOVERNING_LAW, ADMIN_BOOTSTRAP_EMAIL.
+  Kein Addendum nötig — keine neuen Defekte während der Fixes aufgefallen.
