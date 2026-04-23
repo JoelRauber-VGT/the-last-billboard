@@ -392,6 +392,8 @@
     "submit": "Soumettre le signalement",
     "success": "Signalement soumis avec succès. Merci !",
     "error": "Échec de la soumission du signalement. Veuillez réessayer.",
+    "loginRequired": "Vous devez être connecté pour signaler un slot.",
+    "loginCta": "Se connecter",
     "rateLimit": "Vous avez atteint le nombre maximum de signalements par heure. Veuillez réessayer plus tard.",
     "removed": {
       "title": "Slot en cours d'examen",

@@ -392,6 +392,8 @@
     "submit": "Enviar reporte",
     "success": "Reporte enviado exitosamente. ¡Gracias!",
     "error": "Error al enviar el reporte. Por favor intente de nuevo.",
+    "loginRequired": "Debe iniciar sesión para reportar un slot.",
+    "loginCta": "Iniciar sesión",
     "rateLimit": "Ha alcanzado el número máximo de reportes por hora. Por favor intente más tarde.",
     "removed": {
       "title": "Slot bajo revisión",

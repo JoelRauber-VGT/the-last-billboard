@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -21,6 +21,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { createBrowserClient } from '@/lib/supabase/client'
+import { Link } from '@/i18n/routing'
 
 interface ReportDialogProps {
   slotId: string
@@ -54,23 +56,38 @@ export function ReportDialog({
   onSuccess,
 }: ReportDialogProps) {
   const t = useTranslations('report')
-  const [reason, setReason] = useState<ReportReason | ''>('')
+  const [reason, setReason] = useState<ReportReason | null>(null)
   const [details, setDetails] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  // Resolve auth state when the dialog opens so we can show a
+  // login prompt instead of letting the user fill out a form that
+  // will fail with 401 at submit.
+  useEffect(() => {
+    if (!open) return
+    let cancelled = false
+    const supabase = createBrowserClient()
+    supabase.auth.getUser().then(({ data }) => {
+      if (!cancelled) setIsAuthenticated(Boolean(data.user))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    // Validate
     if (!reason) {
       setError(t('error'))
       return
     }
 
     const formData: ReportFormData = {
-      reason: reason as ReportReason,
+      reason,
       details: details.trim() || undefined,
     }
 
@@ -85,6 +102,7 @@ export function ReportDialog({
 
       const response = await fetch('/api/reports', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -94,10 +112,13 @@ export function ReportDialog({
         }),
       })
 
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}))
 
       if (!response.ok) {
-        if (response.status === 429) {
+        if (response.status === 401) {
+          setError(t('loginRequired'))
+          setIsAuthenticated(false)
+        } else if (response.status === 429) {
           setError(t('rateLimit'))
         } else {
           setError(data.error || t('error'))
@@ -105,9 +126,8 @@ export function ReportDialog({
         return
       }
 
-      // Success
       toast.success(t('success'))
-      setReason('')
+      setReason(null)
       setDetails('')
       onOpenChange(false)
       if (onSuccess) {
@@ -126,11 +146,36 @@ export function ReportDialog({
       onOpenChange(newOpen)
       if (!newOpen) {
         // Reset form when closing
-        setReason('')
+        setReason(null)
         setDetails('')
         setError(null)
       }
     }
+  }
+
+  if (open && isAuthenticated === false) {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{t('title')}</DialogTitle>
+            <DialogDescription>{t('loginRequired')}</DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Link href="/login">
+              <Button type="button">{t('loginCta')}</Button>
+            </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   return (

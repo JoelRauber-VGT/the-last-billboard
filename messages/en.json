@@ -392,6 +392,8 @@
     "submit": "Submit Report",
     "success": "Report submitted successfully. Thank you!",
     "error": "Failed to submit report. Please try again.",
+    "loginRequired": "You must be signed in to report a slot.",
+    "loginCta": "Sign in",
     "rateLimit": "You've reached the maximum number of reports per hour. Please try again later.",
     "removed": {
       "title": "Slot Under Review",

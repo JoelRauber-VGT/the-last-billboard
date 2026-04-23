@@ -392,6 +392,8 @@
     "submit": "Meldung absenden",
     "success": "Meldung erfolgreich eingereicht. Vielen Dank!",
     "error": "Meldung konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
+    "loginRequired": "Sie müssen angemeldet sein, um einen Slot zu melden.",
+    "loginCta": "Anmelden",
     "rateLimit": "Sie haben die maximale Anzahl an Meldungen pro Stunde erreicht. Bitte versuchen Sie es später erneut.",
     "removed": {
       "title": "Slot wird überprüft",
