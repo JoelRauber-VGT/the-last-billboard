@@ -74,15 +74,20 @@ export async function POST(request: NextRequest) {
 
       console.log(`Processing checkout.session.completed for session: ${session.id}`);
 
-      // Check idempotency - ensure we don't process the same event twice
+      // Check idempotency - ensure we don't process the same event twice.
+      // Skip on any non-pending status: 'completed' means process_bid already
+      // ran and committed atomically; 'refunded' means a race-condition refund
+      // was issued. Only 'pending' means we still need to run process_bid.
       const { data: existingTransaction } = await supabase
         .from('transactions')
         .select('id, status')
         .eq('stripe_session_id', session.id)
         .single();
 
-      if (existingTransaction && existingTransaction.status === 'completed') {
-        console.log(`Session ${session.id} already processed, skipping`);
+      if (existingTransaction && existingTransaction.status !== 'pending') {
+        console.log(
+          `Session ${session.id} already processed (status: ${existingTransaction.status}), skipping`
+        );
         return NextResponse.json({ received: true });
       }
 
