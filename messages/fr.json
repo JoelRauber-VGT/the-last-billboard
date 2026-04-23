@@ -533,7 +533,8 @@
           "text": "Déposer une plainte auprès de votre autorité nationale de protection des données"
         },
         "contact": "Pour exercer vos droits, contactez-nous à",
-        "todoEmail": "TODO: Remplacer privacy@example.com par l'e-mail de contact réel"
+        "emailPending": "adresse e-mail de contact confidentialité en attente de configuration",
+        "todoEmail": "E-mail de contact confidentialité en attente de configuration — l'administrateur doit définir LEGAL_PRIVACY_EMAIL avant le lancement."
       },
       "cookies": {
         "title": "Cookies",
@@ -567,6 +568,7 @@
         "title": "Contact",
         "text": "Pour les questions liées à la confidentialité, contactez-nous à :",
         "emailLabel": "E-mail",
+        "emailPending": "e-mail confidentialité en attente de configuration",
         "seeImprint": "Pour les coordonnées complètes, consultez nos",
         "imprintLink": "Mentions légales"
       }
@@ -658,9 +660,10 @@
       },
       "law": {
         "title": "Loi applicable",
-        "text": "Ces conditions sont régies par les lois de [juridiction à spécifier].",
-        "todoTitle": "TODO: Spécifier la loi applicable",
-        "todoText": "Spécifier la loi applicable (suisse, allemande, UE, etc.) avant le déploiement en production"
+        "text": "Ces conditions sont régies par la loi applicable ; la juridiction est en attente de configuration.",
+        "textWithJurisdiction": "Ces conditions sont régies par les lois de {jurisdiction}.",
+        "todoTitle": "Loi applicable en attente de configuration",
+        "todoText": "La loi applicable (suisse, allemande, UE, etc.) sera spécifiée avant le lancement en production."
       },
       "changes": {
         "title": "Modifications des conditions",
@@ -674,6 +677,7 @@
         "title": "Contact",
         "text": "Pour des questions sur ces conditions, contactez-nous à :",
         "emailLabel": "E-mail",
+        "pending": "en attente de configuration",
         "seeImprint": "Pour les coordonnées complètes, consultez nos",
         "imprintLink": "Mentions légales",
         "lastUpdated": "Dernière mise à jour"

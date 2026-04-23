@@ -533,7 +533,8 @@
           "text": "Presentar una queja ante su autoridad nacional de protección de datos"
         },
         "contact": "Para ejercer sus derechos, contáctenos en",
-        "todoEmail": "TODO: Reemplazar privacy@example.com con correo de contacto real"
+        "emailPending": "correo electrónico de contacto de privacidad pendiente de configuración",
+        "todoEmail": "Correo de contacto de privacidad pendiente de configuración — el administrador debe establecer LEGAL_PRIVACY_EMAIL antes del lanzamiento."
       },
       "cookies": {
         "title": "Cookies",
@@ -567,6 +568,7 @@
         "title": "Contacto",
         "text": "Para preguntas relacionadas con privacidad, contáctenos en:",
         "emailLabel": "Correo electrónico",
+        "emailPending": "correo electrónico de privacidad pendiente de configuración",
         "seeImprint": "Para detalles de contacto completos, consulte nuestro",
         "imprintLink": "Aviso Legal"
       }
@@ -658,9 +660,10 @@
       },
       "law": {
         "title": "Ley Aplicable",
-        "text": "Estos términos se rigen por las leyes de [jurisdicción a especificar].",
-        "todoTitle": "TODO: Especificar Ley Aplicable",
-        "todoText": "Especificar ley aplicable (Suiza, Alemania, UE, etc.) antes del despliegue en producción"
+        "text": "Estos términos se rigen por la ley aplicable; la jurisdicción está pendiente de configuración.",
+        "textWithJurisdiction": "Estos términos se rigen por las leyes de {jurisdiction}.",
+        "todoTitle": "Ley aplicable pendiente de configuración",
+        "todoText": "La ley aplicable (Suiza, Alemania, UE, etc.) se especificará antes del lanzamiento en producción."
       },
       "changes": {
         "title": "Cambios en los Términos",
@@ -674,6 +677,7 @@
         "title": "Contacto",
         "text": "Para preguntas sobre estos términos, contáctenos en:",
         "emailLabel": "Correo electrónico",
+        "pending": "pendiente de configuración",
         "seeImprint": "Para detalles de contacto completos, consulte nuestro",
         "imprintLink": "Aviso Legal",
         "lastUpdated": "Última actualización"

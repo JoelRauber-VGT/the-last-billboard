@@ -1,8 +1,10 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
+import { config } from '@/lib/config';
 
 export default function PrivacyPage() {
   const t = useTranslations('legal.privacy');
+  const privacyEmail = config.legal.privacyEmail;
 
   return (
     <div className="container max-w-3xl py-12 px-4">
@@ -147,18 +149,24 @@ export default function PrivacyPage() {
           </div>
           <p className="mt-4 text-muted-foreground">
             {t('rights.contact')}{' '}
-            <a
-              href="mailto:privacy@example.com"
-              className="underline hover:text-foreground font-medium"
-            >
-              privacy@example.com
-            </a>
+            {privacyEmail ? (
+              <a
+                href={`mailto:${privacyEmail}`}
+                className="underline hover:text-foreground font-medium"
+              >
+                {privacyEmail}
+              </a>
+            ) : (
+              <span className="italic">{t('rights.emailPending')}</span>
+            )}
           </p>
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-400 dark:border-blue-600 rounded-lg">
-            <p className="text-sm font-semibold text-blue-900 dark:text-blue-200">
-              {t('rights.todoEmail')}
-            </p>
-          </div>
+          {!privacyEmail && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-400 dark:border-blue-600 rounded-lg">
+              <p className="text-sm font-semibold text-blue-900 dark:text-blue-200">
+                {t('rights.todoEmail')}
+              </p>
+            </div>
+          )}
         </section>
 
         <section className="mb-10">
@@ -207,12 +215,16 @@ export default function PrivacyPage() {
           </p>
           <p className="mt-3 text-muted-foreground">
             <strong>{t('contact.emailLabel')}:</strong>{' '}
-            <a
-              href="mailto:privacy@example.com"
-              className="underline hover:text-foreground font-medium"
-            >
-              privacy@example.com
-            </a>
+            {privacyEmail ? (
+              <a
+                href={`mailto:${privacyEmail}`}
+                className="underline hover:text-foreground font-medium"
+              >
+                {privacyEmail}
+              </a>
+            ) : (
+              <span className="italic">{t('contact.emailPending')}</span>
+            )}
           </p>
           <p className="mt-2 text-muted-foreground">
             {t('contact.seeImprint')}{' '}

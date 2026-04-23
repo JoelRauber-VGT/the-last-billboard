@@ -533,7 +533,8 @@
           "text": "Reichen Sie eine Beschwerde bei Ihrer nationalen Datenschutzbehörde ein"
         },
         "contact": "Um Ihre Rechte auszuüben, kontaktieren Sie uns unter",
-        "todoEmail": "TODO: privacy@example.com durch tatsächliche Kontakt-E-Mail ersetzen"
+        "emailPending": "Datenschutz-Kontakt-E-Mail wird konfiguriert",
+        "todoEmail": "Datenschutz-Kontakt-E-Mail wird konfiguriert — Administrator muss LEGAL_PRIVACY_EMAIL vor dem Launch setzen."
       },
       "cookies": {
         "title": "Cookies",
@@ -567,6 +568,7 @@
         "title": "Kontakt",
         "text": "Bei datenschutzbezogenen Fragen kontaktieren Sie uns unter:",
         "emailLabel": "E-Mail",
+        "emailPending": "Datenschutz-E-Mail wird konfiguriert",
         "seeImprint": "Für vollständige Kontaktdaten siehe unser",
         "imprintLink": "Impressum"
       }
@@ -658,9 +660,10 @@
       },
       "law": {
         "title": "Anwendbares Recht",
-        "text": "Diese Bedingungen unterliegen den Gesetzen von [Jurisdiktion anzugeben].",
-        "todoTitle": "TODO: Anwendbares Recht angeben",
-        "todoText": "Anwendbares Recht (Schweiz, Deutschland, EU usw.) vor Produktionsbereitstellung angeben"
+        "text": "Diese Bedingungen unterliegen dem anwendbaren Recht; die Jurisdiktion wird noch konfiguriert.",
+        "textWithJurisdiction": "Diese Bedingungen unterliegen den Gesetzen von {jurisdiction}.",
+        "todoTitle": "Anwendbares Recht wird konfiguriert",
+        "todoText": "Das anwendbare Recht (Schweiz, Deutschland, EU usw.) wird vor dem Produktions-Launch festgelegt."
       },
       "changes": {
         "title": "Änderungen der Bedingungen",
@@ -674,6 +677,7 @@
         "title": "Kontakt",
         "text": "Bei Fragen zu diesen Bedingungen kontaktieren Sie uns unter:",
         "emailLabel": "E-Mail",
+        "pending": "wird konfiguriert",
         "seeImprint": "Für vollständige Kontaktdaten siehe unser",
         "imprintLink": "Impressum",
         "lastUpdated": "Zuletzt aktualisiert"

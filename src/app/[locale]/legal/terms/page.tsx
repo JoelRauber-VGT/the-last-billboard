@@ -1,8 +1,11 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
+import { config } from '@/lib/config';
 
 export default function TermsPage() {
   const t = useTranslations('legal.terms');
+  const legalEmail = config.legal.legalEmail;
+  const jurisdiction = config.legal.governingLawJurisdiction;
 
   return (
     <div className="w-full bg-term-bg py-12 px-6">
@@ -89,11 +92,17 @@ export default function TermsPage() {
 
         <section className="space-y-3">
           <h2 className="text-term-text text-lg">{t('law.title')}</h2>
-          <p>{t('law.text')}</p>
-          <div className="mt-3 p-3 bg-term-surface border border-term-border-light">
-            <p className="text-term-accent text-base mb-1">{t('law.todoTitle')}</p>
-            <p className="text-term-muted text-base">{t('law.todoText')}</p>
-          </div>
+          {jurisdiction ? (
+            <p>{t('law.textWithJurisdiction', { jurisdiction })}</p>
+          ) : (
+            <>
+              <p>{t('law.text')}</p>
+              <div className="mt-3 p-3 bg-term-surface border border-term-border-light">
+                <p className="text-term-accent text-base mb-1">{t('law.todoTitle')}</p>
+                <p className="text-term-muted text-base">{t('law.todoText')}</p>
+              </div>
+            </>
+          )}
         </section>
 
         <section className="space-y-3">
@@ -109,12 +118,19 @@ export default function TermsPage() {
         <section className="space-y-3">
           <h2 className="text-term-text text-lg">{t('contact.title')}</h2>
           <p>{t('contact.text')}</p>
-          <p>
-            <span className="text-white">{t('contact.emailLabel')}:</span>{' '}
-            <a href="mailto:legal@example.com" className="text-term-accent hover:text-white transition-colors">
-              legal@example.com
-            </a>
-          </p>
+          {legalEmail ? (
+            <p>
+              <span className="text-white">{t('contact.emailLabel')}:</span>{' '}
+              <a href={`mailto:${legalEmail}`} className="text-term-accent hover:text-white transition-colors">
+                {legalEmail}
+              </a>
+            </p>
+          ) : (
+            <p className="text-term-muted">
+              <span className="text-white">{t('contact.emailLabel')}:</span>{' '}
+              {t('contact.pending')}
+            </p>
+          )}
           <p>
             {t('contact.seeImprint')}{' '}
             <Link href="/legal/imprint" className="text-term-accent hover:text-white transition-colors">

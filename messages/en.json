@@ -533,7 +533,8 @@
           "text": "File a complaint with your national data protection authority"
         },
         "contact": "To exercise your rights, contact us at",
-        "todoEmail": "TODO: Replace privacy@example.com with actual contact email"
+        "emailPending": "privacy contact email pending configuration",
+        "todoEmail": "Privacy contact email pending configuration — administrator must set LEGAL_PRIVACY_EMAIL before launch."
       },
       "cookies": {
         "title": "Cookies",
@@ -567,6 +568,7 @@
         "title": "Contact",
         "text": "For privacy-related questions, contact us at:",
         "emailLabel": "Email",
+        "emailPending": "privacy email pending configuration",
         "seeImprint": "For full contact details, see our",
         "imprintLink": "Imprint"
       }
@@ -658,9 +660,10 @@
       },
       "law": {
         "title": "Governing Law",
-        "text": "These terms are governed by the laws of [jurisdiction to be specified].",
-        "todoTitle": "TODO: Specify Governing Law",
-        "todoText": "Specify applicable law (Swiss, German, EU, etc.) before production deployment"
+        "text": "These terms are governed by applicable law; the specific jurisdiction is pending configuration.",
+        "textWithJurisdiction": "These terms are governed by the laws of {jurisdiction}.",
+        "todoTitle": "Governing law pending configuration",
+        "todoText": "Applicable law (Swiss, German, EU, etc.) will be specified before production launch."
       },
       "changes": {
         "title": "Changes to Terms",
@@ -674,6 +677,7 @@
         "title": "Contact",
         "text": "For questions about these terms, contact us at:",
         "emailLabel": "Email",
+        "pending": "pending configuration",
         "seeImprint": "For full contact details, see our",
         "imprintLink": "Imprint",
         "lastUpdated": "Last updated"
