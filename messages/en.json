@@ -432,7 +432,7 @@
       "operator": {
         "title": "Operator Information",
         "placeholder": "Information according to legal requirements (§5 TMG / ECG / etc.)",
-        "todoTitle": "TODO: Replace with actual operator details",
+        "todoTitle": "Operator details pending — administrator must configure operator data via environment variables before launch:",
         "todoItems": {
           "name": "Full legal name / Company name",
           "address": "Full address (street, postal code, city, country)",
@@ -445,7 +445,7 @@
       "contact": {
         "title": "Contact",
         "emailLabel": "Email",
-        "placeholder": "TODO: Replace with actual contact email"
+        "placeholder": "Contact email pending configuration."
       },
       "disclaimer": {
         "title": "Disclaimer",

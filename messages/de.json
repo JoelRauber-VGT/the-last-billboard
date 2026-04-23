@@ -432,7 +432,7 @@
       "operator": {
         "title": "Betreiberinformationen",
         "placeholder": "Informationen gemäß gesetzlichen Anforderungen (§5 TMG / ECG / etc.)",
-        "todoTitle": "TODO: Mit tatsächlichen Betreiberdetails ersetzen",
+        "todoTitle": "Betreiberdaten ausstehend — Administrator muss Daten vor dem Launch über Umgebungsvariablen konfigurieren:",
         "todoItems": {
           "name": "Vollständiger rechtlicher Name / Firmenname",
           "address": "Vollständige Adresse (Straße, Postleitzahl, Stadt, Land)",
@@ -445,7 +445,7 @@
       "contact": {
         "title": "Kontakt",
         "emailLabel": "E-Mail",
-        "placeholder": "TODO: Mit tatsächlicher Kontakt-E-Mail ersetzen"
+        "placeholder": "Kontakt-E-Mail wird konfiguriert."
       },
       "disclaimer": {
         "title": "Haftungsausschluss",

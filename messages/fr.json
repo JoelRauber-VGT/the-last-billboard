@@ -432,7 +432,7 @@
       "operator": {
         "title": "Informations sur l'opérateur",
         "placeholder": "Informations conformément aux exigences légales (§5 TMG / ECG / etc.)",
-        "todoTitle": "TODO: Remplacer par les détails réels de l'opérateur",
+        "todoTitle": "Informations opérateur en attente — l'administrateur doit configurer les données via les variables d'environnement avant le lancement :",
         "todoItems": {
           "name": "Nom légal complet / Nom de l'entreprise",
           "address": "Adresse complète (rue, code postal, ville, pays)",
@@ -445,7 +445,7 @@
       "contact": {
         "title": "Contact",
         "emailLabel": "E-mail",
-        "placeholder": "TODO: Remplacer par l'e-mail de contact réel"
+        "placeholder": "E-mail de contact en attente de configuration."
       },
       "disclaimer": {
         "title": "Clause de non-responsabilité",

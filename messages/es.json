@@ -432,7 +432,7 @@
       "operator": {
         "title": "Información del Operador",
         "placeholder": "Información conforme a requisitos legales (§5 TMG / ECG / etc.)",
-        "todoTitle": "TODO: Reemplazar con detalles reales del operador",
+        "todoTitle": "Datos del operador pendientes — el administrador debe configurarlos mediante variables de entorno antes del lanzamiento:",
         "todoItems": {
           "name": "Nombre legal completo / Nombre de empresa",
           "address": "Dirección completa (calle, código postal, ciudad, país)",
@@ -445,7 +445,7 @@
       "contact": {
         "title": "Contacto",
         "emailLabel": "Correo electrónico",
-        "placeholder": "TODO: Reemplazar con correo de contacto real"
+        "placeholder": "Correo electrónico de contacto pendiente de configuración."
       },
       "disclaimer": {
         "title": "Descargo de responsabilidad",
