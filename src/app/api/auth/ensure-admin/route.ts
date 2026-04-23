@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerActionClient } from '@/lib/supabase/server'
 
 /**
- * Ensures first user is set as admin
- * This is called after successful authentication
- * Idempotent operation - safe to call multiple times
+ * Checks whether the current authenticated user is admin, and — if
+ * the server is explicitly configured with ADMIN_BOOTSTRAP_EMAIL and
+ * no admin yet exists — claims admin for that single pre-authorized
+ * email. Without the env var, this endpoint never grants privileges;
+ * it only reports current is_admin status.
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const supabase = await createServerActionClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -15,7 +17,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if any admin exists in the system
     const { data: existingAdmins, error: adminCheckError } = await supabase
       .from('profiles')
       .select('id')
@@ -27,30 +28,35 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
 
-    // If no admins exist, make current user admin
-    if (!existingAdmins || existingAdmins.length === 0) {
-      const updateResult = supabase
+    const bootstrapEmail = process.env.ADMIN_BOOTSTRAP_EMAIL?.trim().toLowerCase()
+    const userEmail = user.email?.trim().toLowerCase()
+    const noAdminsExist = !existingAdmins || existingAdmins.length === 0
+    const canBootstrap =
+      noAdminsExist &&
+      bootstrapEmail !== undefined &&
+      bootstrapEmail.length > 0 &&
+      userEmail !== undefined &&
+      userEmail === bootstrapEmail
+
+    if (canBootstrap) {
+      const { error: updateError } = await supabase
         .from('profiles')
         .update({ is_admin: true })
         .eq('id', user.id)
-      
-      // @ts-ignore - TypeScript inference issue with Supabase update types
-      const { error: updateError } = await updateResult
 
       if (updateError) {
-        console.error('Error setting first user as admin:', updateError)
+        console.error('Error setting bootstrap admin:', updateError)
         return NextResponse.json({ error: 'Failed to set admin' }, { status: 500 })
       }
 
-      console.log(`First user ${user.id} set as admin`)
+      console.log(`Bootstrap admin granted to ${user.id} (${userEmail})`)
       return NextResponse.json({
         success: true,
-        message: 'First user set as admin',
-        is_admin: true
+        message: 'Bootstrap admin granted',
+        is_admin: true,
       })
     }
 
-    // Admin already exists, check if current user is admin
     const { data: currentProfile } = await supabase
       .from('profiles')
       .select('is_admin')
@@ -60,9 +66,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Admin check completed',
-      is_admin: currentProfile?.is_admin || false
+      is_admin: currentProfile?.is_admin || false,
     })
-
   } catch (error) {
     console.error('Unexpected error in ensure-admin:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
