@@ -13,7 +13,44 @@
     "signIn": "sign in",
     "bid": "bid",
     "inbox": "inbox",
-    "profile": "profile"
+    "profile": "profile",
+    "leaderboard": "leaderboard"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Top bidders ranked by spending and slots won.",
+    "empty": "No bids placed yet. Be the first to make history.",
+    "cta": "Place your bid",
+    "stats": {
+      "totalVolume": "Total Volume",
+      "totalBidders": "Bidders",
+      "activeBidders24h": "Active 24h",
+      "activeSlots": "Active Slots",
+      "highestBidEver": "Highest Bid"
+    },
+    "tabs": {
+      "topSpenders": "Top Spenders",
+      "mostWins": "Most Wins"
+    },
+    "columns": {
+      "rank": "Rank",
+      "user": "User",
+      "spent": "Spent",
+      "won": "Won",
+      "holding": "Holding",
+      "highestBid": "Top Bid",
+      "joined": "Joined"
+    },
+    "podium": {
+      "openSlot": "Open Spot",
+      "unnamed": "Anonymous",
+      "joined": "Joined",
+      "winsSuffix": "wins"
+    },
+    "anonymousPool": {
+      "name": "Anonymous Pool",
+      "description": "Aggregated stats for all bids placed anonymously."
+    }
   },
   "landing": {
     "hero": {
@@ -74,16 +111,21 @@
       "submit": "Send Magic Link",
       "checkEmail": "Check your email for the magic link!",
       "error": "Failed to send magic link. Please try again.",
-      "prompt": "enter your email to receive a magic link",
-      "sendLink": "send link",
+      "prompt": "enter your email to receive a sign-in code",
+      "sendLink": "send code",
       "sending": "sending",
-      "linkSent": "link sent to {email}",
-      "checkInbox": "check your inbox",
+      "linkSent": "code sent to {email}",
+      "checkInbox": "check your inbox and enter the 6-digit code",
       "waiting": "waiting",
       "invalidEmail": "invalid email format",
-      "errorSending": "error sending link",
+      "errorSending": "error sending code",
       "unexpectedError": "unexpected error",
-      "errorPrefix": "error"
+      "errorPrefix": "error",
+      "codePlaceholder": "6-digit code",
+      "verify": "sign in",
+      "verifying": "verifying",
+      "invalidCode": "code invalid or expired",
+      "useDifferentEmail": "use different email"
     }
   },
   "dashboard": {
@@ -115,6 +157,18 @@
       "displayNamePlaceholder": "Your name or brand",
       "displayNameHelp": "This name will be displayed on your bids (optional, max 50 characters)"
     },
+    "avatar": {
+      "label": "Profile picture",
+      "upload": "Upload picture",
+      "replace": "Replace picture",
+      "remove": "Remove",
+      "uploading": "uploading…",
+      "help": "PNG, JPG or WebP. Max 5 MB.",
+      "invalidType": "Only PNG, JPG or WebP allowed",
+      "tooLarge": "File is too large (max 5 MB)",
+      "uploadFailed": "Upload failed, please try again",
+      "removeFailed": "Could not remove picture"
+    },
     "save": "Save",
     "saving": "Saving...",
     "success": "Settings saved successfully!",
@@ -122,6 +176,53 @@
       "notAuthenticated": "You must be logged in",
       "updateFailed": "Update failed. Please try again.",
       "unexpected": "Unexpected error occurred"
+    },
+    "availability": {
+      "checking": "checking…",
+      "available": "name available",
+      "taken": "this name is already taken",
+      "error": "could not check availability",
+      "invalid": {
+        "empty": "name cannot be empty",
+        "too_short": "at least 2 characters",
+        "too_long": "max 50 characters",
+        "invalid_chars": "only letters, digits, spaces, dot, dash and underscore allowed"
+      }
+    },
+    "privacy": {
+      "title": "Privacy & data",
+      "description": "Export or delete the data we hold on you (GDPR Art. 17 / 20).",
+      "exportTitle": "Export my data",
+      "exportHelp": "Download every record tied to your account as a JSON file: profile, bids, slots, history, reports, reveal-requests, notifications.",
+      "exportButton": "Download JSON",
+      "exporting": "preparing…",
+      "exportFailed": "Could not generate export. Please try again.",
+      "deleteTitle": "Delete my account",
+      "deleteHelp": "Permanently removes your profile, signs you out, and erases your uploaded images. Active slots are stripped of name/image and marked removed; bid history is anonymised. No automatic refund.",
+      "deleteButton": "Delete account",
+      "deleting": "deleting…",
+      "deleteFailed": "Could not delete account. Please try again or contact support.",
+      "deleteDialog": {
+        "title": "Permanently delete account",
+        "warning": "Warning: this action cannot be undone.",
+        "consequencesLabel": "what happens",
+        "consequence": {
+          "profile": "Your profile will be permanently deleted.",
+          "signout": "You will be signed out immediately.",
+          "images": "All uploaded images will be erased from the server.",
+          "slots": "Active slots lose name, image and link and are marked removed.",
+          "history": "Your bid history will be anonymised (kept for accounting purposes).",
+          "norefund": "No automatic refund will be issued."
+        },
+        "confirmLabel": "confirmation",
+        "confirmHelp": "Type the code below exactly to confirm deletion.",
+        "codeAria": "Confirmation code",
+        "inputPlaceholder": "type code",
+        "mismatch": "code does not match",
+        "cancel": "cancel",
+        "confirmButton": "delete permanently",
+        "deleting": "deleting…"
+      }
     }
   },
   "admin": {
@@ -234,14 +335,6 @@
       "countdown": "When the countdown reaches zero, the billboard enters a permanent, frozen state.",
       "permanent": "No more changes can be made. The final state becomes a permanent digital artifact, preserved as a snapshot of this unique moment in advertising history."
     },
-    "technology": {
-      "title": "Technology Stack",
-      "intro": "Built with modern, scalable technologies:",
-      "nextjs": "Next.js 15 with React Server Components for blazing-fast performance",
-      "supabase": "Supabase for authentication, database, and real-time updates",
-      "stripe": "Stripe for secure payment processing and automatic refunds",
-      "vercel": "Vercel for edge-optimized hosting and global distribution"
-    },
     "specifications": {
       "title": "Technical Specifications",
       "sizing": "Block size: relative to your bid, logarithmically across all active bids",
@@ -300,6 +393,7 @@
       "displayNamePlaceholder": "Your brand or name",
       "anonymous": "anonymous purchase",
       "anonymousHelp": "Your name and profile won't be shown — viewers see \"anonymous\". They can request to know who you are; you decide whether to reveal yourself.",
+      "identityHelp": "Your slot always shows your profile name. Change it in settings — all your slots update automatically.",
       "image": "Image (optional)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "Link URL",
@@ -404,7 +498,8 @@
       "askForReveal": "ask who this is",
       "viewProfile": "view profile",
       "revealAccepted": "this user revealed their identity to you",
-      "revealPending": "your reveal request is pending"
+      "revealPending": "your reveal request is pending",
+      "selfNotice": "this is you — you bought this slot anonymously"
     }
   },
   "ticker": {
@@ -457,7 +552,11 @@
     "lostFor": "held for €{amount}",
     "endedOn": "ended {date}",
     "viewSlot": "view slot",
-    "noDisplayName": "user"
+    "noDisplayName": "user",
+    "stats": {
+      "totalWon": "Slots won",
+      "totalSpent": "Total bid"
+    }
   },
   "inbox": {
     "title": "Inbox",
@@ -537,6 +636,10 @@
     "settings": {
       "title": "Settings — The Last Billboard",
       "description": "Manage your account settings on The Last Billboard."
+    },
+    "leaderboard": {
+      "title": "Leaderboard — The Last Billboard",
+      "description": "See who's leading the bidding war on The Last Billboard."
     }
   },
   "legal": {

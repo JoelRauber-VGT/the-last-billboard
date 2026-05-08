@@ -9,10 +9,16 @@ import { AuthOverlay } from '@/components/auth/AuthOverlay'
 interface LayoutClientProps {
   user: any
   isAdmin: boolean
+  unreadNotifications?: number
   children: React.ReactNode
 }
 
-export function LayoutClient({ user, isAdmin, children }: LayoutClientProps) {
+export function LayoutClient({
+  user,
+  isAdmin,
+  unreadNotifications = 0,
+  children,
+}: LayoutClientProps) {
   const [rulesOpen, setRulesOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const pathname = usePathname()
@@ -25,6 +31,7 @@ export function LayoutClient({ user, isAdmin, children }: LayoutClientProps) {
       <Header
         user={user}
         isAdmin={isAdmin}
+        unreadNotifications={unreadNotifications}
         onOpenRules={() => setRulesOpen(true)}
         onOpenAuth={() => setAuthOpen(true)}
       />

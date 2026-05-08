@@ -60,6 +60,10 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
   const [revealDialogOpen, setRevealDialogOpen] = useState(false)
   const [authedUserId, setAuthedUserId] = useState<string | null>(null)
+  const [ownerProfile, setOwnerProfile] = useState<{
+    display_name: string | null
+    avatar_url: string | null
+  } | null>(null)
   const [revealStatus, setRevealStatus] = useState<
     'none' | 'pending' | 'accepted' | 'declined'
   >('none')
@@ -107,6 +111,31 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
     if (slot && open) fetchSlotHistory(slot.id)
   }, [slot, open]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Pull the *current* owner profile so name + avatar in the modal always
+  // reflect the user's settings (not whatever was stored on the slot row).
+  useEffect(() => {
+    if (!open || !slot || slot.is_anonymous || !slot.current_owner_id) {
+      setOwnerProfile(null)
+      return
+    }
+    let cancelled = false
+    const supabase = createBrowserClient()
+    supabase
+      .from('public_profiles')
+      .select('display_name, avatar_url')
+      .eq('id', slot.current_owner_id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return
+        setOwnerProfile(
+          (data as { display_name: string | null; avatar_url: string | null } | null) ?? null
+        )
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [open, slot])
+
   const fetchSlotHistory = async (slotId: string) => {
     try {
       setLoading(true)
@@ -121,7 +150,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
         (data || []).map(async (entry: SlotHistory) => {
           if (entry.displaced_by_id) {
             const { data: profileData } = await supabase
-              .from('profiles')
+              .from('public_profiles')
               .select('display_name')
               .eq('id', entry.displaced_by_id)
               .single()
@@ -192,8 +221,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             className="font-normal tracking-wide"
             style={{
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 15,
-              color: 'rgba(255,255,255,0.5)',
+              fontSize: 16,
+              color: 'rgba(255,255,255,0.6)',
             }}
           >
             {`// SLOT_#${shortSlotId(slot.id)}`}
@@ -248,13 +277,15 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           </div>
         )}
 
-        {/* Owner block */}
+        {/* Owner block — name + avatar are sourced from the owner's current
+            profile so they stay in sync if the user updates their settings. */}
         <div className="flex items-center gap-3">
           <div
             style={{
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               borderRadius: '50%',
+              overflow: 'hidden',
               background: slot.is_anonymous
                 ? 'rgba(255,255,255,0.06)'
                 : 'rgba(96,165,250,0.15)',
@@ -266,9 +297,21 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               fontSize: 16,
               fontWeight: 600,
               flexShrink: 0,
+              border: '1px solid rgba(255,255,255,0.08)',
             }}
           >
-            {slot.is_anonymous ? '?' : initialOf(slot.display_name)}
+            {slot.is_anonymous ? (
+              '?'
+            ) : ownerProfile?.avatar_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={ownerProfile.avatar_url}
+                alt=""
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              initialOf(ownerProfile?.display_name || slot.display_name)
+            )}
           </div>
           <div className="flex flex-col min-w-0">
             <div
@@ -280,16 +323,18 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                 lineHeight: 1.2,
               }}
             >
-              {slot.is_anonymous ? t('anonymous') : slot.display_name}
+              {slot.is_anonymous
+                ? t('anonymous')
+                : ownerProfile?.display_name || slot.display_name}
             </div>
             {slot.is_anonymous ? (
               <span
                 style={{
-                  marginTop: 2,
-                  color: 'rgba(255,255,255,0.5)',
+                  marginTop: 4,
+                  color: 'rgba(255,255,255,0.6)',
                   fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                  fontSize: 12,
-                  lineHeight: 1.3,
+                  fontSize: 14,
+                  lineHeight: 1.4,
                 }}
               >
                 {t('anonymousNotice')}
@@ -299,14 +344,15 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                 <Link
                   href={`/profile/${slot.current_owner_id}`}
                   style={{
-                    marginTop: 2,
+                    marginTop: 4,
                     color: '#60a5fa',
                     fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                    fontSize: 13,
-                    lineHeight: 1.3,
+                    fontSize: 15,
+                    lineHeight: 1.4,
                     textDecoration: 'none',
                     display: 'inline-block',
                     width: 'fit-content',
+                    cursor: 'pointer',
                   }}
                   className="hover:underline"
                 >
@@ -320,14 +366,15 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  marginTop: 2,
+                  marginTop: 4,
                   color: '#60a5fa',
                   fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                  fontSize: 13,
-                  lineHeight: 1.3,
+                  fontSize: 15,
+                  lineHeight: 1.4,
                   textDecoration: 'none',
                   display: 'inline-block',
                   width: 'fit-content',
+                  cursor: 'pointer',
                 }}
                 className="hover:underline"
               >
@@ -337,17 +384,35 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           </div>
         </div>
 
-        {/* Reveal CTA / status — anonymous slot only */}
-        {slot.is_anonymous && authedUserId && authedUserId !== slot.current_owner_id && (
+        {/* Reveal CTA / status — anonymous slot only.
+            Owner sees a self-marker; everyone else (incl. logged-out) sees the
+            ask-for-reveal button. Logged-out users get redirected to login. */}
+        {slot.is_anonymous && authedUserId && authedUserId === slot.current_owner_id && (
+          <div
+            className="-mt-2"
+            style={{
+              color: 'rgba(255,255,255,0.65)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              padding: '10px 12px',
+              fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+              fontSize: 14,
+              textAlign: 'center',
+            }}
+          >
+            ◉ {t('selfNotice')}
+          </div>
+        )}
+        {slot.is_anonymous && authedUserId !== slot.current_owner_id && (
           <div className="flex flex-col items-stretch gap-2 -mt-2">
-            {revealStatus === 'accepted' ? (
+            {authedUserId && revealStatus === 'accepted' ? (
               <div
-                className="text-xs"
                 style={{
                   color: '#22c55e',
                   border: '1px solid rgba(34,197,94,0.4)',
                   background: 'rgba(34,197,94,0.08)',
-                  padding: '8px 10px',
+                  padding: '10px 12px',
+                  fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  fontSize: 14,
                 }}
               >
                 ◉ {t('revealAccepted')}
@@ -363,28 +428,42 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                   </>
                 )}
               </div>
-            ) : revealStatus === 'pending' ? (
+            ) : authedUserId && revealStatus === 'pending' ? (
               <div
-                className="text-xs text-center"
+                className="text-center"
                 style={{
-                  color: 'rgba(255,255,255,0.55)',
+                  color: 'rgba(255,255,255,0.65)',
                   border: '1px solid rgba(255,255,255,0.12)',
-                  padding: '8px 10px',
+                  padding: '10px 12px',
+                  fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  fontSize: 14,
                 }}
               >
                 ⌛ {t('revealPending')}
               </div>
-            ) : revealStatus === 'declined' ? null : (
+            ) : authedUserId && revealStatus === 'declined' ? null : (
               <button
                 type="button"
-                onClick={() => setRevealDialogOpen(true)}
-                className="transition-colors text-xs"
+                onClick={() => {
+                  if (authedUserId) {
+                    setRevealDialogOpen(true)
+                  } else {
+                    const next =
+                      typeof window !== 'undefined'
+                        ? window.location.pathname + window.location.search
+                        : '/'
+                    router.push(`/login?next=${encodeURIComponent(next)}`)
+                    onOpenChange(false)
+                  }
+                }}
+                className="transition-colors"
                 style={{
                   background: 'transparent',
                   border: '1px solid rgba(96,165,250,0.4)',
                   color: '#60a5fa',
-                  padding: '8px 12px',
+                  padding: '10px 14px',
                   fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  fontSize: 14,
                   cursor: 'pointer',
                 }}
                 onMouseEnter={(e) => {
@@ -464,10 +543,10 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           <div
             style={{
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.5)',
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.55)',
               letterSpacing: '0.05em',
-              marginBottom: 6,
+              marginBottom: 8,
             }}
           >
             {'// HISTORY'}
@@ -476,8 +555,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <p
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 13,
-                color: 'rgba(255,255,255,0.5)',
+                fontSize: 14,
+                color: 'rgba(255,255,255,0.55)',
               }}
             >
               {t('loading')}
@@ -486,8 +565,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <p
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 13,
-                color: 'rgba(255,255,255,0.5)',
+                fontSize: 14,
+                color: 'rgba(255,255,255,0.55)',
               }}
             >
               No history available
@@ -495,7 +574,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           ) : (
             <div
               style={{
-                maxHeight: 180,
+                maxHeight: 200,
                 overflowY: 'auto',
                 paddingRight: 2,
               }}
@@ -511,16 +590,16 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                       gridTemplateColumns: 'auto 1fr auto',
                       alignItems: 'center',
                       columnGap: 10,
-                      padding: '8px 0',
+                      padding: '10px 0',
                       borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)',
                       fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                      fontSize: 13,
+                      fontSize: 14,
                       lineHeight: 1.4,
                     }}
                   >
                     <span
                       style={{
-                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.5)',
                         whiteSpace: 'nowrap',
                       }}
                     >
@@ -528,7 +607,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                     </span>
                     <span
                       style={{
-                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.6)',
+                        color: isCurrent ? '#ffffff' : 'rgba(255,255,255,0.7)',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -538,19 +617,20 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                     </span>
                     <span
                       style={{
-                        color: 'rgba(255,255,255,0.4)',
+                        color: 'rgba(255,255,255,0.5)',
                         whiteSpace: 'nowrap',
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: 6,
+                        fontSize: 13,
                       }}
                     >
                       {formatShortDate(entry.started_at)}
                       {isCurrent && (
-                        <span style={{ color: '#22c55e', fontSize: 12 }}>◉ current</span>
+                        <span style={{ color: '#22c55e', fontSize: 13 }}>◉ current</span>
                       )}
                       {!isCurrent && entry.displaced_by_name && (
-                        <span style={{ color: 'rgba(255,255,255,0.3)' }}>(displaced)</span>
+                        <span style={{ color: 'rgba(255,255,255,0.4)' }}>(displaced)</span>
                       )}
                     </span>
                   </div>
@@ -568,11 +648,11 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             className="transition-all"
             style={{
               width: '100%',
-              padding: '12px',
+              padding: '14px',
               background: '#60a5fa',
               color: '#0a0a0a',
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: 700,
               border: 'none',
               borderRadius: 3,
@@ -598,16 +678,16 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               background: 'transparent',
               border: 'none',
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.45)',
+              fontSize: 14,
+              color: 'rgba(255,255,255,0.55)',
               cursor: 'pointer',
-              padding: '6px 10px',
+              padding: '8px 12px',
               textDecoration: 'underline',
               textUnderlineOffset: 3,
-              textDecorationColor: 'rgba(255,255,255,0.2)',
+              textDecorationColor: 'rgba(255,255,255,0.25)',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.85)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)')}
           >
             report this slot
           </button>

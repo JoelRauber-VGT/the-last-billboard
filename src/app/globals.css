@@ -139,18 +139,36 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4 dropped the default cursor:pointer for buttons.
+     Restore it so every clickable element clearly looks clickable. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [type="button"]:disabled,
+  [type="submit"]:disabled,
+  [type="reset"]:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
-/* Legibility floor: bump tiny text utilities so nothing renders below ~12px.
-   Touch labels, badges, and helper copy were sometimes 10-11px, which is
-   below comfortable reading size. */
+/* Legibility floor: bump tiny text utilities so nothing renders below ~13px.
+   Touch labels, badges, helper copy and dialog button text were sometimes
+   10-12px, which is below comfortable reading size on modern displays. */
 @layer utilities {
   .text-xs {
-    font-size: 0.8125rem; /* 13px (was 12px) */
-    line-height: 1.15rem;
+    font-size: 0.875rem; /* 14px (was 12px) */
+    line-height: 1.2rem;
   }
   .text-\[10px\] {
-    font-size: 12px !important;
+    font-size: 13px !important;
     line-height: 1.4 !important;
   }
   .text-\[11px\] {
@@ -158,7 +176,7 @@
     line-height: 1.4 !important;
   }
   .text-\[12px\] {
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.4 !important;
   }
 }

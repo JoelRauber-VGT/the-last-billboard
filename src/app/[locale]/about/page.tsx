@@ -70,17 +70,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </section>
 
             <section className="space-y-4">
-              <h2 className="text-lg text-white">{t('technology.title')}</h2>
-              <p className="text-term-text">{t('technology.intro')}</p>
-              <ul className="space-y-2 list-disc list-inside text-term-text">
-                <li>{t('technology.nextjs')}</li>
-                <li>{t('technology.supabase')}</li>
-                <li>{t('technology.stripe')}</li>
-                <li>{t('technology.vercel')}</li>
-              </ul>
-            </section>
-
-            <section className="space-y-4">
               <h2 className="text-lg text-white">{t('specifications.title')}</h2>
               <div className="border border-term-border-light bg-term-surface p-6 space-y-2 text-term-text text-base">
                 <div>{t('specifications.sizing')}</div>

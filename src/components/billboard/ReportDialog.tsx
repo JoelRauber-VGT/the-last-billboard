@@ -244,7 +244,7 @@ export function ReportDialog({
               disabled={isSubmitting}
               className="w-full bg-term-bg border border-term-border-light text-white placeholder:text-term-dim px-3 py-2 font-mono text-sm focus:outline-none focus:border-term-accent transition-colors disabled:opacity-50 resize-none"
             />
-            <p className="text-[10px] text-term-muted">
+            <p className="text-term-muted" style={{ fontSize: 12 }}>
               &gt; {t('details.maxLength')} ({details.length}/500)
             </p>
           </div>

@@ -13,7 +13,44 @@
     "signIn": "se connecter",
     "bid": "enchérir",
     "inbox": "messagerie",
-    "profile": "profil"
+    "profile": "profil",
+    "leaderboard": "classement"
+  },
+  "leaderboard": {
+    "title": "Classement",
+    "subtitle": "Meilleurs enchérisseurs classés par dépenses et slots remportés.",
+    "empty": "Aucune enchère pour le moment. Soyez le premier à entrer dans l'histoire.",
+    "cta": "Placer une enchère",
+    "stats": {
+      "totalVolume": "Volume Total",
+      "totalBidders": "Enchérisseurs",
+      "activeBidders24h": "Actifs 24h",
+      "activeSlots": "Slots Actifs",
+      "highestBidEver": "Enchère Max"
+    },
+    "tabs": {
+      "topSpenders": "Plus Dépensé",
+      "mostWins": "Plus de Slots"
+    },
+    "columns": {
+      "rank": "Rang",
+      "user": "Utilisateur",
+      "spent": "Dépensé",
+      "won": "Gagnés",
+      "holding": "Détient",
+      "highestBid": "Enchère Max",
+      "joined": "Inscrit"
+    },
+    "podium": {
+      "openSlot": "Place Libre",
+      "unnamed": "Anonyme",
+      "joined": "Depuis",
+      "winsSuffix": "slots"
+    },
+    "anonymousPool": {
+      "name": "Pool Anonyme",
+      "description": "Statistiques agrégées de toutes les enchères anonymes."
+    }
   },
   "landing": {
     "hero": {
@@ -74,16 +111,21 @@
       "submit": "Envoyer le lien magique",
       "checkEmail": "Consultez votre e-mail pour le lien magique !",
       "error": "Échec de l'envoi du lien magique. Veuillez réessayer.",
-      "prompt": "entrez votre e-mail pour recevoir un lien magique",
-      "sendLink": "envoyer le lien",
+      "prompt": "entrez votre e-mail pour recevoir un code de connexion",
+      "sendLink": "envoyer le code",
       "sending": "envoi en cours",
-      "linkSent": "lien envoyé à {email}",
-      "checkInbox": "consultez votre boîte de réception",
+      "linkSent": "code envoyé à {email}",
+      "checkInbox": "consultez votre boîte de réception et saisissez le code à 6 chiffres",
       "waiting": "en attente",
       "invalidEmail": "format d'e-mail invalide",
-      "errorSending": "erreur lors de l'envoi du lien",
+      "errorSending": "erreur lors de l'envoi du code",
       "unexpectedError": "erreur inattendue",
-      "errorPrefix": "erreur"
+      "errorPrefix": "erreur",
+      "codePlaceholder": "code à 6 chiffres",
+      "verify": "se connecter",
+      "verifying": "vérification",
+      "invalidCode": "code invalide ou expiré",
+      "useDifferentEmail": "utiliser un autre e-mail"
     }
   },
   "dashboard": {
@@ -115,6 +157,18 @@
       "displayNamePlaceholder": "Votre nom ou marque",
       "displayNameHelp": "Ce nom sera affiché sur vos enchères (optionnel, max 50 caractères)"
     },
+    "avatar": {
+      "label": "Photo de profil",
+      "upload": "Téléverser une image",
+      "replace": "Remplacer l'image",
+      "remove": "Supprimer",
+      "uploading": "envoi en cours…",
+      "help": "PNG, JPG ou WebP. Max 5 Mo.",
+      "invalidType": "Uniquement PNG, JPG ou WebP",
+      "tooLarge": "Fichier trop volumineux (max 5 Mo)",
+      "uploadFailed": "Échec de l'envoi, veuillez réessayer",
+      "removeFailed": "Impossible de supprimer l'image"
+    },
     "save": "Enregistrer",
     "saving": "Enregistrement...",
     "success": "Paramètres enregistrés avec succès !",
@@ -122,6 +176,53 @@
       "notAuthenticated": "Vous devez être connecté",
       "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
       "unexpected": "Erreur inattendue"
+    },
+    "availability": {
+      "checking": "vérification…",
+      "available": "nom disponible",
+      "taken": "ce nom est déjà pris",
+      "error": "impossible de vérifier la disponibilité",
+      "invalid": {
+        "empty": "le nom ne peut pas être vide",
+        "too_short": "au moins 2 caractères",
+        "too_long": "max 50 caractères",
+        "invalid_chars": "lettres, chiffres, espace, point, tiret et underscore uniquement"
+      }
+    },
+    "privacy": {
+      "title": "Confidentialité & données",
+      "description": "Exportez ou supprimez les données associées à votre compte (RGPD art. 17 / 20).",
+      "exportTitle": "Exporter mes données",
+      "exportHelp": "Télécharge toutes les données liées à votre compte au format JSON : profil, enchères, slots, historique, signalements, demandes de révélation, notifications.",
+      "exportButton": "Télécharger le JSON",
+      "exporting": "préparation…",
+      "exportFailed": "Impossible de générer l’export. Veuillez réessayer.",
+      "deleteTitle": "Supprimer mon compte",
+      "deleteHelp": "Supprime définitivement votre profil, vous déconnecte et efface vos images. Les slots actifs perdent nom et image et passent en supprimé ; l’historique d’enchères est anonymisé. Aucun remboursement automatique.",
+      "deleteButton": "Supprimer le compte",
+      "deleting": "suppression…",
+      "deleteFailed": "Impossible de supprimer le compte. Réessayez ou contactez le support.",
+      "deleteDialog": {
+        "title": "Suppression définitive du compte",
+        "warning": "Attention : cette action est irréversible.",
+        "consequencesLabel": "ce qui va se passer",
+        "consequence": {
+          "profile": "Votre profil sera définitivement supprimé.",
+          "signout": "Vous serez déconnecté immédiatement.",
+          "images": "Toutes vos images chargées seront effacées du serveur.",
+          "slots": "Les slots actifs perdent nom, image et lien, et passent en supprimé.",
+          "history": "Votre historique d’enchères sera anonymisé (conservé pour la comptabilité).",
+          "norefund": "Aucun remboursement automatique ne sera effectué."
+        },
+        "confirmLabel": "confirmation",
+        "confirmHelp": "Saisissez le code ci-dessous exactement pour confirmer la suppression.",
+        "codeAria": "Code de confirmation",
+        "inputPlaceholder": "saisir le code",
+        "mismatch": "le code ne correspond pas",
+        "cancel": "annuler",
+        "confirmButton": "supprimer définitivement",
+        "deleting": "suppression…"
+      }
     }
   },
   "admin": {
@@ -234,14 +335,6 @@
       "countdown": "Lorsque le compte à rebours atteint zéro, le billboard entre dans un état permanent, figé.",
       "permanent": "Aucun changement supplémentaire ne peut être effectué. L'état final devient un artefact numérique permanent, préservé comme un instantané de ce moment unique dans l'histoire de la publicité."
     },
-    "technology": {
-      "title": "Stack Technologique",
-      "intro": "Construit avec des technologies modernes et évolutives :",
-      "nextjs": "Next.js 15 avec React Server Components pour des performances ultra-rapides",
-      "supabase": "Supabase pour l'authentification, la base de données et les mises à jour en temps réel",
-      "stripe": "Stripe pour le traitement sécurisé des paiements et les remboursements automatiques",
-      "vercel": "Vercel pour l'hébergement optimisé edge et la distribution mondiale"
-    },
     "specifications": {
       "title": "Spécifications Techniques",
       "sizing": "Taille du bloc : relative à votre enchère, logarithmiquement sur toutes les enchères actives",
@@ -300,6 +393,7 @@
       "displayNamePlaceholder": "Votre marque ou nom",
       "anonymous": "achat anonyme",
       "anonymousHelp": "Votre nom et profil ne seront pas affichés — les autres voient « anonymous ». Ils peuvent vous demander qui vous êtes ; vous décidez si vous voulez vous révéler.",
+      "identityHelp": "Votre slot affiche toujours le nom de votre profil. Changez-le dans les paramètres — tous vos slots se mettent à jour automatiquement.",
       "image": "Image (optionnel)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "URL du lien",
@@ -404,7 +498,8 @@
       "askForReveal": "qui est-ce ?",
       "viewProfile": "voir le profil",
       "revealAccepted": "cet utilisateur s'est révélé à vous",
-      "revealPending": "votre demande de révélation est en attente"
+      "revealPending": "votre demande de révélation est en attente",
+      "selfNotice": "c'est vous — vous avez acheté ce slot de manière anonyme"
     }
   },
   "ticker": {
@@ -457,7 +552,11 @@
     "lostFor": "détenu pour €{amount}",
     "endedOn": "terminé le {date}",
     "viewSlot": "voir le slot",
-    "noDisplayName": "user"
+    "noDisplayName": "user",
+    "stats": {
+      "totalWon": "Slots gagnés",
+      "totalSpent": "Total misé"
+    }
   },
   "inbox": {
     "title": "Messagerie",
@@ -537,6 +636,10 @@
     "settings": {
       "title": "Paramètres — The Last Billboard",
       "description": "Gérez les paramètres de votre compte sur The Last Billboard."
+    },
+    "leaderboard": {
+      "title": "Classement — The Last Billboard",
+      "description": "Découvrez qui mène la guerre des enchères sur The Last Billboard."
     }
   },
   "legal": {

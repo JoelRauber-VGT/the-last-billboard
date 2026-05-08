@@ -96,17 +96,17 @@ export function RevealRequestDialog({
         <DialogHeader className="space-y-1">
           <DialogTitle
             className="font-normal tracking-wide"
-            style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)' }}
+            style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }}
           >
             {`// ${t('dialogTitle').toUpperCase().replace(/ /g, '_')}`}
           </DialogTitle>
-          <DialogDescription className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+          <DialogDescription style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, lineHeight: 1.5 }}>
             {t('intro')}
           </DialogDescription>
         </DialogHeader>
 
         {isAuthenticated === false ? (
-          <div className="text-sm" style={{ color: '#f87171' }}>
+          <div style={{ color: '#f87171', fontSize: 14, lineHeight: 1.5 }}>
             {t('loginRequired')}{' '}
             <Link href="/login" className="underline">
               {tReport('loginCta')}
@@ -117,8 +117,8 @@ export function RevealRequestDialog({
             <div className="flex flex-col gap-2">
               <label
                 htmlFor="reveal-message"
-                className="text-xs uppercase tracking-wide"
-                style={{ color: '#60a5fa' }}
+                className="uppercase tracking-wide"
+                style={{ color: '#60a5fa', fontSize: 13 }}
               >
                 [{t('messageLabel')}]
               </label>
@@ -129,21 +129,22 @@ export function RevealRequestDialog({
                 placeholder={t('messagePlaceholder')}
                 disabled={submitting}
                 rows={4}
-                className="w-full px-3 py-2 bg-term-surface border border-term-border-light text-white placeholder:text-term-dim focus:outline-none focus:border-term-accent disabled:opacity-50 resize-none text-sm"
-                style={{ fontFamily: 'inherit' }}
+                className="w-full px-3 py-2 bg-term-surface border border-term-border-light text-white placeholder:text-term-dim focus:outline-none focus:border-term-accent disabled:opacity-50 resize-none"
+                style={{ fontFamily: 'inherit', fontSize: 14, lineHeight: 1.5 }}
               />
-              <span className="text-[10px] text-term-muted self-end">
+              <span className="text-term-muted self-end" style={{ fontSize: 12 }}>
                 {message.length}/500
               </span>
             </div>
 
             {error && (
               <div
-                className="text-xs px-3 py-2 border"
+                className="px-3 py-2 border"
                 style={{
                   color: '#f87171',
                   borderColor: 'rgba(248,113,113,0.4)',
                   background: 'rgba(248,113,113,0.08)',
+                  fontSize: 14,
                 }}
               >
                 {error}
@@ -155,7 +156,8 @@ export function RevealRequestDialog({
                 type="button"
                 onClick={() => onOpenChange(false)}
                 disabled={submitting}
-                className="px-4 py-2 text-xs text-term-muted hover:text-white transition-colors"
+                className="px-4 py-2 text-term-muted hover:text-white transition-colors"
+                style={{ fontSize: 14 }}
               >
                 [cancel]
               </button>
@@ -163,11 +165,12 @@ export function RevealRequestDialog({
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting || isAuthenticated !== true}
-                className="px-4 py-2 text-xs font-bold transition-colors"
+                className="px-4 py-2 font-bold transition-colors"
                 style={{
                   background: '#60a5fa',
                   color: '#0a0a0a',
                   opacity: submitting || isAuthenticated !== true ? 0.5 : 1,
+                  fontSize: 14,
                 }}
               >
                 {submitting ? t('sending') : `[ ${t('send')} ]`}

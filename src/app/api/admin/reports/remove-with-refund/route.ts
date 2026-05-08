@@ -1,6 +1,8 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
 import { processRefunds } from '@/lib/stripe/processRefunds'
+import { createServiceRoleClient } from '@/lib/supabase/server'
+import { deleteSlotImageByUrl } from '@/lib/storage/slotImages'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -22,12 +24,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { reportId, slotId } = removeSchema.parse(body)
 
-    // Get slot details for refund
+    // Get slot details for refund + storage cleanup
     const { data: slot, error: slotError } = await supabase
       .from('slots')
-      .select('current_owner_id, current_bid_eur')
+      .select('current_owner_id, current_bid_eur, image_url')
       .eq('id', slotId)
-      .single()
+      .single<{ current_owner_id: string | null; current_bid_eur: number; image_url: string | null }>()
 
     if (slotError || !slot) {
       return NextResponse.json({ error: 'Slot not found' }, { status: 404 })
@@ -42,6 +44,15 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error('Failed to remove slot:', updateError)
       return NextResponse.json({ error: 'Failed to remove slot' }, { status: 500 })
+    }
+
+    // Best-effort: drop the image from storage so the public URL stops
+    // resolving even though the slot row is preserved for history.
+    if (slot.image_url) {
+      const result = await deleteSlotImageByUrl(createServiceRoleClient(), slot.image_url)
+      if (!result.ok) {
+        console.error('[admin/remove-with-refund] storage cleanup failed:', result.error)
+      }
     }
 
     // Create refund transaction if there's an owner, then kick off Stripe

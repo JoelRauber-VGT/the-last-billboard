@@ -18,9 +18,14 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
   // Fetch user profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('email, display_name')
+    .select('email, display_name, avatar_url')
     .eq('id', user.id)
     .single()
+  const p = profile as {
+    email?: string | null
+    display_name?: string | null
+    avatar_url?: string | null
+  } | null
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] flex-col">
@@ -29,14 +34,15 @@ export default async function SettingsPage({ params }: { params: Promise<{ local
           <h1 className="text-2xl md:text-3xl font-bold font-mono tracking-tight text-term-text">
             {t('title')}
           </h1>
-          <p className="text-term-faint font-mono mt-2">
+          <p className="text-term-muted font-mono mt-2">
             {t('description')}
           </p>
         </div>
 
         <SettingsForm
-          email={profile?.email || user.email || ''}
-          displayName={profile?.display_name || ''}
+          email={p?.email || user.email || ''}
+          displayName={p?.display_name || ''}
+          avatarUrl={p?.avatar_url ?? null}
         />
       </div>
     </div>

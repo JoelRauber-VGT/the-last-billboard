@@ -7,9 +7,12 @@ import { getStripe } from '@/lib/stripe/server';
 import { z } from 'zod';
 import { getLocale } from 'next-intl/server';
 
-// Validation schema for bid data
+// Validation schema for bid data. `display_name` is no longer accepted from
+// the client — the server reads the bidder's profile.display_name and uses
+// that for both the Stripe line item and the eventual slot record. This means
+// changes to the user's profile name automatically propagate to all their
+// slots, and there is no longer a per-bid name override to keep in sync.
 const bidFormSchema = z.object({
-  display_name: z.string().min(1, 'Display name is required').max(50, 'Display name must be max 50 characters'),
   image_url: z.string().url().optional(),
   link_url: z.string().url().startsWith('https://', 'Must be a valid HTTPS URL'),
   brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format'),
@@ -166,10 +169,12 @@ export async function createBidCheckoutSession(
       }
     }
 
-    // Get user's email from profiles table
+    // Get user's email + display_name from profiles table. The display_name is
+    // sourced server-side instead of taken from the form, so the bid form
+    // cannot override the user's identity per-slot.
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('email')
+      .select('email, display_name')
       .eq('id', user.id)
       .single();
 
@@ -179,6 +184,12 @@ export async function createBidCheckoutSession(
         error: 'User profile not found',
       };
     }
+
+    const profileTyped = profile as { email: string; display_name: string | null };
+    const resolvedDisplayName =
+      profileTyped.display_name?.trim() ||
+      profileTyped.email?.split('@')[0] ||
+      'user';
 
     // Calculate commission
     const commission_eur = data.bid_eur * config.commissionRate;
@@ -213,14 +224,14 @@ export async function createBidCheckoutSession(
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer_email: profile.email,
+      customer_email: profileTyped.email,
       line_items: [
         {
           price_data: {
             currency: 'eur',
             product_data: {
               name: 'The Last Billboard - Bid',
-              description: `Bid for ${data.display_name}`,
+              description: `Bid for ${resolvedDisplayName}`,
             },
             unit_amount: Math.round(data.bid_eur * 100), // Convert to cents
           },
@@ -237,7 +248,7 @@ export async function createBidCheckoutSession(
         bid_eur: data.bid_eur.toFixed(2),
         image_url: data.image_url || '',
         link_url: data.link_url,
-        display_name: data.display_name,
+        display_name: resolvedDisplayName,
         brand_color: data.brand_color,
         pan_x: data.pan_x.toString(),
         pan_y: data.pan_y.toString(),

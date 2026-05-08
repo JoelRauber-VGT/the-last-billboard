@@ -41,7 +41,6 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
     : 5
 
   const [bidEur, setBidEur] = useState<number>(minBid)
-  const [displayName, setDisplayName] = useState('')
   const [linkUrl, setLinkUrl] = useState('')
   const [upload, setUpload] = useState<UploadState>({ kind: 'idle' })
   const [pan, setPan] = useState({ x: 0.5, y: 0.5 })
@@ -107,14 +106,10 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
   const bidIsValid =
     Number.isFinite(bidEur) && bidEur >= minBid && bidEur % 5 === 0
   const linkIsValid = /^https:\/\/.+/i.test(linkUrl)
-  const effectiveDisplayName = isAnonymous ? 'anonymous' : displayName.trim()
-  const nameIsValid =
-    isAnonymous ||
-    (displayName.trim().length > 0 && displayName.length <= 50)
   const imageReady = upload.kind === 'uploaded'
 
   const canSubmit =
-    imageReady && bidIsValid && linkIsValid && nameIsValid && !submitting
+    imageReady && bidIsValid && linkIsValid && !submitting
 
   const previewUrl = upload.kind === 'idle' ? null : upload.previewUrl
   const remoteUrl = upload.kind === 'uploaded' ? upload.remoteUrl : null
@@ -125,7 +120,6 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
     setError(null)
     try {
       const result = await createBidCheckoutSession({
-        display_name: effectiveDisplayName,
         image_url: remoteUrl,
         link_url: linkUrl,
         brand_color: '#1a1a1a',
@@ -283,26 +277,13 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
                 )}
               </section>
 
-              {/* Display name */}
+              {/* Identity — name comes from the user's profile, not the bid */}
               <section className="flex flex-col gap-2">
-                <label
-                  htmlFor="bid-display-name"
-                  className="text-xs text-term-accent tracking-wide"
-                >
-                  [display_name]
+                <label className="text-xs text-term-accent tracking-wide">
+                  [identity]
                 </label>
-                <input
-                  id="bid-display-name"
-                  type="text"
-                  maxLength={50}
-                  value={isAnonymous ? 'anonymous' : displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  disabled={submitting || isAnonymous}
-                  placeholder="my brand"
-                  className="w-full px-3 py-2 bg-term-surface border border-term-border-light text-white placeholder:text-term-dim focus:outline-none focus:border-term-accent disabled:opacity-50"
-                />
-                <div className="text-[10px] text-term-muted">
-                  &gt; shown on hover · max 50 chars ({displayName.length}/50)
+                <div className="text-[12px] text-term-muted leading-snug">
+                  &gt; {tForm('identityHelp')}
                 </div>
                 <label className="flex items-start gap-2 cursor-pointer select-none mt-1">
                   <input

@@ -210,11 +210,6 @@ export async function POST(request: NextRequest) {
         p_link_url: metadata.link_url,
         p_display_name: metadata.display_name,
         p_brand_color: metadata.brand_color,
-        // layout_width/height are legacy schema fields; the renderer uses
-        // the live treemap, not these. Keep at 1×1 to satisfy the RPC's
-        // positive-int constraint without implying a fixed pixel block.
-        p_layout_width: 1,
-        p_layout_height: 1,
         p_pan_x: metadata.pan_x,
         p_pan_y: metadata.pan_y,
         p_zoom: metadata.zoom,

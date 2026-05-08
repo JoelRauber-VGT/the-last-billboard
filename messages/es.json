@@ -13,7 +13,44 @@
     "signIn": "iniciar sesión",
     "bid": "ofertar",
     "inbox": "bandeja",
-    "profile": "perfil"
+    "profile": "perfil",
+    "leaderboard": "clasificación"
+  },
+  "leaderboard": {
+    "title": "Clasificación",
+    "subtitle": "Mejores postores clasificados por gasto y slots ganados.",
+    "empty": "Aún no hay pujas. Sé el primero en hacer historia.",
+    "cta": "Hacer una puja",
+    "stats": {
+      "totalVolume": "Volumen Total",
+      "totalBidders": "Postores",
+      "activeBidders24h": "Activos 24h",
+      "activeSlots": "Slots Activos",
+      "highestBidEver": "Puja Máxima"
+    },
+    "tabs": {
+      "topSpenders": "Más Gasto",
+      "mostWins": "Más Slots"
+    },
+    "columns": {
+      "rank": "Rango",
+      "user": "Usuario",
+      "spent": "Gastado",
+      "won": "Ganados",
+      "holding": "Activos",
+      "highestBid": "Puja Máx",
+      "joined": "Desde"
+    },
+    "podium": {
+      "openSlot": "Plaza Libre",
+      "unnamed": "Anónimo",
+      "joined": "Desde",
+      "winsSuffix": "slots"
+    },
+    "anonymousPool": {
+      "name": "Pool Anónimo",
+      "description": "Estadísticas agregadas de todas las pujas anónimas."
+    }
   },
   "landing": {
     "hero": {
@@ -74,16 +111,21 @@
       "submit": "Enviar enlace mágico",
       "checkEmail": "¡Revisa tu correo para el enlace mágico!",
       "error": "Error al enviar el enlace mágico. Por favor, inténtalo de nuevo.",
-      "prompt": "ingresa tu correo para recibir un enlace mágico",
-      "sendLink": "enviar enlace",
+      "prompt": "ingresa tu correo para recibir un código de acceso",
+      "sendLink": "enviar código",
       "sending": "enviando",
-      "linkSent": "enlace enviado a {email}",
-      "checkInbox": "revisa tu bandeja de entrada",
+      "linkSent": "código enviado a {email}",
+      "checkInbox": "revisa tu bandeja de entrada e ingresa el código de 6 dígitos",
       "waiting": "esperando",
       "invalidEmail": "formato de correo inválido",
-      "errorSending": "error al enviar el enlace",
+      "errorSending": "error al enviar el código",
       "unexpectedError": "error inesperado",
-      "errorPrefix": "error"
+      "errorPrefix": "error",
+      "codePlaceholder": "código de 6 dígitos",
+      "verify": "iniciar sesión",
+      "verifying": "verificando",
+      "invalidCode": "código inválido o expirado",
+      "useDifferentEmail": "usar otro correo"
     }
   },
   "dashboard": {
@@ -115,6 +157,18 @@
       "displayNamePlaceholder": "Tu nombre o marca",
       "displayNameHelp": "Este nombre se mostrará en tus ofertas (opcional, máx. 50 caracteres)"
     },
+    "avatar": {
+      "label": "Foto de perfil",
+      "upload": "Subir imagen",
+      "replace": "Reemplazar imagen",
+      "remove": "Quitar",
+      "uploading": "subiendo…",
+      "help": "PNG, JPG o WebP. Máx. 5 MB.",
+      "invalidType": "Solo PNG, JPG o WebP",
+      "tooLarge": "Archivo demasiado grande (máx. 5 MB)",
+      "uploadFailed": "Error al subir, inténtalo de nuevo",
+      "removeFailed": "No se pudo quitar la imagen"
+    },
     "save": "Guardar",
     "saving": "Guardando...",
     "success": "¡Configuración guardada exitosamente!",
@@ -122,6 +176,53 @@
       "notAuthenticated": "Debes iniciar sesión",
       "updateFailed": "Error al actualizar. Por favor, inténtalo de nuevo.",
       "unexpected": "Error inesperado"
+    },
+    "availability": {
+      "checking": "comprobando…",
+      "available": "nombre disponible",
+      "taken": "este nombre ya está en uso",
+      "error": "no se pudo comprobar la disponibilidad",
+      "invalid": {
+        "empty": "el nombre no puede estar vacío",
+        "too_short": "al menos 2 caracteres",
+        "too_long": "máx. 50 caracteres",
+        "invalid_chars": "solo letras, números, espacio, punto, guion y guion bajo"
+      }
+    },
+    "privacy": {
+      "title": "Privacidad y datos",
+      "description": "Exporta o elimina los datos asociados a tu cuenta (RGPD art. 17 / 20).",
+      "exportTitle": "Exportar mis datos",
+      "exportHelp": "Descarga todos los registros vinculados a tu cuenta en JSON: perfil, pujas, slots, historial, reportes, solicitudes de revelación y notificaciones.",
+      "exportButton": "Descargar JSON",
+      "exporting": "preparando…",
+      "exportFailed": "No se pudo generar la exportación. Inténtalo de nuevo.",
+      "deleteTitle": "Eliminar mi cuenta",
+      "deleteHelp": "Elimina permanentemente tu perfil, cierra tu sesión y borra tus imágenes. Los slots activos pierden nombre e imagen y se marcan como eliminados; el historial de pujas se anonimiza. Sin reembolso automático.",
+      "deleteButton": "Eliminar cuenta",
+      "deleting": "eliminando…",
+      "deleteFailed": "No se pudo eliminar la cuenta. Inténtalo de nuevo o contacta con soporte.",
+      "deleteDialog": {
+        "title": "Eliminar cuenta permanentemente",
+        "warning": "Atención: esta acción no se puede deshacer.",
+        "consequencesLabel": "qué ocurrirá",
+        "consequence": {
+          "profile": "Tu perfil será eliminado de forma irreversible.",
+          "signout": "Se cerrará tu sesión inmediatamente.",
+          "images": "Todas las imágenes subidas serán borradas del servidor.",
+          "slots": "Los slots activos pierden nombre, imagen y enlace y se marcan como eliminados.",
+          "history": "Tu historial de pujas será anonimizado (se conserva por motivos contables).",
+          "norefund": "No se emitirá ningún reembolso automático."
+        },
+        "confirmLabel": "confirmación",
+        "confirmHelp": "Escribe el código siguiente exactamente para confirmar la eliminación.",
+        "codeAria": "Código de confirmación",
+        "inputPlaceholder": "escribe el código",
+        "mismatch": "el código no coincide",
+        "cancel": "cancelar",
+        "confirmButton": "eliminar definitivamente",
+        "deleting": "eliminando…"
+      }
     }
   },
   "admin": {
@@ -234,14 +335,6 @@
       "countdown": "Cuando la cuenta regresiva llega a cero, el billboard entra en un estado permanente y congelado.",
       "permanent": "No se pueden hacer más cambios. El estado final se convierte en un artefacto digital permanente, preservado como una instantánea de este momento único en la historia de la publicidad."
     },
-    "technology": {
-      "title": "Stack Tecnológico",
-      "intro": "Construido con tecnologías modernas y escalables:",
-      "nextjs": "Next.js 15 con React Server Components para un rendimiento ultrarrápido",
-      "supabase": "Supabase para autenticación, base de datos y actualizaciones en tiempo real",
-      "stripe": "Stripe para procesamiento seguro de pagos y reembolsos automáticos",
-      "vercel": "Vercel para alojamiento optimizado en edge y distribución global"
-    },
     "specifications": {
       "title": "Especificaciones Técnicas",
       "sizing": "Tamaño del bloque: relativo a tu puja, logarítmicamente entre todas las pujas activas",
@@ -300,6 +393,7 @@
       "displayNamePlaceholder": "Tu marca o nombre",
       "anonymous": "compra anónima",
       "anonymousHelp": "Tu nombre y perfil no se mostrarán — los demás ven «anonymous». Pueden pedirte que reveles quién eres; tú decides si responder.",
+      "identityHelp": "Tu slot siempre muestra el nombre de tu perfil. Cámbialo en ajustes — todos tus slots se actualizan automáticamente.",
       "image": "Imagen (opcional)",
       "imageHelp": "Máx 10MB, PNG/JPEG/WEBP",
       "linkUrl": "URL del enlace",
@@ -404,7 +498,8 @@
       "askForReveal": "¿quién es?",
       "viewProfile": "ver perfil",
       "revealAccepted": "este usuario reveló su identidad ante ti",
-      "revealPending": "tu solicitud está pendiente"
+      "revealPending": "tu solicitud está pendiente",
+      "selfNotice": "eres tú — compraste este slot de forma anónima"
     }
   },
   "ticker": {
@@ -457,7 +552,11 @@
     "lostFor": "mantenido por €{amount}",
     "endedOn": "terminó el {date}",
     "viewSlot": "ver slot",
-    "noDisplayName": "user"
+    "noDisplayName": "user",
+    "stats": {
+      "totalWon": "Slots ganados",
+      "totalSpent": "Total ofertado"
+    }
   },
   "inbox": {
     "title": "Bandeja",
@@ -537,6 +636,10 @@
     "settings": {
       "title": "Configuración — The Last Billboard",
       "description": "Administra la configuración de tu cuenta en The Last Billboard."
+    },
+    "leaderboard": {
+      "title": "Clasificación — The Last Billboard",
+      "description": "Descubre quién lidera la guerra de pujas en The Last Billboard."
     }
   },
   "legal": {

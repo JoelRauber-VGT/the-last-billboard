@@ -18,7 +18,13 @@ interface UserMenuProps {
   user: {
     email?: string
     display_name?: string | null
+    avatar_url?: string | null
   }
+}
+
+function initialOf(name: string) {
+  const ch = name.trim().charAt(0)
+  return ch ? ch.toUpperCase() : '?'
 }
 
 export function UserMenu({ user }: UserMenuProps) {
@@ -46,8 +52,38 @@ export function UserMenu({ user }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="font-mono text-lg text-term-text hover:text-white transition-colors flex items-center gap-1 focus:outline-none"
+        className="font-mono text-lg text-term-text hover:text-white transition-colors flex items-center gap-2 focus:outline-none"
+        aria-label={displayName}
       >
+        {user.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.avatar_url}
+            alt=""
+            className="rounded-full object-cover"
+            style={{
+              width: 28,
+              height: 28,
+              border: '1px solid rgba(255,255,255,0.1)',
+            }}
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="rounded-full inline-flex items-center justify-center font-mono"
+            style={{
+              width: 28,
+              height: 28,
+              background: 'rgba(96,165,250,0.15)',
+              color: '#60a5fa',
+              fontSize: 13,
+              fontWeight: 700,
+              border: '1px solid rgba(255,255,255,0.08)',
+            }}
+          >
+            {initialOf(displayName)}
+          </span>
+        )}
         {displayName}
         <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>

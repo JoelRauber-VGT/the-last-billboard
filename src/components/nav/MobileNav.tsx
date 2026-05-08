@@ -38,6 +38,13 @@ export function MobileNav({ user, isAdmin }: MobileNavProps) {
         </SheetHeader>
         <nav className="flex flex-col gap-4 mt-6">
           <Link
+            href="/leaderboard"
+            className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
+            onClick={() => setOpen(false)}
+          >
+            {t('leaderboard')}
+          </Link>
+          <Link
             href="/about"
             className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
             onClick={() => setOpen(false)}

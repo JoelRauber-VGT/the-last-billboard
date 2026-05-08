@@ -3,6 +3,7 @@ import { createServerActionClient, createServiceRoleClient } from '@/lib/supabas
 import { getStripe } from '@/lib/stripe/server';
 import { config } from '@/lib/config';
 import { throwIfFrozenAsync } from '@/lib/freeze/getFreezeDate';
+import { checkRateLimit } from '@/lib/rate-limit/checkRateLimit';
 
 /**
  * Resolve the caller's locale so Stripe redirects land on the right
@@ -70,6 +71,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'You must be logged in to bid' },
         { status: 401 }
+      );
+    }
+
+    // Rate limit: cap session-creation churn per user. Each call provisions a
+    // Stripe session and a pending transaction row, so unbounded calls would
+    // burn Stripe API quota and bloat the transactions table.
+    const rl = await checkRateLimit(supabase, `checkout:${user.id}`, 10, 300);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: rl.error ?? 'Too many checkout attempts. Please wait a few minutes and try again.' },
+        { status: rl.error ? 500 : 429 }
       );
     }
 

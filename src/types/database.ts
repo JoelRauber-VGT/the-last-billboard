@@ -14,6 +14,7 @@ export interface Database {
           id: string
           email: string
           display_name: string | null
+          avatar_url: string | null
           is_admin: boolean
           created_at: string
         }
@@ -21,6 +22,7 @@ export interface Database {
           id: string
           email: string
           display_name?: string | null
+          avatar_url?: string | null
           is_admin?: boolean
           created_at?: string
         }
@@ -28,6 +30,7 @@ export interface Database {
           id?: string
           email?: string
           display_name?: string | null
+          avatar_url?: string | null
           is_admin?: boolean
           created_at?: string
         }
@@ -43,8 +46,6 @@ export interface Database {
           display_name: string
           brand_color: string | null
           status: 'active' | 'frozen' | 'removed'
-          layout_width: number
-          layout_height: number
           pan_x: number
           pan_y: number
           zoom: number
@@ -61,8 +62,6 @@ export interface Database {
           display_name: string
           brand_color?: string | null
           status?: 'active' | 'frozen' | 'removed'
-          layout_width: number
-          layout_height: number
           pan_x?: number
           pan_y?: number
           zoom?: number
@@ -79,8 +78,6 @@ export interface Database {
           display_name?: string
           brand_color?: string | null
           status?: 'active' | 'frozen' | 'removed'
-          layout_width?: number
-          layout_height?: number
           pan_x?: number
           pan_y?: number
           zoom?: number
@@ -491,6 +488,7 @@ export type Notification = Tables<'notifications'>
 export interface PublicProfileSummary {
   id: string
   display_name: string | null
+  avatar_url: string | null
   created_at: string
   active_slots: Array<{
     id: string
@@ -512,4 +510,6 @@ export interface PublicProfileSummary {
   }>
   anonymous_active_count: number
   anonymous_lost_count: number
+  total_won: number
+  total_spent_eur: number
 }

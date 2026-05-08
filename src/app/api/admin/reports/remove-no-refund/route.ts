@@ -1,5 +1,7 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
+import { createServiceRoleClient } from '@/lib/supabase/server'
+import { deleteSlotImageByUrl } from '@/lib/storage/slotImages'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -21,6 +23,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { reportId, slotId } = removeSchema.parse(body)
 
+    // Capture the image_url before mutating so we can clean up storage.
+    const { data: slotRow } = await supabase
+      .from('slots')
+      .select('image_url')
+      .eq('id', slotId)
+      .single<{ image_url: string | null }>()
+
     // Update slot status to removed
     const { error: updateError } = await supabase
       .from('slots')
@@ -30,6 +39,15 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error('Failed to remove slot:', updateError)
       return NextResponse.json({ error: 'Failed to remove slot' }, { status: 500 })
+    }
+
+    // Best-effort: drop the image from storage. The slot record stays so
+    // history queries don't 404, but the public URL must stop resolving.
+    if (slotRow?.image_url) {
+      const result = await deleteSlotImageByUrl(createServiceRoleClient(), slotRow.image_url)
+      if (!result.ok) {
+        console.error('[admin/remove-no-refund] storage cleanup failed:', result.error)
+      }
     }
 
     // Update report status

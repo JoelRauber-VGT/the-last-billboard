@@ -73,12 +73,19 @@ export function Minimap({
     const fracY = viewport.panY / (canvasSize.height * viewport.zoom)
     const fracW = 1 / viewport.zoom
     const fracH = 1 / viewport.zoom
-    return {
-      left: fracX * mmWidth,
-      top: fracY * mmHeight,
-      width: fracW * mmWidth,
-      height: fracH * mmHeight,
-    }
+    const rawLeft = fracX * mmWidth
+    const rawTop = fracY * mmHeight
+    const rawWidth = fracW * mmWidth
+    const rawHeight = fracH * mmHeight
+    // Clamp to minimap bounds so the 2px border is never clipped by
+    // overflow:hidden when the viewport reaches an edge (right/bottom in
+    // particular, where floating-point or overscroll can push left+width
+    // slightly past mmWidth).
+    const left = Math.max(0, Math.min(rawLeft, mmWidth))
+    const top = Math.max(0, Math.min(rawTop, mmHeight))
+    const width = Math.max(0, Math.min(rawWidth, mmWidth - left))
+    const height = Math.max(0, Math.min(rawHeight, mmHeight - top))
+    return { left, top, width, height }
   }, [viewport, canvasSize.width, canvasSize.height, mmWidth, mmHeight])
 
   /**

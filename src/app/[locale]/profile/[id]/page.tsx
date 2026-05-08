@@ -12,8 +12,8 @@ function formatDate(dateStr: string, locale: string) {
   })
 }
 
-function formatBid(amount: number) {
-  return new Intl.NumberFormat('en', {
+function formatBid(amount: number, locale: string) {
+  return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount)
@@ -58,36 +58,63 @@ export default async function PublicProfilePage({
   }
 
   const displayName = profile.display_name || t('noDisplayName')
-  const totalAnonymous = profile.anonymous_active_count + profile.anonymous_lost_count
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10 font-mono text-term-text">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-10">
-        <div
-          className="flex items-center justify-center"
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: '50%',
-            background: 'rgba(96,165,250,0.15)',
-            color: '#60a5fa',
-            fontSize: 22,
-            fontWeight: 600,
-          }}
-        >
-          {initialOf(profile.display_name)}
-        </div>
+      <div className="flex items-center gap-4 mb-6">
+        {profile.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={profile.avatar_url}
+            alt={displayName}
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              background: '#0a0a0a',
+            }}
+          />
+        ) : (
+          <div
+            className="flex items-center justify-center"
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              background: 'rgba(96,165,250,0.15)',
+              color: '#60a5fa',
+              fontSize: 22,
+              fontWeight: 600,
+            }}
+          >
+            {initialOf(profile.display_name)}
+          </div>
+        )}
         <div className="flex flex-col">
           <h1 className="text-xl font-bold text-white">{displayName}</h1>
           <span className="text-xs text-term-muted">
             {t('joinedOn', { date: formatDate(profile.created_at, locale) })}
           </span>
-          {totalAnonymous > 0 && (
-            <span className="text-[11px] text-term-muted mt-1">
-              · {t('anonymousSummary', { count: totalAnonymous })}
-            </span>
-          )}
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3 mb-10 max-w-md">
+        <div className="border border-term-border-light px-4 py-3">
+          <div className="text-[11px] uppercase tracking-widest text-term-muted">
+            {t('stats.totalWon')}
+          </div>
+          <div className="text-lg text-white tabular-nums">{profile.total_won}</div>
+        </div>
+        <div className="border border-term-border-light px-4 py-3">
+          <div className="text-[11px] uppercase tracking-widest text-term-muted">
+            {t('stats.totalSpent')}
+          </div>
+          <div className="text-lg text-white tabular-nums">
+            €{formatBid(profile.total_spent_eur, locale)}
+          </div>
         </div>
       </div>
 
@@ -127,7 +154,7 @@ export default async function PublicProfilePage({
                 <div className="flex-1 min-w-0 flex flex-col">
                   <span className="text-sm text-white truncate">{s.display_name}</span>
                   <span className="text-[11px] text-term-muted">
-                    {t('currentBid')}: €{formatBid(s.current_bid_eur)}
+                    {t('currentBid')}: €{formatBid(s.current_bid_eur, locale)}
                   </span>
                 </div>
                 <Link
@@ -176,7 +203,7 @@ export default async function PublicProfilePage({
                 <div className="flex-1 min-w-0 flex flex-col">
                   <span className="text-sm text-term-text truncate">{h.display_name}</span>
                   <span className="text-[11px] text-term-muted">
-                    {t('lostFor', { amount: formatBid(h.bid_eur) })}
+                    {t('lostFor', { amount: formatBid(h.bid_eur, locale) })}
                     {h.ended_at && ` · ${t('endedOn', { date: formatDate(h.ended_at, locale) })}`}
                   </span>
                 </div>

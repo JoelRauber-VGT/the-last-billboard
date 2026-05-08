@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerActionClient } from '@/lib/supabase/server'
+import { createServerActionClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/rate-limit/checkRateLimit'
 
 /**
  * Checks whether the current authenticated user is admin, and — if
@@ -17,7 +18,22 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { data: existingAdmins, error: adminCheckError } = await supabase
+    // Rate limit per user. The bootstrap path is single-shot, but the
+    // post-bootstrap branch still runs a profiles read on every call;
+    // limiting prevents cheap DB-thrashing from a compromised cookie.
+    const rl = await checkRateLimit(supabase, `ensure-admin:${user.id}`, 5, 600)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: rl.error ?? 'Too many requests' },
+        { status: rl.error ? 500 : 429 }
+      )
+    }
+
+    // Cross-user read: profiles RLS only exposes self/admins, so a non-admin
+    // user-bound client cannot see whether other admins exist. Use the service
+    // role for this check — bootstrap correctness depends on a global view.
+    const adminClient = createServiceRoleClient()
+    const { data: existingAdmins, error: adminCheckError } = await adminClient
       .from('profiles')
       .select('id')
       .eq('is_admin', true)

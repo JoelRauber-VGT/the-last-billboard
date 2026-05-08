@@ -9,11 +9,6 @@ export function generateTestSlots(count: number): Slot[] {
 
   for (let i = 0; i < count; i++) {
     const bidAmount = Math.pow(10, Math.random() * 3); // Random bids from 1 to 1000 EUR
-    const pixelCount = Math.round(bidAmount);
-
-    // Calculate default layout dimensions (square-ish)
-    const layoutWidth = Math.ceil(Math.sqrt(pixelCount));
-    const layoutHeight = Math.ceil(pixelCount / layoutWidth);
 
     slots.push({
       id: `slot-${i}`,
@@ -25,8 +20,6 @@ export function generateTestSlots(count: number): Slot[] {
       brand_color: `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
       status: 'active' as const,
       is_anonymous: false,
-      layout_width: layoutWidth,
-      layout_height: layoutHeight,
       pan_x: 0.5,
       pan_y: 0.5,
       zoom: 1.0,

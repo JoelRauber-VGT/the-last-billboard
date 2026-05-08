@@ -13,7 +13,44 @@
     "signIn": "anmelden",
     "bid": "bieten",
     "inbox": "posteingang",
-    "profile": "profil"
+    "profile": "profil",
+    "leaderboard": "rangliste"
+  },
+  "leaderboard": {
+    "title": "Rangliste",
+    "subtitle": "Top-Bieter sortiert nach Ausgaben und gewonnenen Slots.",
+    "empty": "Noch keine Gebote. Sei der Erste, der Geschichte schreibt.",
+    "cta": "Gebot abgeben",
+    "stats": {
+      "totalVolume": "Gesamtvolumen",
+      "totalBidders": "Bieter",
+      "activeBidders24h": "Aktiv 24h",
+      "activeSlots": "Aktive Slots",
+      "highestBidEver": "Höchstgebot"
+    },
+    "tabs": {
+      "topSpenders": "Top-Ausgaben",
+      "mostWins": "Meiste Slots"
+    },
+    "columns": {
+      "rank": "Rang",
+      "user": "Benutzer",
+      "spent": "Ausgegeben",
+      "won": "Gewonnen",
+      "holding": "Aktiv",
+      "highestBid": "Höchstgebot",
+      "joined": "Beigetreten"
+    },
+    "podium": {
+      "openSlot": "Freier Platz",
+      "unnamed": "Anonym",
+      "joined": "Seit",
+      "winsSuffix": "Slots"
+    },
+    "anonymousPool": {
+      "name": "Anonymer Pool",
+      "description": "Aggregierte Statistik aller anonymen Gebote."
+    }
   },
   "landing": {
     "hero": {
@@ -74,16 +111,21 @@
       "submit": "Magic Link senden",
       "checkEmail": "Prüfen Sie Ihre E-Mail für den Magic Link!",
       "error": "Fehler beim Senden des Magic Links. Bitte versuchen Sie es erneut.",
-      "prompt": "Geben Sie Ihre E-Mail ein, um einen Magic Link zu erhalten",
-      "sendLink": "Link senden",
+      "prompt": "Geben Sie Ihre E-Mail ein, um einen Anmelde-Code zu erhalten",
+      "sendLink": "Code senden",
       "sending": "sende",
-      "linkSent": "Link gesendet an {email}",
-      "checkInbox": "Prüfen Sie Ihr Postfach",
+      "linkSent": "Code gesendet an {email}",
+      "checkInbox": "Prüfen Sie Ihr Postfach und geben Sie den 6-stelligen Code ein",
       "waiting": "warte",
       "invalidEmail": "Ungültiges E-Mail-Format",
-      "errorSending": "Fehler beim Senden des Links",
+      "errorSending": "Fehler beim Senden des Codes",
       "unexpectedError": "Unerwarteter Fehler",
-      "errorPrefix": "Fehler"
+      "errorPrefix": "Fehler",
+      "codePlaceholder": "6-stelliger Code",
+      "verify": "anmelden",
+      "verifying": "prüfe",
+      "invalidCode": "Code ungültig oder abgelaufen",
+      "useDifferentEmail": "andere E-Mail verwenden"
     }
   },
   "dashboard": {
@@ -115,6 +157,18 @@
       "displayNamePlaceholder": "Ihr Name oder Marke",
       "displayNameHelp": "Dieser Name wird in Ihren Geboten angezeigt (optional, max. 50 Zeichen)"
     },
+    "avatar": {
+      "label": "Profilbild",
+      "upload": "Bild hochladen",
+      "replace": "Bild ersetzen",
+      "remove": "Entfernen",
+      "uploading": "wird hochgeladen…",
+      "help": "PNG, JPG oder WebP. Max. 5 MB.",
+      "invalidType": "Nur PNG, JPG oder WebP erlaubt",
+      "tooLarge": "Datei ist zu gross (max. 5 MB)",
+      "uploadFailed": "Upload fehlgeschlagen, bitte erneut versuchen",
+      "removeFailed": "Bild konnte nicht entfernt werden"
+    },
     "save": "Speichern",
     "saving": "Wird gespeichert...",
     "success": "Einstellungen erfolgreich gespeichert!",
@@ -122,6 +176,53 @@
       "notAuthenticated": "Sie müssen angemeldet sein",
       "updateFailed": "Aktualisierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "unexpected": "Unerwarteter Fehler aufgetreten"
+    },
+    "availability": {
+      "checking": "wird geprüft…",
+      "available": "name verfügbar",
+      "taken": "dieser name ist bereits vergeben",
+      "error": "verfügbarkeit konnte nicht geprüft werden",
+      "invalid": {
+        "empty": "name darf nicht leer sein",
+        "too_short": "mindestens 2 Zeichen",
+        "too_long": "maximal 50 Zeichen",
+        "invalid_chars": "nur Buchstaben, Ziffern, Leerzeichen, Punkt, Bindestrich und Unterstrich erlaubt"
+      }
+    },
+    "privacy": {
+      "title": "Datenschutz & Daten",
+      "description": "Exportieren oder löschen Sie die zu Ihrem Konto gespeicherten Daten (DSGVO Art. 17 / 20).",
+      "exportTitle": "Meine Daten exportieren",
+      "exportHelp": "Lädt alle zu Ihrem Konto gespeicherten Datensätze als JSON-Datei: Profil, Gebote, Slots, Historie, Meldungen, Aufdeckungs-Anfragen, Benachrichtigungen.",
+      "exportButton": "JSON herunterladen",
+      "exporting": "wird vorbereitet…",
+      "exportFailed": "Export konnte nicht erstellt werden. Bitte erneut versuchen.",
+      "deleteTitle": "Mein Konto löschen",
+      "deleteHelp": "Löscht Ihr Profil endgültig, meldet Sie ab und entfernt Ihre hochgeladenen Bilder. Aktive Slots verlieren Name und Bild und werden als entfernt markiert; die Gebotshistorie wird anonymisiert. Keine automatische Rückerstattung.",
+      "deleteButton": "Konto löschen",
+      "deleting": "wird gelöscht…",
+      "deleteFailed": "Konto konnte nicht gelöscht werden. Bitte erneut versuchen oder Support kontaktieren.",
+      "deleteDialog": {
+        "title": "Konto endgültig löschen",
+        "warning": "Achtung: dies kann nicht rückgängig gemacht werden.",
+        "consequencesLabel": "was passiert",
+        "consequence": {
+          "profile": "Ihr Profil wird unwiderruflich gelöscht.",
+          "signout": "Sie werden sofort abgemeldet.",
+          "images": "Alle hochgeladenen Bilder werden vom Server entfernt.",
+          "slots": "Aktive Slots verlieren Name, Bild und Link und werden als entfernt markiert.",
+          "history": "Ihre Gebotshistorie wird anonymisiert (aus Buchhaltungsgründen nicht gelöscht).",
+          "norefund": "Es erfolgt keine automatische Rückerstattung."
+        },
+        "confirmLabel": "bestätigung",
+        "confirmHelp": "Tippen Sie den folgenden Code exakt ab, um die Löschung zu bestätigen.",
+        "codeAria": "Bestätigungscode",
+        "inputPlaceholder": "code eingeben",
+        "mismatch": "code stimmt nicht überein",
+        "cancel": "abbrechen",
+        "confirmButton": "endgültig löschen",
+        "deleting": "wird gelöscht…"
+      }
     }
   },
   "admin": {
@@ -234,14 +335,6 @@
       "countdown": "Wenn der Countdown Null erreicht, tritt das Billboard in einen permanenten, eingefrorenen Zustand ein.",
       "permanent": "Es können keine weiteren Änderungen vorgenommen werden. Der finale Zustand wird zu einem permanenten digitalen Artefakt, bewahrt als Momentaufnahme dieses einzigartigen Moments in der Werbegeschichte."
     },
-    "technology": {
-      "title": "Technologie-Stack",
-      "intro": "Entwickelt mit modernen, skalierbaren Technologien:",
-      "nextjs": "Next.js 15 mit React Server Components für blitzschnelle Performance",
-      "supabase": "Supabase für Authentifizierung, Datenbank und Echtzeit-Updates",
-      "stripe": "Stripe für sichere Zahlungsabwicklung und automatische Rückerstattungen",
-      "vercel": "Vercel für Edge-optimiertes Hosting und globale Verteilung"
-    },
     "specifications": {
       "title": "Technische Spezifikationen",
       "sizing": "Block-Größe: relativ zum eigenen Gebot, logarithmisch zu allen aktiven Geboten",
@@ -300,6 +393,7 @@
       "displayNamePlaceholder": "Ihre Marke oder Name",
       "anonymous": "anonymer Kauf",
       "anonymousHelp": "Ihr Name und Profil werden nicht angezeigt — andere sehen nur „anonymous“. Sie können angefragt werden, sich zu erkennen zu geben — entscheiden aber selbst, ob Sie antworten.",
+      "identityHelp": "Auf Ihrem Slot erscheint immer Ihr Profilname. Sie ändern ihn in den Einstellungen — alle Ihre Slots werden automatisch aktualisiert.",
       "image": "Bild (optional)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "Link-URL",
@@ -404,7 +498,8 @@
       "askForReveal": "wer ist das?",
       "viewProfile": "profil anzeigen",
       "revealAccepted": "diese Person hat sich Ihnen zu erkennen gegeben",
-      "revealPending": "Ihre Anfrage zur Offenlegung läuft"
+      "revealPending": "Ihre Anfrage zur Offenlegung läuft",
+      "selfNotice": "das sind Sie — Sie haben diesen Slot anonym gekauft"
     }
   },
   "ticker": {
@@ -457,7 +552,11 @@
     "lostFor": "gehalten für €{amount}",
     "endedOn": "endete am {date}",
     "viewSlot": "slot ansehen",
-    "noDisplayName": "user"
+    "noDisplayName": "user",
+    "stats": {
+      "totalWon": "Slots gewonnen",
+      "totalSpent": "Insgesamt geboten"
+    }
   },
   "inbox": {
     "title": "Posteingang",
@@ -537,6 +636,10 @@
     "settings": {
       "title": "Einstellungen — The Last Billboard",
       "description": "Verwalten Sie Ihre Kontoeinstellungen auf The Last Billboard."
+    },
+    "leaderboard": {
+      "title": "Rangliste — The Last Billboard",
+      "description": "Sieh, wer den Bietkampf auf The Last Billboard anführt."
     }
   },
   "legal": {

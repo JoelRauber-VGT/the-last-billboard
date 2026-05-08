@@ -70,14 +70,35 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   let isAdmin = false;
+  let displayName: string | null = null;
+  let avatarUrl: string | null = null;
+  let unreadNotifications = 0;
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('is_admin, display_name, avatar_url')
       .eq('id', user.id)
       .single();
-    isAdmin = profile?.is_admin || false;
+    const p = profile as {
+      is_admin?: boolean;
+      display_name?: string | null;
+      avatar_url?: string | null;
+    } | null;
+    isAdmin = p?.is_admin || false;
+    displayName = p?.display_name ?? null;
+    avatarUrl = p?.avatar_url ?? null;
+
+    const { count } = await supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .is('read_at', null);
+    unreadNotifications = count ?? 0;
   }
+
+  const userWithProfile = user
+    ? { ...user, display_name: displayName, avatar_url: avatarUrl }
+    : null;
 
   const freezeDate = await getFreezeDate();
 
@@ -86,7 +107,11 @@ export default async function RootLayout({
       <body className="h-screen flex flex-col font-mono antialiased bg-term-bg text-white overflow-hidden">
         <NextIntlClientProvider messages={messages}>
           <Tickertape />
-          <LayoutClient user={user} isAdmin={isAdmin}>
+          <LayoutClient
+            user={userWithProfile}
+            isAdmin={isAdmin}
+            unreadNotifications={unreadNotifications}
+          >
             {children}
           </LayoutClient>
           <Footer freezeDateIso={freezeDate.toISOString()} />
