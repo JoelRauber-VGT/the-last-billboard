@@ -99,7 +99,6 @@
     "currentBid": "Actual",
     "rebid": "Pujar de nuevo",
     "contactSupport": "Contactar soporte",
-    "pixels": "píxeles",
     "since": "desde"
   },
   "settings": {
@@ -129,7 +128,8 @@
       "reports": "Reportes",
       "slots": "Espacios",
       "transactions": "Transacciones",
-      "users": "Usuarios"
+      "users": "Usuarios",
+      "settings": "Configuración"
     },
     "overview": {
       "title": "Panel de administración",
@@ -165,6 +165,31 @@
       "toggleAdmin": "Cambiar admin",
       "viewBids": "Ver ofertas",
       "confirmToggleAdmin": "¿Cambiar el estado de administrador para este usuario?"
+    },
+    "settings": {
+      "title": "Configuración de la aplicación",
+      "description": "Configuración modificable en tiempo real. Los cambios surten efecto de inmediato para todos los visitantes.",
+      "freezeDate": {
+        "title": "Fecha de congelación del billboard",
+        "description": "Cuando la cuenta regresiva llegue a este momento, no se aceptarán más ofertas y el billboard será permanente.",
+        "field": "Fecha y hora de congelación (UTC)",
+        "hint": "Se interpreta como UTC. La cuenta regresiva del pie de página lee este valor.",
+        "save": "Guardar",
+        "saving": "Guardando…",
+        "success": "Fecha de congelación actualizada",
+        "warningEarlier": "Está adelantando la fecha de congelación. Las sesiones de Stripe en curso cuyo pago llegue después de la nueva congelación serán reembolsadas automáticamente.",
+        "warningPast": "Esta marca de tiempo está en el pasado — guardar congelará el billboard de inmediato."
+      },
+      "audit": {
+        "title": "Cambios recientes",
+        "description": "Últimos 10 cambios de configuración registrados en el log de auditoría.",
+        "empty": "Aún no hay cambios.",
+        "when": "Cuándo",
+        "who": "Admin",
+        "action": "Acción",
+        "previous": "Anterior",
+        "next": "Nuevo"
+      }
     }
   },
   "about": {
@@ -217,10 +242,9 @@
     },
     "specifications": {
       "title": "Especificaciones Técnicas",
-      "canvasSize": "Tamaño del Canvas: 10.000 × 10.000 píxeles",
+      "sizing": "Tamaño del bloque: relativo a tu puja, logarítmicamente entre todas las pujas activas",
       "maxImageSize": "Tamaño Máximo de Imagen: 10 MB",
-      "imageFormats": "Formatos Soportados: PNG, JPEG, WebP",
-      "minBlockSize": "Tamaño Mínimo de Bloque: 40 × 40 píxeles"
+      "imageFormats": "Formatos Soportados: PNG, JPEG, WebP"
     },
     "faq": {
       "title": "Preguntas Frecuentes",
@@ -248,7 +272,8 @@
     "philosophy": {
       "title": "Por qué esto importa",
       "text": "En una era de espacio digital infinito y contenido efímero, The Last Billboard trae de vuelta el concepto de escasez y permanencia. Pregunta: ¿qué dirías si supieras que se preservará para siempre? ¿Cuánto estarías dispuesto a pagar por una visibilidad verdaderamente duradera?"
-    }
+    },
+    "claimCta": "reserva tu lugar"
   },
   "footer": {
     "imprint": "aviso-legal",
@@ -256,7 +281,8 @@
     "terms": "términos",
     "contact": "contacto",
     "live": "en vivo",
-    "uptime": "tiempo de actividad"
+    "ended": "terminado",
+    "endsIn": "termina en"
   },
   "bid": {
     "frozen": {
@@ -279,7 +305,8 @@
       "bidAmountHelp": "Mínimo: €{min}",
       "submit": "Proceder al pago",
       "submitting": "Procesando...",
-      "uploadingImage": "Subiendo imagen..."
+      "uploadingImage": "Subiendo imagen...",
+      "cropHint": "[info] tu imagen se recortará al formato de tu slot. mantén el contenido importante centrado."
     },
     "validation": {
       "displayNameRequired": "El nombre para mostrar es requerido",
@@ -302,7 +329,13 @@
     "success": {
       "title": "Pago exitoso",
       "message": "Tu oferta está siendo procesada.",
-      "viewBillboard": "Ver Billboard"
+      "viewBillboard": "Ver Billboard",
+      "viewDashboard": "Ver mis ofertas",
+      "slotLive": "tu slot está ahora en vivo en el billboard",
+      "confirmationEmail": "confirmación enviada a {email}",
+      "statusProcessing": "procesando pago...",
+      "statusVerifying": "verificando transacción...",
+      "statusConfirmed": "oferta confirmada"
     },
     "cancel": {
       "title": "Pago cancelado",
@@ -413,6 +446,10 @@
     "bid": {
       "title": "Haz tu oferta — The Last Billboard",
       "description": "Reclama tu espacio en el billboard final. Elige tu imagen, establece tu oferta y compite por visibilidad."
+    },
+    "bidCancel": {
+      "title": "Pago cancelado — The Last Billboard",
+      "description": "Se canceló el pago de tu oferta. Puedes intentarlo de nuevo o volver al billboard."
     },
     "dashboard": {
       "title": "Mi panel — The Last Billboard",

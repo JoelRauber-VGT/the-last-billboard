@@ -83,10 +83,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <section className="space-y-4">
               <h2 className="text-lg text-white">{t('specifications.title')}</h2>
               <div className="border border-term-border-light bg-term-surface p-6 space-y-2 text-term-text text-base">
-                <div>{t('specifications.canvasSize')}</div>
+                <div>{t('specifications.sizing')}</div>
                 <div>{t('specifications.maxImageSize')}</div>
                 <div>{t('specifications.imageFormats')}</div>
-                <div>{t('specifications.minBlockSize')}</div>
               </div>
             </section>
           </div>
@@ -155,18 +154,15 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
               <div className="border-l-2 border-term-border-light pl-4 text-term-text">
                 {t('philosophy.text')}
               </div>
+              <Link
+                href="/bid"
+                className="inline-block font-mono text-base text-term-accent hover:text-white transition-colors mt-2"
+              >
+                → {t('claimCta')}
+              </Link>
             </section>
           </div>
         </div>
-
-        <section className="mt-12 text-center">
-          <Link
-            href="/"
-            className="inline-block font-mono text-base text-term-accent hover:text-white transition-colors"
-          >
-            → claim your pixel [enter the grid]
-          </Link>
-        </section>
       </div>
     </div>
   );

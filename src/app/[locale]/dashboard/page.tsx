@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
-import { Button } from '@/components/ui/button'
 import { Link } from '@/i18n/routing'
 import type { Slot, SlotHistory } from '@/types/database'
 
@@ -52,15 +51,18 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   const isEmpty = slots.length === 0 && outbid.length === 0
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-10">
-      <h1 className="text-2xl font-bold mb-10">{t('title')}</h1>
+    <div className="mx-auto w-full max-w-3xl px-4 py-10 font-mono">
+      <h1 className="text-2xl font-bold mb-10 text-term-text">{t('title')}</h1>
 
       {isEmpty ? (
-        <div className="text-center py-20 border border-dashed rounded-lg">
-          <p className="text-muted-foreground text-sm mb-1">{t('empty')}</p>
-          <p className="text-muted-foreground text-xs mb-6">{t('emptyAction')}</p>
-          <Link href="/bid">
-            <Button variant="outline" className="font-mono text-sm">+ {t('placeBid')}</Button>
+        <div className="text-center py-20 border border-dashed border-term-border-light">
+          <p className="text-term-muted text-sm mb-1">{t('empty')}</p>
+          <p className="text-term-muted text-xs mb-6">{t('emptyAction')}</p>
+          <Link
+            href="/bid"
+            className="inline-block px-4 py-2 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 transition-colors"
+          >
+            + {t('placeBid')}
           </Link>
         </div>
       ) : (
@@ -70,14 +72,14 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           {activeSlots.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <h2 className="text-xs uppercase tracking-widest text-term-muted">
                   {t('activeSection')} · {activeSlots.length}
                 </h2>
               </div>
-              <div className="divide-y divide-border border-t border-b">
+              <div className="divide-y divide-term-border-light border-t border-b border-term-border-light">
                 {activeSlots.map(slot => (
                   <div key={slot.id} className="flex items-center gap-4 py-3">
-                    <div className="shrink-0 w-11 h-11 rounded overflow-hidden bg-muted">
+                    <div className="shrink-0 w-11 h-11 overflow-hidden bg-term-surface">
                       {slot.image_url ? (
                         <img src={slot.image_url} alt="" className="w-full h-full object-cover" />
                       ) : (
@@ -86,23 +88,20 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{slot.display_name}</div>
-                      <div className="text-xs text-muted-foreground truncate">{slot.link_url}</div>
+                      <div className="font-medium text-sm truncate text-term-text">{slot.display_name}</div>
+                      <div className="text-xs text-term-muted truncate">{slot.link_url}</div>
                     </div>
 
-                    <span className="shrink-0 inline-flex items-center gap-1.5 text-xs font-mono px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400">
+                    <span className="shrink-0 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 bg-green-500/10 text-green-400">
                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                       {t('statusActive')}
                     </span>
 
                     <div className="shrink-0 text-right">
-                      <div className="font-mono font-semibold text-sm">€{slot.current_bid_eur.toFixed(0)}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {slot.layout_width * slot.layout_height} {t('pixels')}
-                      </div>
+                      <div className="font-mono font-semibold text-sm text-term-text">€{slot.current_bid_eur.toFixed(0)}</div>
                     </div>
 
-                    <div className="shrink-0 text-xs text-muted-foreground text-right hidden sm:block w-24">
+                    <div className="shrink-0 text-xs text-term-muted text-right hidden sm:block w-24">
                       {formatDate(slot.updated_at, locale)}
                     </div>
                   </div>
@@ -115,24 +114,24 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           {outbid.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <h2 className="text-xs uppercase tracking-widest text-term-muted">
                   {t('outbidSection')} · {outbid.length}
                 </h2>
               </div>
-              <div className="divide-y divide-border border-t border-b">
+              <div className="divide-y divide-term-border-light border-t border-b border-term-border-light">
                 {outbid.map(entry => (
                   <div key={entry.id} className="flex items-center gap-4 py-3">
-                    <div className="shrink-0 w-11 h-11 rounded overflow-hidden bg-muted opacity-50">
+                    <div className="shrink-0 w-11 h-11 overflow-hidden bg-term-surface opacity-50">
                       {entry.image_url ? (
                         <img src={entry.image_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-muted" />
+                        <div className="w-full h-full bg-term-border-light" />
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{entry.display_name}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="font-medium text-sm truncate text-term-text">{entry.display_name}</div>
+                      <div className="text-xs text-term-muted">
                         {t('yourBid')} €{entry.bid_eur.toFixed(0)}
                         {entry.slots && (
                           <> · {t('currentBid')} €{entry.slots.current_bid_eur.toFixed(0)}</>
@@ -140,19 +139,20 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                       </div>
                     </div>
 
-                    <span className="shrink-0 text-xs font-mono px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-500">
+                    <span className="shrink-0 text-xs px-2 py-0.5 bg-orange-500/10 text-orange-400">
                       {t('statusOutbid')}
                     </span>
 
-                    <div className="shrink-0 text-xs text-muted-foreground text-right hidden sm:block w-24">
+                    <div className="shrink-0 text-xs text-term-muted text-right hidden sm:block w-24">
                       {entry.ended_at ? formatDate(entry.ended_at, locale) : '—'}
                     </div>
 
                     {entry.slots?.status === 'active' && (
-                      <Link href={`/bid?outbid=${entry.slot_id}`} className="shrink-0">
-                        <Button variant="outline" size="sm" className="text-xs font-mono h-7 px-3">
-                          {t('rebid')} →
-                        </Button>
+                      <Link
+                        href={`/bid?outbid=${entry.slot_id}`}
+                        className="shrink-0 px-3 py-1 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 transition-colors"
+                      >
+                        {t('rebid')} →
                       </Link>
                     )}
                   </div>
@@ -165,34 +165,32 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           {removedSlots.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                <h2 className="text-xs uppercase tracking-widest text-term-muted">
                   {t('removedSection')} · {removedSlots.length}
                 </h2>
               </div>
-              <div className="divide-y divide-border border-t border-b">
+              <div className="divide-y divide-term-border-light border-t border-b border-term-border-light">
                 {removedSlots.map(slot => (
                   <div key={slot.id} className="flex items-center gap-4 py-3">
-                    <div className="shrink-0 w-11 h-11 rounded overflow-hidden bg-muted opacity-30">
+                    <div className="shrink-0 w-11 h-11 overflow-hidden bg-term-surface opacity-30">
                       {slot.image_url && (
                         <img src={slot.image_url} alt="" className="w-full h-full object-cover" />
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate text-muted-foreground">{slot.display_name}</div>
+                      <div className="font-medium text-sm truncate text-term-muted">{slot.display_name}</div>
                     </div>
 
-                    <span className="shrink-0 text-xs font-mono px-2 py-0.5 rounded-full bg-red-500/10 text-red-500">
+                    <span className="shrink-0 text-xs px-2 py-0.5 bg-red-500/10 text-red-400">
                       {t('statusRemoved')}
                     </span>
 
                     <a
                       href={`mailto:support@thelastbillboard.com?subject=Report Review for Slot ${slot.id}`}
-                      className="shrink-0"
+                      className="shrink-0 text-xs text-term-muted border border-term-border-light px-3 py-1 hover:text-white hover:border-term-accent transition-colors"
                     >
-                      <Button variant="ghost" size="sm" className="text-xs font-mono h-7 px-3">
-                        {t('contactSupport')}
-                      </Button>
+                      {t('contactSupport')}
                     </a>
                   </div>
                 ))}
@@ -200,8 +198,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
             </section>
           )}
 
-          <Link href="/bid">
-            <Button variant="outline" className="font-mono text-sm">+ {t('placeBid')}</Button>
+          <Link
+            href="/bid"
+            className="inline-block px-4 py-2 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 transition-colors"
+          >
+            + {t('placeBid')}
           </Link>
         </div>
       )}

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { FullscreenBillboard } from '@/components/billboard/FullscreenBillboard';
 import { createServerClient } from '@/lib/supabase/server';
-import { isBillboardFrozen } from '@/lib/freeze/checkFrozen';
+import { isBillboardFrozenAsync } from '@/lib/freeze/getFreezeDate';
 import type { Slot } from '@/types/database';
 import type { Metadata } from 'next';
 
@@ -60,7 +60,7 @@ export default async function HomePage() {
     console.error('Failed to fetch initial slots:', error);
   }
 
-  const frozen = isBillboardFrozen();
+  const frozen = await isBillboardFrozenAsync();
 
   const structuredData = {
     '@context': 'https://schema.org',

@@ -36,10 +36,6 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
   }, [isOpen])
 
   const handleClose = () => {
-    // Mark as seen in localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('lastbillboard_onboarding_seen', 'true')
-    }
     setCurrentStep(0)
     onClose()
   }
@@ -146,7 +142,7 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
         {/* Footer */}
         <div className="px-5 py-2.5 border-t border-term-faint">
           <p className="font-mono text-base text-term-dim">
-            last updated 142d ago
+            the last billboard · v1
           </p>
         </div>
       </DialogContent>
@@ -154,26 +150,23 @@ export function OnboardingModal({ isOpen, onClose }: OnboardingModalProps) {
   )
 }
 
+const ONBOARDING_SESSION_KEY = 'lastbillboard_onboarding_seen'
+
 /**
- * Hook to manage onboarding modal state
- * Auto-opens on first visit
+ * Opens once per browser session (sessionStorage): first load of a tab shows it,
+ * reloads in the same tab don't, a new tab shows it again.
  */
 export function useOnboarding() {
   const [isOpen, setIsOpen] = useState(false)
-  const [hasChecked, setHasChecked] = useState(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined' || hasChecked) return
+    if (typeof window === 'undefined') return
+    if (sessionStorage.getItem(ONBOARDING_SESSION_KEY)) return
 
-    const hasSeenOnboarding = localStorage.getItem('lastbillboard_onboarding_seen')
-    if (!hasSeenOnboarding) {
-      // Auto-open after a short delay
-      setTimeout(() => {
-        setIsOpen(true)
-      }, 500)
-    }
-    setHasChecked(true)
-  }, [hasChecked])
+    sessionStorage.setItem(ONBOARDING_SESSION_KEY, '1')
+    const t = setTimeout(() => setIsOpen(true), 500)
+    return () => clearTimeout(t)
+  }, [])
 
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)

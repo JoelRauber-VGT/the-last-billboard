@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { getStripe } from '@/lib/stripe/server';
+import { isBillboardFrozenAsync } from '@/lib/freeze/getFreezeDate';
 import Stripe from 'stripe';
 import { z } from 'zod';
 
 // Stripe metadata values arrive as strings. We coerce and validate
-// with Zod so malformed values (NaN, out-of-range zoom, negative
-// layout dims) never reach the process_bid RPC.
+// with Zod so malformed values (NaN, out-of-range zoom) never reach
+// the process_bid RPC.
 const webhookMetadataSchema = z
   .object({
     transaction_id: z.string().uuid(),
@@ -25,8 +26,6 @@ const webhookMetadataSchema = z
     link_url: z.string().url(),
     display_name: z.string().min(1).max(50),
     brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-    layout_width: z.coerce.number().int().positive().default(1),
-    layout_height: z.coerce.number().int().positive().default(1),
     pan_x: z.coerce.number().min(0).max(1).default(0.5),
     pan_y: z.coerce.number().min(0).max(1).default(0.5),
     zoom: z.coerce.number().min(1.0).max(3.0).default(1.0),
@@ -146,6 +145,40 @@ export async function POST(request: NextRequest) {
       const metadata = parsed.data;
       const transactionId = metadata.transaction_id;
 
+      // Freeze gate: if the admin moved the freeze date earlier while
+      // this Stripe session was in flight, the payment landed *after*
+      // the billboard closed. Don't run process_bid — instead mark the
+      // transaction failed and queue a refund. We still record the
+      // payment_intent so the refund processor can issue the refund.
+      if (await isBillboardFrozenAsync()) {
+        console.warn(
+          `[freeze-gate] Webhook arrived after freeze for transaction ${transactionId}; queuing refund`
+        );
+
+        await supabase
+          .from('transactions')
+          .update({
+            stripe_payment_intent_id: session.payment_intent as string,
+            status: 'failed',
+          })
+          .eq('id', transactionId);
+
+        // Queue a pending refund row for the existing refund processor.
+        await supabase.from('transactions').insert({
+          user_id: metadata.user_id,
+          slot_id: null,
+          amount_eur: metadata.bid_eur,
+          commission_eur: 0,
+          type: 'refund',
+          status: 'pending',
+          stripe_payment_intent_id: session.payment_intent as string,
+        });
+
+        const { processRefunds } = await import('@/lib/stripe/processRefunds');
+        await processRefunds();
+        return NextResponse.json({ received: true, refunded: true });
+      }
+
       // Update transaction with payment intent ID (status will be updated by process_bid)
       const { error: updateError } = await supabase
         .from('transactions')
@@ -173,8 +206,11 @@ export async function POST(request: NextRequest) {
         p_link_url: metadata.link_url,
         p_display_name: metadata.display_name,
         p_brand_color: metadata.brand_color,
-        p_layout_width: metadata.layout_width,
-        p_layout_height: metadata.layout_height,
+        // layout_width/height are legacy schema fields; the renderer uses
+        // the live treemap, not these. Keep at 1×1 to satisfy the RPC's
+        // positive-int constraint without implying a fixed pixel block.
+        p_layout_width: 1,
+        p_layout_height: 1,
         p_pan_x: metadata.pan_x,
         p_pan_y: metadata.pan_y,
         p_zoom: metadata.zoom,

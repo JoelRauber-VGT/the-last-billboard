@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { config } from '@/lib/config'
+import { getFreezeDate } from '@/lib/freeze/getFreezeDate'
 
 export default async function AdminOverviewPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -47,9 +47,9 @@ export default async function AdminOverviewPage({ params }: { params: Promise<{ 
     return t.type === 'bid' ? sum + t.amount_eur : sum
   }, 0) || 0
 
-  // Calculate time to freeze
+  // Calculate time to freeze (read from app_settings, falls back to config default)
   const now = new Date()
-  const freezeDate = config.billboardEndsAt
+  const freezeDate = await getFreezeDate()
   const timeToFreeze = freezeDate.getTime() - now.getTime()
   const daysToFreeze = Math.max(0, Math.floor(timeToFreeze / (1000 * 60 * 60 * 24)))
 
@@ -103,14 +103,19 @@ export default async function AdminOverviewPage({ params }: { params: Promise<{ 
           </CardHeader>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardDescription>{t('timeToFreeze')}</CardDescription>
-            <CardTitle className="text-3xl">
-              {daysToFreeze} days
-            </CardTitle>
-          </CardHeader>
-        </Card>
+        <Link href={`/${locale}/admin/settings`}>
+          <Card className="transition-shadow hover:shadow-md">
+            <CardHeader>
+              <CardDescription>{t('timeToFreeze')}</CardDescription>
+              <CardTitle className="text-3xl">
+                {daysToFreeze} days
+              </CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {freezeDate.toISOString().slice(0, 16).replace('T', ' ')} UTC
+              </p>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       {/* Recent Transactions */}

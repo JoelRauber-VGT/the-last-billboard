@@ -142,7 +142,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="w-full max-w-[440px] p-6 gap-5 rounded-sm border text-left"
+        className="w-full max-w-[520px] p-7 gap-6 rounded-sm border text-left"
         style={{
           background: '#0a0a0a',
           borderColor: 'rgba(255,255,255,0.08)',
@@ -155,7 +155,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             className="font-normal tracking-wide"
             style={{
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 14,
+              fontSize: 15,
               color: 'rgba(255,255,255,0.5)',
             }}
           >
@@ -192,11 +192,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             style={{
               position: 'relative',
               width: '100%',
-              maxHeight: 320,
-              height: 240,
-              borderRadius: 3,
-              border: '1px solid rgba(255,255,255,0.05)',
-              background: 'radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%)',
+              height: 280,
               overflow: 'hidden',
             }}
           >
@@ -219,8 +215,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
         <div className="flex items-center gap-3">
           <div
             style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: '50%',
               background: 'rgba(96,165,250,0.15)',
               color: '#60a5fa',
@@ -228,7 +224,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               alignItems: 'center',
               justifyContent: 'center',
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: 600,
               flexShrink: 0,
             }}
@@ -240,7 +236,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               style={{
                 color: '#ffffff',
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 15,
+                fontSize: 17,
                 fontWeight: 700,
                 lineHeight: 1.2,
               }}
@@ -256,7 +252,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                   marginTop: 2,
                   color: '#60a5fa',
                   fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                  fontSize: 12,
+                  fontSize: 13,
                   lineHeight: 1.3,
                   textDecoration: 'none',
                   display: 'inline-block',
@@ -275,9 +271,9 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           <div
             style={{
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 11,
-              letterSpacing: '0.1em',
-              color: 'rgba(255,255,255,0.4)',
+              fontSize: 12,
+              letterSpacing: '0.12em',
+              color: 'rgba(255,255,255,0.5)',
               textTransform: 'uppercase',
               marginBottom: 10,
             }}
@@ -295,7 +291,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <span
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 48,
+                fontSize: 56,
                 fontWeight: 700,
                 color: 'rgba(255,255,255,0.6)',
                 lineHeight: 1,
@@ -306,7 +302,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <span
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 48,
+                fontSize: 56,
                 fontWeight: 700,
                 color: '#ffffff',
                 lineHeight: 1,
@@ -334,8 +330,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
           <div
             style={{
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 11,
-              color: 'rgba(255,255,255,0.4)',
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.5)',
               letterSpacing: '0.05em',
               marginBottom: 6,
             }}
@@ -346,8 +342,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <p
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.4)',
+                fontSize: 13,
+                color: 'rgba(255,255,255,0.5)',
               }}
             >
               {t('loading')}
@@ -356,8 +352,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             <p
               style={{
                 fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                fontSize: 12,
-                color: 'rgba(255,255,255,0.4)',
+                fontSize: 13,
+                color: 'rgba(255,255,255,0.5)',
               }}
             >
               No history available
@@ -384,8 +380,8 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                       padding: '8px 0',
                       borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)',
                       fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-                      fontSize: 12,
-                      lineHeight: 1.3,
+                      fontSize: 13,
+                      lineHeight: 1.4,
                     }}
                   >
                     <span
@@ -417,7 +413,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                     >
                       {formatShortDate(entry.started_at)}
                       {isCurrent && (
-                        <span style={{ color: '#22c55e', fontSize: 10 }}>◉ current</span>
+                        <span style={{ color: '#22c55e', fontSize: 12 }}>◉ current</span>
                       )}
                       {!isCurrent && entry.displaced_by_name && (
                         <span style={{ color: 'rgba(255,255,255,0.3)' }}>(displaced)</span>
@@ -442,12 +438,12 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               background: '#60a5fa',
               color: '#0a0a0a',
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: 700,
               border: 'none',
               borderRadius: 3,
               cursor: 'pointer',
-              letterSpacing: '0.02em',
+              letterSpacing: '0.04em',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#7db4fb'
@@ -468,13 +464,16 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               background: 'transparent',
               border: 'none',
               fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
-              fontSize: 11,
-              color: 'rgba(255,255,255,0.3)',
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.45)',
               cursor: 'pointer',
-              padding: '4px 8px',
+              padding: '6px 10px',
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+              textDecorationColor: 'rgba(255,255,255,0.2)',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.85)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
           >
             report this slot
           </button>

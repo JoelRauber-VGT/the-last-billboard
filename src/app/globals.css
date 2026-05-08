@@ -141,6 +141,28 @@
   }
 }
 
+/* Legibility floor: bump tiny text utilities so nothing renders below ~12px.
+   Touch labels, badges, and helper copy were sometimes 10-11px, which is
+   below comfortable reading size. */
+@layer utilities {
+  .text-xs {
+    font-size: 0.8125rem; /* 13px (was 12px) */
+    line-height: 1.15rem;
+  }
+  .text-\[10px\] {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+  .text-\[11px\] {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+  .text-\[12px\] {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+}
+
 @keyframes ticker {
   0% {
     transform: translateX(0);

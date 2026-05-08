@@ -21,30 +21,41 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
   }
 
-  // Fetch transaction stats for each user
-  const usersWithStats = await Promise.all(
-    (users || []).map(async (user) => {
-      const { data: transactions } = await supabase
-        .from('transactions')
-        .select('amount_eur, type')
-        .eq('user_id', user.id)
-        .eq('type', 'bid')
-        .eq('status', 'completed')
+  // Single-shot fetch of all completed bid transactions; aggregate in JS.
+  // Replaces the previous per-user query (N+1) — one round-trip regardless
+  // of user count.
+  const { data: allTx, error: txError } = await supabase
+    .from('transactions')
+    .select('user_id, amount_eur')
+    .eq('type', 'bid')
+    .eq('status', 'completed')
 
-      const bidCount = transactions?.length || 0
-      const totalSpent = transactions?.reduce((sum, t) => sum + t.amount_eur, 0) || 0
+  if (txError) {
+    console.error('Failed to fetch transactions:', txError)
+    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 })
+  }
 
-      return {
-        id: user.id,
-        email: user.email,
-        display_name: user.display_name,
-        is_admin: user.is_admin,
-        created_at: user.created_at,
-        bid_count: bidCount,
-        total_spent: totalSpent,
-      }
+  const statsByUser = new Map<string, { count: number; total: number }>()
+  for (const tx of allTx || []) {
+    const prev = statsByUser.get(tx.user_id) || { count: 0, total: 0 }
+    statsByUser.set(tx.user_id, {
+      count: prev.count + 1,
+      total: prev.total + (tx.amount_eur || 0),
     })
-  )
+  }
+
+  const usersWithStats = (users || []).map((user) => {
+    const stats = statsByUser.get(user.id) || { count: 0, total: 0 }
+    return {
+      id: user.id,
+      email: user.email,
+      display_name: user.display_name,
+      is_admin: user.is_admin,
+      created_at: user.created_at,
+      bid_count: stats.count,
+      total_spent: stats.total,
+    }
+  })
 
   return NextResponse.json({ users: usersWithStats })
 }

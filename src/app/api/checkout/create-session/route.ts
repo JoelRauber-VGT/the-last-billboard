@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerActionClient } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe/server';
 import { config } from '@/lib/config';
-import { throwIfFrozen } from '@/lib/freeze/checkFrozen';
+import { throwIfFrozenAsync } from '@/lib/freeze/getFreezeDate';
 
 /**
  * Resolve the caller's locale so Stripe redirects land on the right
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check if billboard is frozen
     try {
-      throwIfFrozen();
+      await throwIfFrozenAsync();
     } catch (freezeError) {
       return NextResponse.json(
         { error: 'Billboard is frozen' },

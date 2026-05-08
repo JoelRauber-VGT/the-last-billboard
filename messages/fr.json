@@ -99,7 +99,6 @@
     "currentBid": "Actuelle",
     "rebid": "Enchérir à nouveau",
     "contactSupport": "Contacter le support",
-    "pixels": "pixels",
     "since": "depuis"
   },
   "settings": {
@@ -129,7 +128,8 @@
       "reports": "Signalements",
       "slots": "Emplacements",
       "transactions": "Transactions",
-      "users": "Utilisateurs"
+      "users": "Utilisateurs",
+      "settings": "Paramètres"
     },
     "overview": {
       "title": "Tableau de bord administrateur",
@@ -165,6 +165,31 @@
       "toggleAdmin": "Basculer admin",
       "viewBids": "Voir les enchères",
       "confirmToggleAdmin": "Modifier le statut administrateur de cet utilisateur ?"
+    },
+    "settings": {
+      "title": "Paramètres de l'application",
+      "description": "Configuration modifiable en temps réel. Les changements prennent effet immédiatement pour tous les visiteurs.",
+      "freezeDate": {
+        "title": "Date de gel du billboard",
+        "description": "Quand le compte à rebours atteint ce moment, plus aucune enchère n'est acceptée et le billboard devient permanent.",
+        "field": "Date et heure du gel (UTC)",
+        "hint": "Interprété en UTC. Le compte à rebours du pied de page lit cette valeur.",
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "success": "Date de gel mise à jour",
+        "warningEarlier": "Vous avancez la date de gel. Les sessions Stripe en cours dont le paiement arrive après le nouveau gel seront automatiquement remboursées.",
+        "warningPast": "Cet horodatage est dans le passé — l'enregistrement gèlera le billboard immédiatement."
+      },
+      "audit": {
+        "title": "Modifications récentes",
+        "description": "10 dernières modifications de paramètres enregistrées dans le journal d'audit.",
+        "empty": "Aucune modification pour l'instant.",
+        "when": "Quand",
+        "who": "Admin",
+        "action": "Action",
+        "previous": "Précédent",
+        "next": "Nouveau"
+      }
     }
   },
   "about": {
@@ -217,10 +242,9 @@
     },
     "specifications": {
       "title": "Spécifications Techniques",
-      "canvasSize": "Taille du Canvas : 10 000 × 10 000 pixels",
+      "sizing": "Taille du bloc : relative à votre enchère, logarithmiquement sur toutes les enchères actives",
       "maxImageSize": "Taille Max d'Image : 10 Mo",
-      "imageFormats": "Formats Supportés : PNG, JPEG, WebP",
-      "minBlockSize": "Taille Min de Bloc : 40 × 40 pixels"
+      "imageFormats": "Formats Supportés : PNG, JPEG, WebP"
     },
     "faq": {
       "title": "Questions Fréquemment Posées",
@@ -248,7 +272,8 @@
     "philosophy": {
       "title": "Pourquoi c'est important",
       "text": "À une époque d'espace numérique infini et de contenu éphémère, The Last Billboard ramène le concept de rareté et de permanence. Il pose la question : que diriez-vous si vous saviez que ce serait préservé pour toujours ? Que seriez-vous prêt à payer pour une visibilité vraiment durable ?"
-    }
+    },
+    "claimCta": "réserver votre place"
   },
   "footer": {
     "imprint": "mentions-légales",
@@ -256,7 +281,8 @@
     "terms": "cgu",
     "contact": "contact",
     "live": "en direct",
-    "uptime": "temps de fonctionnement"
+    "ended": "terminé",
+    "endsIn": "se termine dans"
   },
   "bid": {
     "frozen": {
@@ -279,7 +305,8 @@
       "bidAmountHelp": "Minimum: €{min}",
       "submit": "Procéder au paiement",
       "submitting": "Traitement...",
-      "uploadingImage": "Téléchargement de l'image..."
+      "uploadingImage": "Téléchargement de l'image...",
+      "cropHint": "[info] votre image sera recadrée selon le format de votre slot. gardez l'essentiel au centre."
     },
     "validation": {
       "displayNameRequired": "Le nom d'affichage est requis",
@@ -302,7 +329,13 @@
     "success": {
       "title": "Paiement réussi",
       "message": "Votre enchère est en cours de traitement.",
-      "viewBillboard": "Voir le Billboard"
+      "viewBillboard": "Voir le Billboard",
+      "viewDashboard": "Voir mes enchères",
+      "slotLive": "votre slot est maintenant en direct sur le billboard",
+      "confirmationEmail": "confirmation envoyée à {email}",
+      "statusProcessing": "traitement du paiement...",
+      "statusVerifying": "vérification de la transaction...",
+      "statusConfirmed": "enchère confirmée"
     },
     "cancel": {
       "title": "Paiement annulé",
@@ -413,6 +446,10 @@
     "bid": {
       "title": "Placez votre enchère — The Last Billboard",
       "description": "Revendiquez votre espace sur le billboard final. Choisissez votre image, fixez votre enchère et rivalisez pour la visibilité."
+    },
+    "bidCancel": {
+      "title": "Paiement annulé — The Last Billboard",
+      "description": "Votre paiement d'enchère a été annulé. Vous pouvez réessayer ou retourner au billboard."
     },
     "dashboard": {
       "title": "Mon tableau de bord — The Last Billboard",

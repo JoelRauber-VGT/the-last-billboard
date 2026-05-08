@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -80,8 +79,11 @@ export function SettingsForm({ email, displayName }: SettingsFormProps) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email (Read-only) */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="font-mono text-term-text">
-              {t('profile.email')}
+            <Label
+              htmlFor="email"
+              className="font-mono text-xs text-term-accent tracking-wide"
+            >
+              [{t('profile.email')}]
             </Label>
             <Input
               id="email"
@@ -91,14 +93,17 @@ export function SettingsForm({ email, displayName }: SettingsFormProps) {
               className="font-mono bg-term-border/30 text-term-faint border-term-border cursor-not-allowed"
             />
             <p className="text-xs text-term-faint font-mono">
-              {t('profile.emailHelp')}
+              &gt; {t('profile.emailHelp')}
             </p>
           </div>
 
           {/* Display Name */}
           <div className="space-y-2">
-            <Label htmlFor="displayName" className="font-mono text-term-text">
-              {t('profile.displayName')}
+            <Label
+              htmlFor="displayName"
+              className="font-mono text-xs text-term-accent tracking-wide"
+            >
+              [{t('profile.displayName')}]
             </Label>
             <Input
               id="displayName"
@@ -107,45 +112,45 @@ export function SettingsForm({ email, displayName }: SettingsFormProps) {
               onChange={(e) => setNewDisplayName(e.target.value)}
               placeholder={t('profile.displayNamePlaceholder')}
               maxLength={50}
-              className="font-mono bg-term-bg text-term-text border-term-border focus:border-[#60a5fa]"
+              className="font-mono bg-term-bg text-term-text border-term-border focus:border-term-accent"
             />
             <p className="text-xs text-term-faint font-mono">
-              {t('profile.displayNameHelp')}
+              &gt; {t('profile.displayNameHelp')}
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="p-3 rounded border border-red-500/50 bg-red-500/10">
-              <p className="text-sm text-red-400 font-mono">{error}</p>
-            </div>
+            <p className="text-sm font-mono text-term-danger">
+              &gt; error: {error}
+            </p>
           )}
 
           {/* Success Message */}
           {success && (
-            <div className="p-3 rounded border border-green-500/50 bg-green-500/10">
-              <p className="text-sm text-green-400 font-mono">{t('success')}</p>
-            </div>
+            <p className="text-sm font-mono text-term-success">
+              &gt; {t('success')}
+            </p>
           )}
 
           {/* Save Button */}
-          <Button
+          <button
             type="submit"
             disabled={isSaving}
-            className="font-mono bg-[#60a5fa] hover:bg-[#3b82f6] text-white"
+            className="font-mono text-xs px-3 py-2 text-term-accent border border-term-accent hover:bg-term-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-2"
           >
             {isSaving ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {t('saving')}
+                <Loader2 className="h-3 w-3 animate-spin" />
+                [{t('saving')}]
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 mr-2" />
-                {t('save')}
+                <Save className="h-3 w-3" />
+                [{t('save')}]
               </>
             )}
-          </Button>
+          </button>
         </form>
       </CardContent>
     </Card>

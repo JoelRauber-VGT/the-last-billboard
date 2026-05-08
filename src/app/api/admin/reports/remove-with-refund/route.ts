@@ -1,5 +1,6 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
+import { processRefunds } from '@/lib/stripe/processRefunds'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -43,7 +44,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to remove slot' }, { status: 500 })
     }
 
-    // Create refund transaction if there's an owner
+    // Create refund transaction if there's an owner, then kick off Stripe
+    // processing so the refund doesn't sit indefinitely in `pending` (the
+    // worker is only invoked manually via /api/admin/process-refunds).
+    let refundQueued = false
     if (slot.current_owner_id) {
       const { error: refundError } = await supabase
         .from('transactions')
@@ -58,6 +62,8 @@ export async function POST(request: NextRequest) {
 
       if (refundError) {
         console.error('Failed to create refund:', refundError)
+      } else {
+        refundQueued = true
       }
     }
 
@@ -84,7 +90,20 @@ export async function POST(request: NextRequest) {
       details: { reportId, refund: true },
     })
 
-    return NextResponse.json({ success: true })
+    // Auto-trigger Stripe refund processing if we queued a refund. Best-effort:
+    // if Stripe is down we still return success for the slot removal — the
+    // refund remains `pending` and can be retried via /api/admin/process-refunds.
+    let refundResult: { processed: number; failed: number } | null = null
+    if (refundQueued) {
+      try {
+        const result = await processRefunds()
+        refundResult = { processed: result.processed, failed: result.failed }
+      } catch (refundErr) {
+        console.error('Auto-refund processing failed (will be retryable):', refundErr)
+      }
+    }
+
+    return NextResponse.json({ success: true, refund: refundResult })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid input' }, { status: 400 })

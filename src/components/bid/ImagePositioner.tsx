@@ -168,26 +168,23 @@ export function ImagePositioner({
         : 'grab'
 
   return (
-    <div className="space-y-3">
-      <div className="text-sm text-primary font-mono">&gt; position image</div>
-      <p className="text-xs font-mono text-muted-foreground">
-        zoom in, then drag to choose the focal point. the previews below show
+    <div className="space-y-3 font-mono">
+      <p className="text-[11px] text-term-muted leading-snug">
+        &gt; zoom in, then drag to choose the focal point. previews below show
         how the crop looks at the three common slot shapes.
       </p>
 
       {/* Interactive editor: 1:1 crop */}
       <div
         ref={containerRef}
-        className="mx-auto"
+        className="mx-auto border border-term-border-light"
         style={{
           position: 'relative',
           width: '100%',
           maxWidth: 320,
           aspectRatio: '1 / 1',
-          borderRadius: 4,
           overflow: 'hidden',
           background: '#1a1a1a',
-          border: '1px solid rgba(255,255,255,0.08)',
           cursor,
           touchAction: 'none',
         }}
@@ -198,7 +195,7 @@ export function ImagePositioner({
         onWheel={handleWheel}
       >
         <CoverImage src={imageUrl} width="100%" height="100%" panX={pan.x} panY={pan.y} zoom={zoom} />
-        <div className="absolute bottom-2 right-2 px-2 py-0.5 bg-black/70 rounded text-[11px] font-mono text-white">
+        <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 bg-black/70 text-[10px] text-term-muted">
           {zoom.toFixed(1)}x
         </div>
       </div>
@@ -210,19 +207,19 @@ export function ImagePositioner({
             type="button"
             onClick={handleZoomOut}
             disabled={disabled || zoom <= MIN_ZOOM}
-            className="w-7 h-7 rounded border border-border flex items-center justify-center hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-7 h-7 border border-term-border-light text-term-muted hover:text-white hover:border-term-accent flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label="Zoom out"
           >
             <Minus className="w-3 h-3" />
           </button>
-          <span className="text-sm font-mono text-muted-foreground min-w-[3rem] text-center">
+          <span className="text-xs text-term-muted min-w-[3rem] text-center">
             {zoom.toFixed(1)}x
           </span>
           <button
             type="button"
             onClick={handleZoomIn}
             disabled={disabled || zoom >= MAX_ZOOM}
-            className="w-7 h-7 rounded border border-border flex items-center justify-center hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-7 h-7 border border-term-border-light text-term-muted hover:text-white hover:border-term-accent flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label="Zoom in"
           >
             <Plus className="w-3 h-3" />
@@ -232,16 +229,16 @@ export function ImagePositioner({
           type="button"
           onClick={handleReset}
           disabled={disabled}
-          className="text-xs font-mono text-muted-foreground hover:text-foreground underline disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+          className="text-[11px] text-term-muted hover:text-term-accent disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
         >
           <RotateCcw className="w-3 h-3" />
-          reset
+          [reset]
         </button>
       </div>
 
       {/* Read-only aspect previews */}
       <div className="mt-2">
-        <div className="text-xs font-mono text-muted-foreground mb-2">
+        <div className="text-[10px] text-term-muted mb-2">
           &gt; how it looks at different slot shapes
         </div>
         <div className="grid grid-cols-3 gap-2">
@@ -295,7 +292,7 @@ function AspectPreview({
       <div style={{ width: '100%', aspectRatio: String(aspect), borderRadius: 3, overflow: 'hidden' }}>
         <CoverImage src={imageUrl} width="100%" height="100%" panX={panX} panY={panY} zoom={zoom} />
       </div>
-      <span className="text-[10px] font-mono text-muted-foreground tracking-wide">
+      <span className="text-[10px] text-term-muted tracking-wide">
         {label}
       </span>
     </div>

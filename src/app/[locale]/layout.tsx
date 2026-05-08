@@ -10,6 +10,7 @@ import { Tickertape } from '@/components/layout/Tickertape';
 import { LayoutClient } from '@/components/layout/LayoutClient';
 import { Footer } from '@/components/nav/Footer';
 import { CookieBanner } from '@/components/legal/CookieBanner';
+import { getFreezeDate } from '@/lib/freeze/getFreezeDate';
 import '../globals.css';
 
 const inter = Inter({
@@ -78,6 +79,8 @@ export default async function RootLayout({
     isAdmin = profile?.is_admin || false;
   }
 
+  const freezeDate = await getFreezeDate();
+
   return (
     <html lang={locale} className={`${inter.variable} ${spaceMono.variable}`}>
       <body className="h-screen flex flex-col font-mono antialiased bg-term-bg text-white overflow-hidden">
@@ -86,7 +89,7 @@ export default async function RootLayout({
           <LayoutClient user={user} isAdmin={isAdmin}>
             {children}
           </LayoutClient>
-          <Footer />
+          <Footer freezeDateIso={freezeDate.toISOString()} />
           <CookieBanner />
           <Toaster position="top-right" richColors />
         </NextIntlClientProvider>

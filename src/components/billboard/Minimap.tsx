@@ -166,6 +166,7 @@ export function Minimap({
   return (
     <div
       ref={rootRef}
+      onPointerDown={(e) => e.stopPropagation()}
       onClick={handleBackgroundClick}
       className="absolute bottom-4 right-4 z-20 overflow-hidden select-none"
       style={{

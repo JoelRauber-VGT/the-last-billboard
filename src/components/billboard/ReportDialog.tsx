@@ -4,23 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { toast } from 'sonner'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { createBrowserClient } from '@/lib/supabase/client'
 import { Link } from '@/i18n/routing'
 
@@ -56,15 +40,12 @@ export function ReportDialog({
   onSuccess,
 }: ReportDialogProps) {
   const t = useTranslations('report')
-  const [reason, setReason] = useState<ReportReason | null>(null)
+  const [reason, setReason] = useState<ReportReason | ''>('')
   const [details, setDetails] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
 
-  // Resolve auth state when the dialog opens so we can show a
-  // login prompt instead of letting the user fill out a form that
-  // will fail with 401 at submit.
   useEffect(() => {
     if (!open) return
     let cancelled = false
@@ -76,6 +57,16 @@ export function ReportDialog({
       cancelled = true
     }
   }, [open])
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (isSubmitting) return
+    onOpenChange(newOpen)
+    if (!newOpen) {
+      setReason('')
+      setDetails('')
+      setError(null)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -103,13 +94,8 @@ export function ReportDialog({
       const response = await fetch('/api/reports', {
         method: 'POST',
         credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          slot_id: slotId,
-          ...result.data,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slot_id: slotId, ...result.data }),
       })
 
       const data = await response.json().catch(() => ({}))
@@ -127,12 +113,10 @@ export function ReportDialog({
       }
 
       toast.success(t('success'))
-      setReason(null)
+      setReason('')
       setDetails('')
       onOpenChange(false)
-      if (onSuccess) {
-        onSuccess()
-      }
+      if (onSuccess) onSuccess()
     } catch (err) {
       console.error('Report submission error:', err)
       setError(t('error'))
@@ -141,37 +125,48 @@ export function ReportDialog({
     }
   }
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!isSubmitting) {
-      onOpenChange(newOpen)
-      if (!newOpen) {
-        // Reset form when closing
-        setReason(null)
-        setDetails('')
-        setError(null)
-      }
-    }
-  }
+  const dialogClass =
+    'sm:max-w-[460px] max-w-[calc(100vw-32px)] p-0 gap-0 bg-term-surface border-term-border-light'
 
   if (open && isAuthenticated === false) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>{t('title')}</DialogTitle>
-            <DialogDescription>{t('loginRequired')}</DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end gap-3">
-            <Button
-              type="button"
-              variant="outline"
+        <DialogContent
+          className={dialogClass}
+          showCloseButton={false}
+          aria-label={t('title')}
+        >
+          <div className="flex items-center justify-between px-5 py-3 border-b border-term-faint">
+            <span className="font-mono text-sm text-term-accent">
+              $ report
+            </span>
+            <button
               onClick={() => handleOpenChange(false)}
+              className="font-mono text-sm text-term-dim hover:text-term-muted transition-colors"
+              aria-label="Close dialog"
             >
-              Cancel
-            </Button>
-            <Link href="/login">
-              <Button type="button">{t('loginCta')}</Button>
-            </Link>
+              [esc]
+            </button>
+          </div>
+          <div className="px-5 py-6 bg-term-bg font-mono">
+            <p className="text-term-text text-sm mb-4">
+              &gt; {t('loginRequired')}
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => handleOpenChange(false)}
+                className="px-3 py-1.5 text-xs text-term-muted border border-term-border-light hover:text-white hover:border-term-accent transition-colors"
+              >
+                [cancel]
+              </button>
+              <Link
+                href="/login"
+                className="px-3 py-1.5 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 transition-colors"
+              >
+                [{t('loginCta')}]
+              </Link>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -180,86 +175,102 @@ export function ReportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>
-            {t('button')}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className={dialogClass}
+        showCloseButton={false}
+        aria-label={t('title')}
+      >
+        {/* Terminal Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-term-faint">
+          <span className="font-mono text-sm text-term-accent">$ report</span>
+          <button
+            onClick={() => handleOpenChange(false)}
+            disabled={isSubmitting}
+            className="font-mono text-sm text-term-dim hover:text-term-muted transition-colors disabled:opacity-30"
+            aria-label="Close dialog"
+          >
+            [esc]
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="px-5 py-5 bg-term-bg font-mono space-y-5"
+        >
+          <p className="text-term-text text-sm">&gt; {t('button')}</p>
+
           {/* Reason Select */}
           <div className="space-y-2">
-            <Label htmlFor="reason">{t('reason.label')}</Label>
-            <Select
-              value={reason}
-              onValueChange={(value) => setReason(value as ReportReason)}
-              disabled={isSubmitting}
+            <label
+              htmlFor="report-reason"
+              className="block text-xs text-term-accent tracking-wide"
             >
-              <SelectTrigger id="reason">
-                <SelectValue placeholder={t('reason.label')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="inappropriate">
-                  {t('reason.inappropriate')}
-                </SelectItem>
-                <SelectItem value="misleading">
-                  {t('reason.misleading')}
-                </SelectItem>
-                <SelectItem value="copyright">
-                  {t('reason.copyright')}
-                </SelectItem>
-                <SelectItem value="malware">
-                  {t('reason.malware')}
-                </SelectItem>
-                <SelectItem value="spam">
-                  {t('reason.spam')}
-                </SelectItem>
-                <SelectItem value="other">
-                  {t('reason.other')}
-                </SelectItem>
-              </SelectContent>
-            </Select>
+              [{t('reason.label')}]
+            </label>
+            <select
+              id="report-reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value as ReportReason | '')}
+              disabled={isSubmitting}
+              className="w-full bg-term-bg border border-term-border-light text-white px-3 py-2 font-mono text-sm focus:outline-none focus:border-term-accent transition-colors disabled:opacity-50"
+            >
+              <option value="" disabled>
+                {t('reason.label')}
+              </option>
+              <option value="inappropriate">{t('reason.inappropriate')}</option>
+              <option value="misleading">{t('reason.misleading')}</option>
+              <option value="copyright">{t('reason.copyright')}</option>
+              <option value="malware">{t('reason.malware')}</option>
+              <option value="spam">{t('reason.spam')}</option>
+              <option value="other">{t('reason.other')}</option>
+            </select>
           </div>
 
           {/* Details Textarea */}
           <div className="space-y-2">
-            <Label htmlFor="details">{t('details.label')}</Label>
-            <Textarea
-              id="details"
+            <label
+              htmlFor="report-details"
+              className="block text-xs text-term-accent tracking-wide"
+            >
+              [{t('details.label')}]
+            </label>
+            <textarea
+              id="report-details"
               placeholder={t('details.placeholder')}
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               maxLength={500}
               rows={4}
               disabled={isSubmitting}
+              className="w-full bg-term-bg border border-term-border-light text-white placeholder:text-term-dim px-3 py-2 font-mono text-sm focus:outline-none focus:border-term-accent transition-colors disabled:opacity-50 resize-none"
             />
-            <p className="text-xs text-muted-foreground">
-              {t('details.maxLength')} ({details.length}/500)
+            <p className="text-[10px] text-term-muted">
+              &gt; {t('details.maxLength')} ({details.length}/500)
             </p>
           </div>
 
-          {/* Error Message */}
+          {/* Error */}
           {error && (
-            <div className="rounded-md bg-red-50 p-3">
-              <p className="text-sm text-red-800">{error}</p>
-            </div>
+            <p className="text-sm text-term-danger">&gt; error: {error}</p>
           )}
 
-          {/* Submit Button */}
-          <div className="flex justify-end gap-3">
-            <Button
+          {/* Buttons */}
+          <div className="flex justify-end gap-2 pt-1">
+            <button
               type="button"
-              variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
+              className="px-3 py-1.5 text-xs text-term-muted border border-term-border-light hover:text-white hover:border-term-accent disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !reason}>
-              {isSubmitting ? 'Submitting...' : t('submit')}
-            </Button>
+              [cancel]
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || !reason}
+              className="px-3 py-1.5 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSubmitting ? '[submitting...]' : `[${t('submit')}]`}
+            </button>
           </div>
         </form>
       </DialogContent>

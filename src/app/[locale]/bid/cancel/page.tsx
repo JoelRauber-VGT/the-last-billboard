@@ -1,71 +1,53 @@
 'use client';
 
-import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { XCircle, HelpCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/routing';
 
 export default function BidCancelPage() {
-  const router = useRouter();
-  const params = useParams();
-  const locale = params.locale as string;
   const t = useTranslations('bid.cancel');
   const tErrors = useTranslations('errors');
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-8 md:py-16">
-      <Card className="border-yellow-200 bg-yellow-50/50">
-        <CardHeader className="text-center pb-4">
-          <div className="flex justify-center mb-4">
-            <div className="rounded-full bg-yellow-100 p-4">
-              <XCircle className="size-16 text-yellow-600" aria-hidden="true" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl md:text-3xl text-yellow-900">
-            {t('title')}
-          </CardTitle>
-          <CardDescription className="text-base text-yellow-800 mt-2">
-            {t('message')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-white/70 border border-yellow-200 rounded-lg p-4 space-y-2">
-            <p className="text-sm text-yellow-900">
-              Your payment was not completed. No charges have been made to your account.
-            </p>
-            <p className="text-sm text-yellow-900">
-              You can try again or return to the billboard to browse other options.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Button
-              onClick={() => router.push(`/${locale}/bid`)}
-              className="flex-1"
-              size="lg"
-            >
-              {t('tryAgain')}
-            </Button>
-            <Button
-              onClick={() => router.push(`/${locale}`)}
-              variant="outline"
-              className="flex-1"
-              size="lg"
-            >
-              {t('backToBillboard')}
-            </Button>
-          </div>
-          <div className="pt-2 border-t border-yellow-200">
-            <a
-              href="mailto:support@thelastbillboard.com"
-              className="flex items-center justify-center gap-2 text-sm text-yellow-700 hover:text-yellow-900 transition-colors"
-            >
-              <HelpCircle className="size-4" />
-              {tErrors('contactSupport')}
-            </a>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="h-full w-full flex items-center justify-center bg-term-bg text-white font-mono p-6">
+      <div className="max-w-md w-full border border-term-border-light bg-term-surface p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-term-faint pb-2">
+          <span className="text-sm text-term-accent">$ payment</span>
+          <span className="text-xs text-term-danger">[cancelled]</span>
+        </div>
+
+        <h1 className="text-lg text-term-text">&gt; {t('title')}</h1>
+
+        <p className="text-sm text-term-muted leading-relaxed">
+          &gt; {t('message')}
+        </p>
+        <p className="text-xs text-term-muted leading-relaxed">
+          &gt; your payment was not completed. no charges were made.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-2 pt-2">
+          <Link
+            href="/bid"
+            className="flex-1 text-center px-3 py-2 text-xs text-term-accent border border-term-accent hover:bg-term-accent/10 transition-colors"
+          >
+            [{t('tryAgain')}]
+          </Link>
+          <Link
+            href="/"
+            className="flex-1 text-center px-3 py-2 text-xs text-term-muted border border-term-border-light hover:text-white hover:border-term-accent transition-colors"
+          >
+            [{t('backToBillboard')}]
+          </Link>
+        </div>
+
+        <div className="pt-3 border-t border-term-faint">
+          <a
+            href="mailto:support@thelastbillboard.com"
+            className="text-[11px] text-term-muted hover:text-term-accent transition-colors"
+          >
+            &gt; {tErrors('contactSupport')}
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

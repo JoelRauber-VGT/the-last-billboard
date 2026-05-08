@@ -99,7 +99,6 @@
     "currentBid": "Aktuell",
     "rebid": "Erneut bieten",
     "contactSupport": "Support kontaktieren",
-    "pixels": "Pixel",
     "since": "seit"
   },
   "settings": {
@@ -129,7 +128,8 @@
       "reports": "Meldungen",
       "slots": "Slots",
       "transactions": "Transaktionen",
-      "users": "Benutzer"
+      "users": "Benutzer",
+      "settings": "Einstellungen"
     },
     "overview": {
       "title": "Admin-Dashboard",
@@ -165,6 +165,31 @@
       "toggleAdmin": "Admin umschalten",
       "viewBids": "Gebote anzeigen",
       "confirmToggleAdmin": "Admin-Status für diesen Benutzer ändern?"
+    },
+    "settings": {
+      "title": "App-Einstellungen",
+      "description": "Laufzeit-konfigurierbare Werte. Änderungen wirken sofort für alle Besucher.",
+      "freezeDate": {
+        "title": "Billboard-Freeze-Datum",
+        "description": "Wenn der Countdown diesen Zeitpunkt erreicht, werden keine Gebote mehr angenommen und das Billboard wird permanent.",
+        "field": "Freeze-Datum & Uhrzeit (UTC)",
+        "hint": "Wird als UTC interpretiert. Der Countdown im Footer liest diesen Wert.",
+        "save": "Speichern",
+        "saving": "Speichere…",
+        "success": "Freeze-Datum aktualisiert",
+        "warningEarlier": "Sie verschieben das Freeze-Datum nach vorne. Laufende Stripe-Sessions, deren Zahlung nach dem neuen Freeze eingeht, werden automatisch zurückerstattet.",
+        "warningPast": "Dieser Zeitpunkt liegt in der Vergangenheit — Speichern friert das Billboard sofort ein."
+      },
+      "audit": {
+        "title": "Letzte Änderungen",
+        "description": "Die 10 letzten Einstellungsänderungen aus dem Audit-Log.",
+        "empty": "Noch keine Änderungen.",
+        "when": "Wann",
+        "who": "Admin",
+        "action": "Aktion",
+        "previous": "Vorher",
+        "next": "Neu"
+      }
     }
   },
   "about": {
@@ -217,10 +242,9 @@
     },
     "specifications": {
       "title": "Technische Spezifikationen",
-      "canvasSize": "Canvas-Größe: 10.000 × 10.000 Pixel",
+      "sizing": "Block-Größe: relativ zum eigenen Gebot, logarithmisch zu allen aktiven Geboten",
       "maxImageSize": "Maximale Bildgröße: 10 MB",
-      "imageFormats": "Unterstützte Formate: PNG, JPEG, WebP",
-      "minBlockSize": "Minimale Blockgröße: 40 × 40 Pixel"
+      "imageFormats": "Unterstützte Formate: PNG, JPEG, WebP"
     },
     "faq": {
       "title": "Häufig gestellte Fragen",
@@ -248,7 +272,8 @@
     "philosophy": {
       "title": "Warum das wichtig ist",
       "text": "In einer Zeit unendlichen digitalen Raums und flüchtiger Inhalte bringt The Last Billboard das Konzept von Knappheit und Beständigkeit zurück. Es fragt: Was würden Sie sagen, wenn Sie wüssten, es würde für immer bewahrt? Was wären Sie bereit zu zahlen für wirklich dauerhafte Sichtbarkeit?"
-    }
+    },
+    "claimCta": "Platz sichern"
   },
   "footer": {
     "imprint": "impressum",
@@ -256,7 +281,8 @@
     "terms": "agb",
     "contact": "kontakt",
     "live": "live",
-    "uptime": "Betriebszeit"
+    "ended": "beendet",
+    "endsIn": "endet in"
   },
   "bid": {
     "frozen": {
@@ -279,7 +305,8 @@
       "bidAmountHelp": "Minimum: €{min}",
       "submit": "Zur Zahlung",
       "submitting": "Verarbeiten...",
-      "uploadingImage": "Bild wird hochgeladen..."
+      "uploadingImage": "Bild wird hochgeladen...",
+      "cropHint": "[info] dein bild wird auf dein slot-format zugeschnitten. halte wichtige inhalte mittig."
     },
     "validation": {
       "displayNameRequired": "Anzeigename ist erforderlich",
@@ -302,7 +329,13 @@
     "success": {
       "title": "Zahlung erfolgreich",
       "message": "Ihr Gebot wird bearbeitet.",
-      "viewBillboard": "Billboard ansehen"
+      "viewBillboard": "Billboard ansehen",
+      "viewDashboard": "Meine Gebote ansehen",
+      "slotLive": "dein Slot ist jetzt live auf dem Billboard",
+      "confirmationEmail": "Bestätigung gesendet an {email}",
+      "statusProcessing": "Zahlung wird bearbeitet...",
+      "statusVerifying": "Transaktion wird verifiziert...",
+      "statusConfirmed": "Gebot bestätigt"
     },
     "cancel": {
       "title": "Zahlung abgebrochen",
@@ -413,6 +446,10 @@
     "bid": {
       "title": "Geben Sie Ihr Gebot ab — The Last Billboard",
       "description": "Sichern Sie sich Ihren Platz auf dem finalen Billboard. Wählen Sie Ihr Bild, legen Sie Ihr Gebot fest und konkurrieren Sie um Sichtbarkeit."
+    },
+    "bidCancel": {
+      "title": "Zahlung abgebrochen — The Last Billboard",
+      "description": "Ihre Gebotszahlung wurde abgebrochen. Sie können es erneut versuchen oder zum Billboard zurückkehren."
     },
     "dashboard": {
       "title": "Mein Dashboard — The Last Billboard",

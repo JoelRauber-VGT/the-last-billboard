@@ -14,6 +14,7 @@ export function ZoomControls({ onZoomIn, onZoomOut, onReset, zoom }: ZoomControl
   const canZoomIn = zoom < 4.9999
   return (
     <div
+      onPointerDown={(e) => e.stopPropagation()}
       className="absolute bottom-4 left-4 z-20 flex flex-col select-none"
       style={{
         background: 'rgba(0, 0, 0, 0.8)',

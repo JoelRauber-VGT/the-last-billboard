@@ -7,11 +7,6 @@ export const config = {
   commissionRate: 0.10, // 10% Platform-Fee
   currency: 'EUR' as const,
 
-  // Canvas
-  canvasWidth: 10000,
-  canvasHeight: 10000,
-  minBlockPixelSize: 40,
-
   // Zeit (nur für v2_displacement)
   billboardEndsAt: new Date('2026-06-30T23:59:59Z'),
 

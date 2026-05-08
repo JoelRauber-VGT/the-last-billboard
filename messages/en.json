@@ -99,7 +99,6 @@
     "currentBid": "Current",
     "rebid": "Bid again",
     "contactSupport": "Contact support",
-    "pixels": "pixels",
     "since": "since"
   },
   "settings": {
@@ -129,7 +128,8 @@
       "reports": "Reports",
       "slots": "Slots",
       "transactions": "Transactions",
-      "users": "Users"
+      "users": "Users",
+      "settings": "Settings"
     },
     "overview": {
       "title": "Admin Dashboard",
@@ -165,6 +165,31 @@
       "toggleAdmin": "Toggle Admin",
       "viewBids": "View Bids",
       "confirmToggleAdmin": "Change admin status for this user?"
+    },
+    "settings": {
+      "title": "App Settings",
+      "description": "Runtime-mutable configuration. Changes take effect immediately for all visitors.",
+      "freezeDate": {
+        "title": "Billboard freeze date",
+        "description": "When the countdown hits this moment, no more bids are accepted and the billboard becomes permanent.",
+        "field": "Freeze date & time (UTC)",
+        "hint": "Interpreted as UTC. The countdown in the footer reads this value.",
+        "save": "Save",
+        "saving": "Saving…",
+        "success": "Freeze date updated",
+        "warningEarlier": "You are moving the freeze date earlier. In-flight Stripe sessions whose payment lands after the new freeze will be refunded automatically.",
+        "warningPast": "This timestamp is in the past — saving will freeze the billboard immediately."
+      },
+      "audit": {
+        "title": "Recent changes",
+        "description": "Last 10 settings changes recorded in the audit log.",
+        "empty": "No changes yet.",
+        "when": "When",
+        "who": "Admin",
+        "action": "Action",
+        "previous": "Previous",
+        "next": "New"
+      }
     }
   },
   "about": {
@@ -217,10 +242,9 @@
     },
     "specifications": {
       "title": "Technical Specifications",
-      "canvasSize": "Canvas Size: 10,000 × 10,000 pixels",
+      "sizing": "Block size: relative to your bid, logarithmically across all active bids",
       "maxImageSize": "Maximum Image Size: 10 MB",
-      "imageFormats": "Supported Formats: PNG, JPEG, WebP",
-      "minBlockSize": "Minimum Block Size: 40 × 40 pixels"
+      "imageFormats": "Supported Formats: PNG, JPEG, WebP"
     },
     "faq": {
       "title": "Frequently Asked Questions",
@@ -248,7 +272,8 @@
     "philosophy": {
       "title": "Why This Matters",
       "text": "In an age of infinite digital space and ephemeral content, The Last Billboard brings back the concept of scarcity and permanence. It asks: what would you say if you knew it would be preserved forever? What would you be willing to pay for truly lasting visibility?"
-    }
+    },
+    "claimCta": "claim your spot"
   },
   "footer": {
     "imprint": "imprint",
@@ -256,7 +281,8 @@
     "terms": "terms",
     "contact": "contact",
     "live": "live",
-    "uptime": "uptime"
+    "ended": "ended",
+    "endsIn": "ends in"
   },
   "bid": {
     "frozen": {
@@ -279,7 +305,8 @@
       "bidAmountHelp": "Minimum: €{min}",
       "submit": "Proceed to Payment",
       "submitting": "Processing...",
-      "uploadingImage": "Uploading image..."
+      "uploadingImage": "Uploading image...",
+      "cropHint": "[info] your image will be cropped to fit your slot format. keep the important content centered."
     },
     "validation": {
       "displayNameRequired": "Display name is required",
@@ -302,7 +329,13 @@
     "success": {
       "title": "Payment Successful",
       "message": "Your bid is being processed.",
-      "viewBillboard": "View Billboard"
+      "viewBillboard": "View Billboard",
+      "viewDashboard": "View My Bids",
+      "slotLive": "your slot is now live on the billboard",
+      "confirmationEmail": "confirmation sent to {email}",
+      "statusProcessing": "processing payment...",
+      "statusVerifying": "verifying transaction...",
+      "statusConfirmed": "bid confirmed"
     },
     "cancel": {
       "title": "Payment Cancelled",
@@ -413,6 +446,10 @@
     "bid": {
       "title": "Place Your Bid — The Last Billboard",
       "description": "Claim your space on the final billboard. Choose your image, set your bid, and compete for visibility."
+    },
+    "bidCancel": {
+      "title": "Payment Cancelled — The Last Billboard",
+      "description": "Your bid payment was cancelled. You can try again or return to the billboard."
     },
     "dashboard": {
       "title": "My Dashboard — The Last Billboard",

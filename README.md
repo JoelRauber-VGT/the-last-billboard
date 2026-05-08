@@ -2,6 +2,39 @@
 
 A collaborative digital billboard where every bid reshapes the canvas. The Last Billboard is an innovative web application that combines art, economics, and technology to create a dynamic, ever-evolving digital canvas.
 
+## ⚠️ Production Notice
+
+**The Last Billboard is a production application.**
+
+- Every change must be tested in isolation.
+- No change may break existing functionality.
+- All interactive elements must be 100% functional — no half-finished buttons, no dead links, no placeholder handlers.
+- Before deploying: run the Manual Smoke Test below.
+
+### Critical Invariants
+
+The following behaviors must never regress:
+
+1. **Displacement atomicity** — displaced slots trigger an atomic Postgres function (`process_bid`, migration 008). Refunds are calculated as 90% to the displaced owner, 10% retained as platform commission. Race-protection uses `SELECT … FOR UPDATE`.
+2. **Freeze status** — when `/api/freeze-status` returns active (i.e. `isBillboardFrozen()` is true), bidding is disabled app-wide (`/bid` shows the frozen gate; `FreezeBanner` renders on the board).
+3. **Auth flow** — Supabase Magic Link only. No password fields anywhere.
+4. **Stripe webhook idempotency** — `/api/webhooks/stripe` must handle duplicate events safely. The current guard skips any transaction whose status is not `pending`, and the Zod schema validates metadata before any DB write.
+5. **Realtime consistency** — the billboard canvas reflects DB state within ~2 s of any change (Supabase Realtime subscription + `useLiveTicker`).
+6. **Admin-route existence leak** — every `/api/admin/*` endpoint returns **404** to non-admin callers (never 401/403). Matches `checkAdminAuth()` in `src/lib/admin/auth.ts`.
+
+## Manual Smoke Test (run before every deploy)
+
+1. **Auth** — Log in via Magic Link. Confirm session persists on reload.
+2. **Billboard** — Open `/`. Confirm canvas renders, zoom (buttons + wheel) works, minimap tracks pan/zoom 1:1.
+3. **Bid** — Place a bid end-to-end with Stripe test card (`4242 4242 4242 4242`). Confirm slot appears on the board via Realtime.
+4. **Displacement** — Place a higher bid that displaces another owner. Confirm refund appears in the Stripe dashboard (status eventually `succeeded`) and `slot_history.ended_at` is set on the old row.
+5. **Report** — Submit a report on a slot (authenticated). Confirm row in `reports` table.
+6. **Admin** — Dismiss a report, export transactions CSV, toggle an admin flag (on a non-self user).
+7. **Mobile** — Repeat steps 2–5 on a 390×844 viewport.
+8. **Curl health-check** — `curl http://<host>/api/health` returns 200 `{status:"healthy", ...}`.
+
+**If any step fails: do not deploy.**
+
 ## Tech Stack
 
 ### Core
@@ -199,6 +232,17 @@ The application configuration is centralized in `src/lib/config.ts`:
 - Bidding mechanics and financial settings
 - Upload limits and file types
 - Internationalization settings
+
+## Deployment
+
+Before every deploy to production:
+
+1. Run the [Manual Smoke Test](#manual-smoke-test-run-before-every-deploy) above end-to-end.
+2. Verify every `Critical Invariant` still holds.
+3. Ensure all required `env` vars (Supabase, Stripe, `LEGAL_*`, `ADMIN_BOOTSTRAP_EMAIL` if applicable) are set in the deploy target.
+4. `npm run build` must succeed locally (`tsc --noEmit` clean, no ESLint errors).
+
+Any regression of a Critical Invariant is a launch-blocker — roll back the deploy.
 
 ## License
 

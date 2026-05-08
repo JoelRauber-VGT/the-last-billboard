@@ -8,7 +8,6 @@ import { Minimap } from './Minimap'
 import { ZoomControls } from './ZoomControls'
 import { SlotTooltip } from './SlotTooltip'
 import { SlotDetailModal } from './SlotDetailModal'
-import { HowItWorksButton } from './HowItWorksButton'
 import { OnboardingModal, useOnboarding } from '../onboarding/OnboardingModal'
 import type { Slot } from '@/types/database'
 
@@ -26,7 +25,7 @@ export function FullscreenBillboard({
   const [modalOpen, setModalOpen] = useState(false)
   const [hoveredSlot, setHoveredSlot] = useState<Slot | null>(null)
   const [cursor, setCursor] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
-  const { isOpen: onboardingOpen, open: openOnboarding, close: closeOnboarding } = useOnboarding()
+  const { isOpen: onboardingOpen, close: closeOnboarding } = useOnboarding()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const slotsRef = useRef<Slot[]>(slots)
@@ -123,10 +122,6 @@ export function FullscreenBillboard({
           />
         )}
 
-        {/* How It Works (top-right; bottom-left is ZoomControls, bottom-right is Minimap) */}
-        <div className="absolute top-4 right-4 z-20">
-          <HowItWorksButton onClick={openOnboarding} />
-        </div>
       </div>
 
       {/* Hover tooltip — portaled to fixed position */}

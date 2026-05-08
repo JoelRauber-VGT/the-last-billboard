@@ -201,9 +201,9 @@ export function OnboardingTreemap({ step }: OnboardingTreemapProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: prefersReducedMotion ? 0 : 0.2 }}
-              className="text-[11px] font-mono text-muted-foreground"
+              className="text-[11px] font-mono text-term-muted"
             >
-              <span className="font-medium text-foreground">
+              <span className="font-medium text-term-text">
                 {animationState.tickerText.split('—')[0]}
               </span>
               {animationState.tickerText.includes('—') && (

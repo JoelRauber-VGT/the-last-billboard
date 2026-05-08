@@ -3,15 +3,20 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const slotId = searchParams.get('slot');
+    const rawSlot = searchParams.get('slot');
 
-    // For slot-specific OG images (optional future enhancement)
-    if (slotId) {
-      // TODO: Fetch slot data and generate custom OG
-      // For now, fall back to default
+    // Reject malformed slot params early — the OG pipeline must not take
+    // unvalidated input into a DB lookup. Slot-specific OG rendering is a
+    // separate P2; for now we just guard the param and continue with the
+    // default card.
+    if (rawSlot !== null && !UUID_RE.test(rawSlot)) {
+      return new Response('Invalid slot id', { status: 400 });
     }
 
     // Default OG image

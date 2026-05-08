@@ -127,11 +127,11 @@ export function SlotTooltip({
       }}
       role="tooltip"
     >
-      <div style={{ color: '#ffffff', fontSize: 13, lineHeight: 1.3 }}>
+      <div style={{ color: '#ffffff', fontSize: 14, lineHeight: 1.3 }}>
         {visibleSlot.display_name}
       </div>
       {visibleSlot.link_url && (
-        <div style={{ color: '#60a5fa', fontSize: 11, marginTop: 2, lineHeight: 1.3 }}>
+        <div style={{ color: '#60a5fa', fontSize: 12, marginTop: 2, lineHeight: 1.3 }}>
           {shortenUrl(visibleSlot.link_url, 40)}
         </div>
       )}

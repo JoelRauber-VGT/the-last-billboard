@@ -1,7 +1,7 @@
 import { requireAdmin } from '@/lib/admin/auth'
 import { getTranslations } from 'next-intl/server'
 import Link from 'next/link'
-import { LayoutDashboardIcon, AlertTriangleIcon, ImageIcon, CreditCardIcon, UsersIcon } from 'lucide-react'
+import { LayoutDashboardIcon, AlertTriangleIcon, ImageIcon, CreditCardIcon, UsersIcon, SettingsIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -54,6 +54,11 @@ export default async function AdminLayout({
       name: t('users'),
       href: `/${locale}/admin/users`,
       icon: UsersIcon,
+    },
+    {
+      name: t('settings'),
+      href: `/${locale}/admin/settings`,
+      icon: SettingsIcon,
     },
   ]
 
