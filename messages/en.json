@@ -11,7 +11,9 @@
     "placeBid": "place-bid",
     "rules": "rules",
     "signIn": "sign in",
-    "bid": "bid"
+    "bid": "bid",
+    "inbox": "inbox",
+    "profile": "profile"
   },
   "landing": {
     "hero": {
@@ -296,6 +298,8 @@
       "outbiddingInfo": "You are outbidding {name} (current bid: €{amount})",
       "displayName": "Display Name",
       "displayNamePlaceholder": "Your brand or name",
+      "anonymous": "anonymous purchase",
+      "anonymousHelp": "Your name and profile won't be shown — viewers see \"anonymous\". They can request to know who you are; you decide whether to reveal yourself.",
       "image": "Image (optional)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "Link URL",
@@ -394,7 +398,13 @@
       "from": "from",
       "to": "to",
       "displacedBy": "displaced by {name}",
-      "currentOwner": "current owner"
+      "currentOwner": "current owner",
+      "anonymous": "anonymous",
+      "anonymousNotice": "This buyer chose to remain anonymous.",
+      "askForReveal": "ask who this is",
+      "viewProfile": "view profile",
+      "revealAccepted": "this user revealed their identity to you",
+      "revealPending": "your reveal request is pending"
     }
   },
   "ticker": {
@@ -433,6 +443,75 @@
       "message": "This slot was reported and is under review. Contact support if you think this is a mistake.",
       "contactSupport": "Contact Support"
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "joinedOn": "joined {date}",
+    "activeSlots": "Active slots",
+    "lostSlots": "Past slots",
+    "anonymousSummary": "{count, plural, =0 {no anonymous purchases} one {# anonymous purchase} other {# anonymous purchases}}",
+    "noActive": "No active slots.",
+    "noHistory": "No past slots.",
+    "notFound": "Profile not found.",
+    "currentBid": "current bid",
+    "lostFor": "held for €{amount}",
+    "endedOn": "ended {date}",
+    "viewSlot": "view slot",
+    "noDisplayName": "user"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "tabs": {
+      "incoming": "incoming",
+      "outgoing": "outgoing"
+    },
+    "empty": {
+      "incoming": "No messages.",
+      "outgoing": "You haven't sent any reveal requests."
+    },
+    "markAllRead": "mark all read",
+    "markRead": "mark read",
+    "open": "open",
+    "unread": "unread",
+    "from": "from",
+    "to": "to",
+    "anonymousFrom": "anonymous user",
+    "types": {
+      "reveal_request_received": "wants to know who you are",
+      "reveal_request_accepted": "revealed their identity",
+      "reveal_request_declined": "declined to reveal their identity",
+      "system": "system message"
+    },
+    "viewSlot": "view slot",
+    "noMessage": "no message"
+  },
+  "revealRequest": {
+    "dialogTitle": "Ask for reveal",
+    "intro": "This slot was purchased anonymously. You can send a request asking the buyer to reveal who they are. They can accept, decline, or ignore.",
+    "messageLabel": "Message (optional)",
+    "messagePlaceholder": "Hi, I'd love to know who you are because…",
+    "send": "send request",
+    "sending": "sending...",
+    "success": "request sent",
+    "alreadySent": "you already sent a request for this slot",
+    "rateLimit": "you've reached the maximum of 3 requests per 24h",
+    "selfTarget": "you cannot send a reveal request to yourself",
+    "loginRequired": "sign in to send a reveal request",
+    "error": "couldn't send the request, please try again",
+    "incomingTitle": "Reveal request",
+    "incomingIntro": "{name} wants to know who you are.",
+    "messageFromRequester": "Their message:",
+    "responseLabel": "Response (optional)",
+    "responsePlaceholder": "Add a short note for the requester…",
+    "accept": "reveal my identity",
+    "decline": "decline",
+    "responding": "saving...",
+    "responseAccepted": "you revealed your identity",
+    "responseDeclined": "you declined the request",
+    "outgoingPending": "waiting for response",
+    "outgoingAccepted": "they revealed their identity",
+    "outgoingDeclined": "they declined",
+    "viewProfile": "view their profile"
   },
   "meta": {
     "landing": {

@@ -34,6 +34,36 @@ interface UseBillboardViewportOptions {
   onPanEnd?: () => void
 }
 
+interface PointerInfo {
+  pointerId: number
+  startClientX: number
+  startClientY: number
+  clientX: number
+  clientY: number
+  lastMoves: Array<{ x: number; y: number; t: number }>
+  moved: boolean
+  target: EventTarget | null
+}
+
+interface PanAnchor {
+  pointerId: number
+  anchorClientX: number
+  anchorClientY: number
+  anchorPanX: number
+  anchorPanY: number
+  // Velocity samples before this timestamp are discarded (post-pinch grace).
+  velocityActiveAt: number
+}
+
+interface PinchSession {
+  startDistance: number
+  startCentroidX: number
+  startCentroidY: number
+  startZoom: number
+  startPanX: number
+  startPanY: number
+}
+
 /**
  * Custom viewport controller for the billboard.
  *
@@ -62,18 +92,16 @@ export function useBillboardViewport(
   const optionsRef = useRef(options)
   optionsRef.current = options
 
-  // Pointer session state
-  const pointerStateRef = useRef<{
-    active: boolean
-    pointerId: number
-    startX: number
-    startY: number
-    startPanX: number
-    startPanY: number
-    lastMoves: Array<{ x: number; y: number; t: number }>
-    moved: boolean
-    target: EventTarget | null
-  } | null>(null)
+  const isPanningRef = useRef(false)
+  const setPanningSync = useCallback((v: boolean) => {
+    isPanningRef.current = v
+    setIsPanning(v)
+  }, [])
+
+  // Multi-pointer session state
+  const pointersRef = useRef<Map<number, PointerInfo>>(new Map())
+  const panAnchorRef = useRef<PanAnchor | null>(null)
+  const pinchRef = useRef<PinchSession | null>(null)
 
   // Momentum animation state
   const momentumRef = useRef<{ vx: number; vy: number; rafId: number | null }>({
@@ -213,7 +241,24 @@ export function useBillboardViewport(
     return () => el.removeEventListener('wheel', listener)
   }, [containerRef, handleWheel])
 
-  // ---- POINTER (pan + click) ----
+  // iOS Safari fires non-standard gesture events even when touch-action: none
+  // is set on the element. Without preventDefault here, the OS will trigger
+  // page-zoom and our pinch handler will desync.
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const block = (e: Event) => e.preventDefault()
+    el.addEventListener('gesturestart', block, { passive: false })
+    el.addEventListener('gesturechange', block, { passive: false })
+    el.addEventListener('gestureend', block, { passive: false })
+    return () => {
+      el.removeEventListener('gesturestart', block)
+      el.removeEventListener('gesturechange', block)
+      el.removeEventListener('gestureend', block)
+    }
+  }, [containerRef])
+
+  // ---- POINTER (pan + pinch + click) ----
   const runMomentum = useCallback(() => {
     const tick = () => {
       const m = momentumRef.current
@@ -236,6 +281,44 @@ export function useBillboardViewport(
     momentumRef.current.rafId = requestAnimationFrame(tick)
   }, [])
 
+  const startPinchSession = useCallback(() => {
+    const el = containerRef.current
+    if (!el) return
+    const ptrs = [...pointersRef.current.values()]
+    if (ptrs.length !== 2) return
+    const [a, b] = ptrs
+    const dist = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY) || 1
+    const rect = el.getBoundingClientRect()
+    const cx = (a.clientX + b.clientX) / 2 - rect.left
+    const cy = (a.clientY + b.clientY) / 2 - rect.top
+    pinchRef.current = {
+      startDistance: dist,
+      startCentroidX: cx,
+      startCentroidY: cy,
+      startZoom: viewportRef.current.zoom,
+      startPanX: viewportRef.current.panX,
+      startPanY: viewportRef.current.panY,
+    }
+  }, [containerRef])
+
+  const reanchorPanFromRemaining = useCallback(() => {
+    const ptrs = [...pointersRef.current.values()]
+    if (ptrs.length !== 1) return
+    const remaining = ptrs[0]
+    const now = performance.now()
+    panAnchorRef.current = {
+      pointerId: remaining.pointerId,
+      anchorClientX: remaining.clientX,
+      anchorClientY: remaining.clientY,
+      anchorPanX: viewportRef.current.panX,
+      anchorPanY: viewportRef.current.panY,
+      // 100ms grace before pan velocity becomes eligible for momentum.
+      velocityActiveAt: now + 100,
+    }
+    remaining.lastMoves = [{ x: remaining.clientX, y: remaining.clientY, t: now }]
+    remaining.moved = true
+  }, [])
+
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       // Ignore non-primary buttons for mouse
@@ -246,76 +329,156 @@ export function useBillboardViewport(
       cancelMomentum()
       cancelAnimation()
 
-      pointerStateRef.current = {
-        active: true,
+      const now = performance.now()
+      const info: PointerInfo = {
         pointerId: e.pointerId,
-        startX: e.clientX,
-        startY: e.clientY,
-        startPanX: viewportRef.current.panX,
-        startPanY: viewportRef.current.panY,
-        lastMoves: [{ x: e.clientX, y: e.clientY, t: performance.now() }],
+        startClientX: e.clientX,
+        startClientY: e.clientY,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        lastMoves: [{ x: e.clientX, y: e.clientY, t: now }],
         moved: false,
         target: e.target,
       }
+      pointersRef.current.set(e.pointerId, info)
+
       try {
         el.setPointerCapture(e.pointerId)
       } catch {
-        // best-effort
+        // best-effort; iOS<16 may reject under multi-touch
+      }
+
+      const count = pointersRef.current.size
+
+      if (count === 1) {
+        panAnchorRef.current = {
+          pointerId: e.pointerId,
+          anchorClientX: e.clientX,
+          anchorClientY: e.clientY,
+          anchorPanX: viewportRef.current.panX,
+          anchorPanY: viewportRef.current.panY,
+          velocityActiveAt: now,
+        }
+        pinchRef.current = null
+        return
+      }
+
+      if (count === 2) {
+        // Suppress click on the first pointer and set up pinch session.
+        for (const p of pointersRef.current.values()) p.moved = true
+        startPinchSession()
+        // No momentum carry-over from any pre-pinch pan.
+        cancelMomentum()
+        if (!isPanningRef.current) {
+          setPanningSync(true)
+          optionsRef.current.onPanStart?.()
+        }
+        return
+      }
+
+      // 3+ pointers: abort any in-progress gesture cleanly.
+      for (const id of pointersRef.current.keys()) {
+        try {
+          el.releasePointerCapture(id)
+        } catch {
+          // best-effort
+        }
+      }
+      pointersRef.current.clear()
+      pinchRef.current = null
+      panAnchorRef.current = null
+      cancelMomentum()
+      if (isPanningRef.current) {
+        setPanningSync(false)
+        optionsRef.current.onPanEnd?.()
       }
     },
-    [containerRef, cancelMomentum, cancelAnimation]
+    [containerRef, cancelMomentum, cancelAnimation, setPanningSync, startPinchSession]
   )
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      const s = pointerStateRef.current
-      if (!s || !s.active || s.pointerId !== e.pointerId) return
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    const p = pointersRef.current.get(e.pointerId)
+    if (!p) return
 
-      const dx = e.clientX - s.startX
-      const dy = e.clientY - s.startY
+    p.clientX = e.clientX
+    p.clientY = e.clientY
+    const now = performance.now()
+    p.lastMoves.push({ x: e.clientX, y: e.clientY, t: now })
+    while (p.lastMoves.length > 2 && now - p.lastMoves[0].t > 100) {
+      p.lastMoves.shift()
+    }
 
-      if (!s.moved) {
-        if (Math.abs(dx) < CLICK_THRESHOLD_PX && Math.abs(dy) < CLICK_THRESHOLD_PX) {
-          // still in click zone
-          return
-        }
-        s.moved = true
-        // Only allow panning when zoomed in
-        if (viewportRef.current.zoom <= MIN_ZOOM + 0.0001) {
-          // no-op pan at zoom 1.0 — mark as moved so we don't fire click later
-          return
-        }
-        setIsPanning(true)
+    const count = pointersRef.current.size
+
+    // ---- PINCH ----
+    if (count === 2 && pinchRef.current) {
+      const el = containerRef.current
+      if (!el) return
+      const [a, b] = [...pointersRef.current.values()]
+      const dist = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY) || 1
+      const rect = el.getBoundingClientRect()
+      const cx = (a.clientX + b.clientX) / 2 - rect.left
+      const cy = (a.clientY + b.clientY) / 2 - rect.top
+
+      const ps = pinchRef.current
+      const factor = dist / ps.startDistance
+      const newZoom = clamp(ps.startZoom * factor, MIN_ZOOM, MAX_ZOOM)
+      const zFactor = newZoom / ps.startZoom
+
+      // Anchor: keep the content point under the start centroid stationary
+      // under the current centroid. Centroid translation falls out naturally
+      // because we use the *current* centroid as the reference.
+      const newPanX = (ps.startPanX + ps.startCentroidX) * zFactor - cx
+      const newPanY = (ps.startPanY + ps.startCentroidY) * zFactor - cy
+      const currentSize = sizeRef.current
+      const clamped = clampPan(newPanX, newPanY, newZoom, currentSize)
+      setViewport({ zoom: newZoom, panX: clamped.panX, panY: clamped.panY })
+      return
+    }
+
+    // ---- SINGLE-POINTER PAN ----
+    if (count !== 1) return
+    const anchor = panAnchorRef.current
+    if (!anchor || anchor.pointerId !== p.pointerId) return
+
+    const dx = p.clientX - anchor.anchorClientX
+    const dy = p.clientY - anchor.anchorClientY
+
+    if (!p.moved) {
+      const startDx = p.clientX - p.startClientX
+      const startDy = p.clientY - p.startClientY
+      if (Math.abs(startDx) < CLICK_THRESHOLD_PX && Math.abs(startDy) < CLICK_THRESHOLD_PX) {
+        return
+      }
+      p.moved = true
+      if (viewportRef.current.zoom <= MIN_ZOOM + 0.0001) {
+        // No pan at zoom 1.0; moved=true ensures no click fires later.
+        return
+      }
+      if (!isPanningRef.current) {
+        setPanningSync(true)
         optionsRef.current.onPanStart?.()
       }
+    }
 
-      if (viewportRef.current.zoom <= MIN_ZOOM + 0.0001) return
+    if (viewportRef.current.zoom <= MIN_ZOOM + 0.0001) return
 
-      const now = performance.now()
-      s.lastMoves.push({ x: e.clientX, y: e.clientY, t: now })
-      // Keep only the last ~100ms of moves (for velocity calc)
-      while (s.lastMoves.length > 2 && now - s.lastMoves[0].t > 100) {
-        s.lastMoves.shift()
-      }
-
-      const currentSize = sizeRef.current
-      setViewport((v) => {
-        const { panX, panY } = clampPan(
-          s.startPanX - dx,
-          s.startPanY - dy,
-          v.zoom,
-          currentSize
-        )
-        return { ...v, panX, panY }
-      })
-    },
-    []
-  )
+    const currentSize = sizeRef.current
+    setViewport((v) => {
+      const { panX, panY } = clampPan(
+        anchor.anchorPanX - dx,
+        anchor.anchorPanY - dy,
+        v.zoom,
+        currentSize
+      )
+      return { ...v, panX, panY }
+    })
+  }, [containerRef, setPanningSync])
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent) => {
-      const s = pointerStateRef.current
-      if (!s || s.pointerId !== e.pointerId) return
+      const p = pointersRef.current.get(e.pointerId)
+      if (!p) return
       const el = containerRef.current
       if (el) {
         try {
@@ -324,27 +487,52 @@ export function useBillboardViewport(
           // best-effort
         }
       }
+      pointersRef.current.delete(e.pointerId)
+      const wasPinching = pinchRef.current !== null
+      const count = pointersRef.current.size
 
-      pointerStateRef.current = null
-
-      if (!s.moved) {
-        // Click
-        optionsRef.current.onClick?.(e.clientX, e.clientY, s.target)
+      if (count === 1) {
+        if (wasPinching) {
+          // 2 -> 1 transition: re-anchor pan to the remaining pointer at the
+          // *current* viewport so the image does not jump.
+          pinchRef.current = null
+          reanchorPanFromRemaining()
+        }
         return
       }
 
-      if (isPanning) {
-        setIsPanning(false)
+      if (count >= 2) {
+        // Came down from 3+ via the abort path; stay aborted.
+        return
+      }
+
+      // count === 0: session ends.
+      const anchor = panAnchorRef.current
+      pinchRef.current = null
+      panAnchorRef.current = null
+
+      if (!p.moved && !wasPinching) {
+        // Clean tap.
+        optionsRef.current.onClick?.(e.clientX, e.clientY, p.target)
+        return
+      }
+
+      if (isPanningRef.current) {
+        setPanningSync(false)
         optionsRef.current.onPanEnd?.()
       }
 
-      // Compute momentum velocity from the last few moves (~last 100ms).
-      const moves = s.lastMoves
+      // No pinch momentum (deliberately omitted, Day-2 if desired).
+      if (wasPinching) return
+
+      // Pan momentum from single-pointer pan. Discard samples taken before
+      // velocityActiveAt (covers the 100ms grace after a 2->1 transition).
+      const cutoff = anchor?.velocityActiveAt ?? 0
+      const moves = p.lastMoves.filter((m) => m.t >= cutoff)
       if (moves.length >= 2) {
         const newest = moves[moves.length - 1]
         const oldest = moves[0]
         const dt = Math.max(1, newest.t - oldest.t)
-        // velocity in px per frame (assuming 16.67ms frames)
         const vx = ((newest.x - oldest.x) / dt) * 16.67
         const vy = ((newest.y - oldest.y) / dt) * 16.67
         momentumRef.current.vx = vx
@@ -354,20 +542,44 @@ export function useBillboardViewport(
         }
       }
     },
-    [containerRef, isPanning, runMomentum]
+    [containerRef, setPanningSync, reanchorPanFromRemaining, runMomentum]
   )
 
   const handlePointerCancel = useCallback(
     (e: React.PointerEvent) => {
-      const s = pointerStateRef.current
-      if (!s || s.pointerId !== e.pointerId) return
-      pointerStateRef.current = null
-      if (isPanning) {
-        setIsPanning(false)
+      const p = pointersRef.current.get(e.pointerId)
+      if (!p) return
+      const el = containerRef.current
+      if (el) {
+        try {
+          el.releasePointerCapture(e.pointerId)
+        } catch {
+          // best-effort
+        }
+      }
+      pointersRef.current.delete(e.pointerId)
+      const wasPinching = pinchRef.current !== null
+      const count = pointersRef.current.size
+
+      if (count === 1 && wasPinching) {
+        // Mid-pinch cancel: still re-anchor so we don't jump if the user keeps
+        // the other finger down.
+        pinchRef.current = null
+        reanchorPanFromRemaining()
+        return
+      }
+
+      if (count >= 1) return
+
+      // count === 0: end the session, no momentum.
+      pinchRef.current = null
+      panAnchorRef.current = null
+      if (isPanningRef.current) {
+        setPanningSync(false)
         optionsRef.current.onPanEnd?.()
       }
     },
-    [isPanning]
+    [containerRef, setPanningSync, reanchorPanFromRemaining]
   )
 
   // ---- PROGRAMMATIC CONTROLS ----

@@ -48,6 +48,7 @@ export interface Database {
           pan_x: number
           pan_y: number
           zoom: number
+          is_anonymous: boolean
           created_at: string
           updated_at: string
         }
@@ -65,6 +66,7 @@ export interface Database {
           pan_x?: number
           pan_y?: number
           zoom?: number
+          is_anonymous?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -82,6 +84,7 @@ export interface Database {
           pan_x?: number
           pan_y?: number
           zoom?: number
+          is_anonymous?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -107,6 +110,7 @@ export interface Database {
           started_at: string
           ended_at: string | null
           displaced_by_id: string | null
+          is_anonymous: boolean
         }
         Insert: {
           id?: string
@@ -119,6 +123,7 @@ export interface Database {
           started_at: string
           ended_at?: string | null
           displaced_by_id?: string | null
+          is_anonymous?: boolean
         }
         Update: {
           id?: string
@@ -131,6 +136,7 @@ export interface Database {
           started_at?: string
           ended_at?: string | null
           displaced_by_id?: string | null
+          is_anonymous?: boolean
         }
         Relationships: [
           {
@@ -167,6 +173,7 @@ export interface Database {
           stripe_session_id: string | null
           stripe_payment_intent_id: string | null
           status: 'pending' | 'completed' | 'failed' | 'refunded'
+          is_anonymous: boolean
           created_at: string
         }
         Insert: {
@@ -179,6 +186,7 @@ export interface Database {
           stripe_session_id?: string | null
           stripe_payment_intent_id?: string | null
           status: 'pending' | 'completed' | 'failed' | 'refunded'
+          is_anonymous?: boolean
           created_at?: string
         }
         Update: {
@@ -191,6 +199,7 @@ export interface Database {
           stripe_session_id?: string | null
           stripe_payment_intent_id?: string | null
           status?: 'pending' | 'completed' | 'failed' | 'refunded'
+          is_anonymous?: boolean
           created_at?: string
         }
         Relationships: [
@@ -267,6 +276,72 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      reveal_requests: {
+        Row: {
+          id: string
+          slot_id: string
+          target_owner_id: string
+          requester_id: string
+          message: string | null
+          status: 'pending' | 'accepted' | 'declined' | 'expired'
+          response_message: string | null
+          created_at: string
+          responded_at: string | null
+        }
+        Insert: {
+          id?: string
+          slot_id: string
+          target_owner_id: string
+          requester_id: string
+          message?: string | null
+          status?: 'pending' | 'accepted' | 'declined' | 'expired'
+          response_message?: string | null
+          created_at?: string
+          responded_at?: string | null
+        }
+        Update: {
+          id?: string
+          slot_id?: string
+          target_owner_id?: string
+          requester_id?: string
+          message?: string | null
+          status?: 'pending' | 'accepted' | 'declined' | 'expired'
+          response_message?: string | null
+          created_at?: string
+          responded_at?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'system'
+          payload: Json
+          related_reveal_request_id: string | null
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'system'
+          payload?: Json
+          related_reveal_request_id?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'system'
+          payload?: Json
+          related_reveal_request_id?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
       }
       admin_audit_log: {
         Row: {
@@ -409,3 +484,32 @@ export type Profile = Tables<'profiles'>
 export type Transaction = Tables<'transactions'>
 export type Report = Tables<'reports'>
 export type AdminAuditLog = Tables<'admin_audit_log'>
+export type RevealRequest = Tables<'reveal_requests'>
+export type Notification = Tables<'notifications'>
+
+// Public profile shape returned by get_public_profile RPC
+export interface PublicProfileSummary {
+  id: string
+  display_name: string | null
+  created_at: string
+  active_slots: Array<{
+    id: string
+    display_name: string
+    image_url: string | null
+    link_url: string
+    current_bid_eur: number
+    status: 'active' | 'frozen' | 'removed'
+    created_at: string
+  }>
+  history: Array<{
+    id: string
+    slot_id: string
+    display_name: string
+    image_url: string | null
+    bid_eur: number
+    started_at: string
+    ended_at: string | null
+  }>
+  anonymous_active_count: number
+  anonymous_lost_count: number
+}

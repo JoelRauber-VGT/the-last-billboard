@@ -24,6 +24,7 @@ export function generateTestSlots(count: number): Slot[] {
       display_name: `Brand ${i}`,
       brand_color: `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`,
       status: 'active' as const,
+      is_anonymous: false,
       layout_width: layoutWidth,
       layout_height: layoutHeight,
       pan_x: 0.5,

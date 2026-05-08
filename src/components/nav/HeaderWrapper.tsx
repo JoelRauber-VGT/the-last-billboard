@@ -16,6 +16,7 @@ export async function HeaderWrapper({ onOpenRules, onOpenAuth }: HeaderWrapperPr
 
   let isAdmin = false;
   let displayName = null;
+  let unreadNotifications = 0;
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -24,10 +25,25 @@ export async function HeaderWrapper({ onOpenRules, onOpenAuth }: HeaderWrapperPr
       .single();
     isAdmin = profile?.is_admin || false;
     displayName = profile?.display_name || null;
+
+    const { count } = await supabase
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .is('read_at', null);
+    unreadNotifications = count ?? 0;
   }
 
   // Extend user object with display_name
   const userWithProfile = user ? { ...user, display_name: displayName } : null;
 
-  return <Header user={userWithProfile} isAdmin={isAdmin} onOpenRules={onOpenRules} onOpenAuth={onOpenAuth} />;
+  return (
+    <Header
+      user={userWithProfile}
+      isAdmin={isAdmin}
+      unreadNotifications={unreadNotifications}
+      onOpenRules={onOpenRules}
+      onOpenAuth={onOpenAuth}
+    />
+  );
 }

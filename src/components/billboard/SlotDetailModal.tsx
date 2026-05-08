@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 import { format } from 'date-fns'
 import { de, fr, es, enUS } from 'date-fns/locale'
-import { useRouter } from '@/i18n/routing'
+import { useRouter, Link } from '@/i18n/routing'
 import { createBrowserClient } from '@/lib/supabase/client'
 import type { Slot, SlotHistory } from '@/types/database'
 import {
@@ -15,6 +15,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { ReportDialog } from './ReportDialog'
+import { RevealRequestDialog } from './RevealRequestDialog'
 
 interface SlotDetailModalProps {
   slot: Slot | null
@@ -57,6 +58,42 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
   const [loading, setLoading] = useState(false)
   const [locale, setLocale] = useState<LocaleKey>('en')
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
+  const [revealDialogOpen, setRevealDialogOpen] = useState(false)
+  const [authedUserId, setAuthedUserId] = useState<string | null>(null)
+  const [revealStatus, setRevealStatus] = useState<
+    'none' | 'pending' | 'accepted' | 'declined'
+  >('none')
+
+  useEffect(() => {
+    if (!open || !slot) return
+    let cancelled = false
+    const supabase = createBrowserClient()
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (cancelled) return
+      const uid = data.user?.id ?? null
+      setAuthedUserId(uid)
+      if (uid && slot.is_anonymous) {
+        const { data: rr } = await supabase
+          .from('reveal_requests')
+          .select('status')
+          .eq('slot_id', slot.id)
+          .eq('requester_id', uid)
+          .maybeSingle()
+        if (!cancelled) {
+          const status = (rr as { status?: string } | null)?.status
+          if (status === 'accepted') setRevealStatus('accepted')
+          else if (status === 'declined') setRevealStatus('declined')
+          else if (status === 'pending') setRevealStatus('pending')
+          else setRevealStatus('none')
+        }
+      } else {
+        setRevealStatus('none')
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [open, slot])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -218,8 +255,10 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               width: 36,
               height: 36,
               borderRadius: '50%',
-              background: 'rgba(96,165,250,0.15)',
-              color: '#60a5fa',
+              background: slot.is_anonymous
+                ? 'rgba(255,255,255,0.06)'
+                : 'rgba(96,165,250,0.15)',
+              color: slot.is_anonymous ? 'rgba(255,255,255,0.55)' : '#60a5fa',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -229,7 +268,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
               flexShrink: 0,
             }}
           >
-            {initialOf(slot.display_name)}
+            {slot.is_anonymous ? '?' : initialOf(slot.display_name)}
           </div>
           <div className="flex flex-col min-w-0">
             <div
@@ -241,8 +280,40 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                 lineHeight: 1.2,
               }}
             >
-              {slot.display_name}
+              {slot.is_anonymous ? t('anonymous') : slot.display_name}
             </div>
+            {slot.is_anonymous ? (
+              <span
+                style={{
+                  marginTop: 2,
+                  color: 'rgba(255,255,255,0.5)',
+                  fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  fontSize: 12,
+                  lineHeight: 1.3,
+                }}
+              >
+                {t('anonymousNotice')}
+              </span>
+            ) : (
+              slot.current_owner_id && (
+                <Link
+                  href={`/profile/${slot.current_owner_id}`}
+                  style={{
+                    marginTop: 2,
+                    color: '#60a5fa',
+                    fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                    fontSize: 13,
+                    lineHeight: 1.3,
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    width: 'fit-content',
+                  }}
+                  className="hover:underline"
+                >
+                  [ {t('viewProfile')} → ]
+                </Link>
+              )
+            )}
             {slot.link_url && (
               <a
                 href={slot.link_url}
@@ -265,6 +336,69 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             )}
           </div>
         </div>
+
+        {/* Reveal CTA / status — anonymous slot only */}
+        {slot.is_anonymous && authedUserId && authedUserId !== slot.current_owner_id && (
+          <div className="flex flex-col items-stretch gap-2 -mt-2">
+            {revealStatus === 'accepted' ? (
+              <div
+                className="text-xs"
+                style={{
+                  color: '#22c55e',
+                  border: '1px solid rgba(34,197,94,0.4)',
+                  background: 'rgba(34,197,94,0.08)',
+                  padding: '8px 10px',
+                }}
+              >
+                ◉ {t('revealAccepted')}
+                {slot.current_owner_id && (
+                  <>
+                    {' · '}
+                    <Link
+                      href={`/profile/${slot.current_owner_id}`}
+                      className="underline"
+                    >
+                      {t('viewProfile')}
+                    </Link>
+                  </>
+                )}
+              </div>
+            ) : revealStatus === 'pending' ? (
+              <div
+                className="text-xs text-center"
+                style={{
+                  color: 'rgba(255,255,255,0.55)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  padding: '8px 10px',
+                }}
+              >
+                ⌛ {t('revealPending')}
+              </div>
+            ) : revealStatus === 'declined' ? null : (
+              <button
+                type="button"
+                onClick={() => setRevealDialogOpen(true)}
+                className="transition-colors text-xs"
+                style={{
+                  background: 'transparent',
+                  border: '1px solid rgba(96,165,250,0.4)',
+                  color: '#60a5fa',
+                  padding: '8px 12px',
+                  fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(96,165,250,0.08)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                }}
+              >
+                [ ? {t('askForReveal')} ]
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Current bid hero */}
         <div className="flex flex-col items-center" style={{ padding: '24px 0' }}>
@@ -400,7 +534,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      {entry.display_name}
+                      {entry.is_anonymous ? t('anonymous') : entry.display_name}
                     </span>
                     <span
                       style={{
@@ -485,6 +619,14 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             open={reportDialogOpen}
             onOpenChange={setReportDialogOpen}
             onSuccess={handleReportSuccess}
+          />
+        )}
+        {slot && (
+          <RevealRequestDialog
+            slotId={slot.id}
+            open={revealDialogOpen}
+            onOpenChange={setRevealDialogOpen}
+            onSent={() => setRevealStatus('pending')}
           />
         )}
       </DialogContent>

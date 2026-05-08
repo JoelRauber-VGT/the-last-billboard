@@ -18,6 +18,7 @@ const bidFormSchema = z.object({
   pan_x: z.number().min(0).max(1).default(0.5),
   pan_y: z.number().min(0).max(1).default(0.5),
   zoom: z.number().min(1.0).max(3.0).default(1.0),
+  is_anonymous: z.boolean().default(false),
 });
 
 type BidFormData = z.infer<typeof bidFormSchema>;
@@ -192,6 +193,7 @@ export async function createBidCheckoutSession(
         amount_eur: data.bid_eur,
         commission_eur: commission_eur,
         status: 'pending',
+        is_anonymous: data.is_anonymous,
       })
       .select('id')
       .single();
@@ -240,6 +242,7 @@ export async function createBidCheckoutSession(
         pan_x: data.pan_x.toString(),
         pan_y: data.pan_y.toString(),
         zoom: data.zoom.toString(),
+        is_anonymous: data.is_anonymous ? '1' : '0',
       },
     });
 

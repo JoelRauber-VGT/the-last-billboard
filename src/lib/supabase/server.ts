@@ -35,6 +35,30 @@ export async function createServerClient() {
 }
 
 /**
+ * Service-role client for internal server-side mutations that must bypass
+ * RLS (e.g. writing stripe_session_id back to a transaction the user just
+ * created — the user-auth client cannot UPDATE transactions by policy).
+ * Never expose this client's results to a user-bound code path that should
+ * be RLS-restricted.
+ */
+export function createServiceRoleClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return []
+        },
+        setAll() {
+          // service-role client has no session; cookies are a no-op
+        },
+      },
+    }
+  )
+}
+
+/**
  * Create a Supabase client for Server Actions
  * Use this in Server Actions and Route Handlers where you need to mutate data
  */

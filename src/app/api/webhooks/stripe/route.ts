@@ -29,6 +29,10 @@ const webhookMetadataSchema = z
     pan_x: z.coerce.number().min(0).max(1).default(0.5),
     pan_y: z.coerce.number().min(0).max(1).default(0.5),
     zoom: z.coerce.number().min(1.0).max(3.0).default(1.0),
+    is_anonymous: z
+      .string()
+      .optional()
+      .transform((v) => v === '1' || v === 'true'),
   })
   .refine((d) => d.mode !== 'outbid' || d.slot_id !== null, {
     path: ['slot_id'],
@@ -214,6 +218,7 @@ export async function POST(request: NextRequest) {
         p_pan_x: metadata.pan_x,
         p_pan_y: metadata.pan_y,
         p_zoom: metadata.zoom,
+        p_is_anonymous: metadata.is_anonymous,
       });
 
       if (bidError) {

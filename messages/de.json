@@ -11,7 +11,9 @@
     "placeBid": "gebot-abgeben",
     "rules": "regeln",
     "signIn": "anmelden",
-    "bid": "bieten"
+    "bid": "bieten",
+    "inbox": "posteingang",
+    "profile": "profil"
   },
   "landing": {
     "hero": {
@@ -296,6 +298,8 @@
       "outbiddingInfo": "Sie überbieten {name} (aktuelles Gebot: €{amount})",
       "displayName": "Anzeigename",
       "displayNamePlaceholder": "Ihre Marke oder Name",
+      "anonymous": "anonymer Kauf",
+      "anonymousHelp": "Ihr Name und Profil werden nicht angezeigt — andere sehen nur „anonymous“. Sie können angefragt werden, sich zu erkennen zu geben — entscheiden aber selbst, ob Sie antworten.",
       "image": "Bild (optional)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "Link-URL",
@@ -394,7 +398,13 @@
       "from": "von",
       "to": "bis",
       "displacedBy": "verdrängt von {name}",
-      "currentOwner": "aktueller Besitzer"
+      "currentOwner": "aktueller Besitzer",
+      "anonymous": "anonymous",
+      "anonymousNotice": "Dieser Käufer hat sich für Anonymität entschieden.",
+      "askForReveal": "wer ist das?",
+      "viewProfile": "profil anzeigen",
+      "revealAccepted": "diese Person hat sich Ihnen zu erkennen gegeben",
+      "revealPending": "Ihre Anfrage zur Offenlegung läuft"
     }
   },
   "ticker": {
@@ -433,6 +443,75 @@
       "message": "Dieser Slot wurde gemeldet und wird überprüft. Kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist.",
       "contactSupport": "Support kontaktieren"
     }
+  },
+  "profile": {
+    "title": "Profil",
+    "joinedOn": "dabei seit {date}",
+    "activeSlots": "Aktive Slots",
+    "lostSlots": "Vergangene Slots",
+    "anonymousSummary": "{count, plural, =0 {keine anonymen Käufe} one {# anonymer Kauf} other {# anonyme Käufe}}",
+    "noActive": "Keine aktiven Slots.",
+    "noHistory": "Keine vergangenen Slots.",
+    "notFound": "Profil nicht gefunden.",
+    "currentBid": "aktuelles Gebot",
+    "lostFor": "gehalten für €{amount}",
+    "endedOn": "endete am {date}",
+    "viewSlot": "slot ansehen",
+    "noDisplayName": "user"
+  },
+  "inbox": {
+    "title": "Posteingang",
+    "tabs": {
+      "incoming": "eingehend",
+      "outgoing": "ausgehend"
+    },
+    "empty": {
+      "incoming": "Keine Nachrichten.",
+      "outgoing": "Sie haben keine Anfragen gesendet."
+    },
+    "markAllRead": "alle als gelesen markieren",
+    "markRead": "gelesen",
+    "open": "öffnen",
+    "unread": "ungelesen",
+    "from": "von",
+    "to": "an",
+    "anonymousFrom": "anonymer Nutzer",
+    "types": {
+      "reveal_request_received": "möchte wissen, wer Sie sind",
+      "reveal_request_accepted": "hat sich zu erkennen gegeben",
+      "reveal_request_declined": "hat die Offenlegung abgelehnt",
+      "system": "Systemnachricht"
+    },
+    "viewSlot": "slot ansehen",
+    "noMessage": "keine Nachricht"
+  },
+  "revealRequest": {
+    "dialogTitle": "Identität anfragen",
+    "intro": "Dieser Slot wurde anonym gekauft. Sie können den Käufer fragen, wer er ist. Er kann annehmen, ablehnen oder ignorieren.",
+    "messageLabel": "Nachricht (optional)",
+    "messagePlaceholder": "Hallo, ich würde gerne wissen, wer Sie sind, weil…",
+    "send": "anfrage senden",
+    "sending": "wird gesendet...",
+    "success": "anfrage gesendet",
+    "alreadySent": "sie haben bereits eine anfrage zu diesem slot gesendet",
+    "rateLimit": "sie haben das maximum von 3 anfragen pro 24h erreicht",
+    "selfTarget": "sie können sich keine anfrage selbst senden",
+    "loginRequired": "melden sie sich an, um eine anfrage zu senden",
+    "error": "anfrage konnte nicht gesendet werden, bitte erneut versuchen",
+    "incomingTitle": "Anfrage zur Offenlegung",
+    "incomingIntro": "{name} möchte wissen, wer Sie sind.",
+    "messageFromRequester": "Nachricht:",
+    "responseLabel": "Antwort (optional)",
+    "responsePlaceholder": "Eine kurze Notiz an den Anfragenden…",
+    "accept": "identität preisgeben",
+    "decline": "ablehnen",
+    "responding": "wird gespeichert...",
+    "responseAccepted": "sie haben sich zu erkennen gegeben",
+    "responseDeclined": "sie haben abgelehnt",
+    "outgoingPending": "wartet auf antwort",
+    "outgoingAccepted": "hat sich zu erkennen gegeben",
+    "outgoingDeclined": "hat abgelehnt",
+    "viewProfile": "profil ansehen"
   },
   "meta": {
     "landing": {

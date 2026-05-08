@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronDown, Package, Settings, LogOut } from 'lucide-react'
+import { ChevronDown, Package, Settings, LogOut, Inbox } from 'lucide-react'
 import { Link } from '@/i18n/routing'
 import { useState } from 'react'
 
@@ -67,6 +67,14 @@ export function UserMenu({ user }: UserMenuProps) {
           <Link href="/dashboard" className="flex items-center gap-3 cursor-pointer">
             <Package className="h-5 w-5" />
             <span>{t('myBids')}</span>
+          </Link>
+        </DropdownMenuItem>
+
+        {/* Inbox */}
+        <DropdownMenuItem asChild className="text-base text-term-text hover:bg-term-border hover:text-white focus:bg-term-border focus:text-white py-2.5 px-3">
+          <Link href="/inbox" className="flex items-center gap-3 cursor-pointer">
+            <Inbox className="h-5 w-5" />
+            <span>{t('inbox')}</span>
           </Link>
         </DropdownMenuItem>
 

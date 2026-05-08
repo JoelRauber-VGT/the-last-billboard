@@ -11,7 +11,9 @@
     "placeBid": "hacer-oferta",
     "rules": "reglas",
     "signIn": "iniciar sesión",
-    "bid": "ofertar"
+    "bid": "ofertar",
+    "inbox": "bandeja",
+    "profile": "perfil"
   },
   "landing": {
     "hero": {
@@ -296,6 +298,8 @@
       "outbiddingInfo": "Estás superando la oferta de {name} (oferta actual: €{amount})",
       "displayName": "Nombre para mostrar",
       "displayNamePlaceholder": "Tu marca o nombre",
+      "anonymous": "compra anónima",
+      "anonymousHelp": "Tu nombre y perfil no se mostrarán — los demás ven «anonymous». Pueden pedirte que reveles quién eres; tú decides si responder.",
       "image": "Imagen (opcional)",
       "imageHelp": "Máx 10MB, PNG/JPEG/WEBP",
       "linkUrl": "URL del enlace",
@@ -394,7 +398,13 @@
       "from": "desde",
       "to": "hasta",
       "displacedBy": "desplazado por {name}",
-      "currentOwner": "propietario actual"
+      "currentOwner": "propietario actual",
+      "anonymous": "anonymous",
+      "anonymousNotice": "Este comprador eligió permanecer anónimo.",
+      "askForReveal": "¿quién es?",
+      "viewProfile": "ver perfil",
+      "revealAccepted": "este usuario reveló su identidad ante ti",
+      "revealPending": "tu solicitud está pendiente"
     }
   },
   "ticker": {
@@ -433,6 +443,75 @@
       "message": "Este slot fue reportado y está bajo revisión. Contacte al soporte si cree que esto es un error.",
       "contactSupport": "Contactar soporte"
     }
+  },
+  "profile": {
+    "title": "Perfil",
+    "joinedOn": "desde {date}",
+    "activeSlots": "Slots activos",
+    "lostSlots": "Slots pasados",
+    "anonymousSummary": "{count, plural, =0 {sin compras anónimas} one {# compra anónima} other {# compras anónimas}}",
+    "noActive": "Sin slots activos.",
+    "noHistory": "Sin slots pasados.",
+    "notFound": "Perfil no encontrado.",
+    "currentBid": "oferta actual",
+    "lostFor": "mantenido por €{amount}",
+    "endedOn": "terminó el {date}",
+    "viewSlot": "ver slot",
+    "noDisplayName": "user"
+  },
+  "inbox": {
+    "title": "Bandeja",
+    "tabs": {
+      "incoming": "recibidos",
+      "outgoing": "enviados"
+    },
+    "empty": {
+      "incoming": "Sin mensajes.",
+      "outgoing": "No has enviado solicitudes."
+    },
+    "markAllRead": "marcar todo como leído",
+    "markRead": "leído",
+    "open": "abrir",
+    "unread": "no leído",
+    "from": "de",
+    "to": "para",
+    "anonymousFrom": "usuario anónimo",
+    "types": {
+      "reveal_request_received": "quiere saber quién eres",
+      "reveal_request_accepted": "reveló su identidad",
+      "reveal_request_declined": "se negó a revelar su identidad",
+      "system": "mensaje del sistema"
+    },
+    "viewSlot": "ver slot",
+    "noMessage": "sin mensaje"
+  },
+  "revealRequest": {
+    "dialogTitle": "Solicitar identidad",
+    "intro": "Este slot se compró de forma anónima. Puedes pedirle al comprador que revele quién es. Puede aceptar, rechazar o ignorar.",
+    "messageLabel": "Mensaje (opcional)",
+    "messagePlaceholder": "Hola, me gustaría saber quién eres porque…",
+    "send": "enviar solicitud",
+    "sending": "enviando...",
+    "success": "solicitud enviada",
+    "alreadySent": "ya enviaste una solicitud para este slot",
+    "rateLimit": "alcanzaste el máximo de 3 solicitudes en 24h",
+    "selfTarget": "no puedes enviarte una solicitud a ti mismo",
+    "loginRequired": "inicia sesión para enviar una solicitud",
+    "error": "no se pudo enviar la solicitud, intenta de nuevo",
+    "incomingTitle": "Solicitud de identidad",
+    "incomingIntro": "{name} quiere saber quién eres.",
+    "messageFromRequester": "Su mensaje:",
+    "responseLabel": "Respuesta (opcional)",
+    "responsePlaceholder": "Una nota corta para el solicitante…",
+    "accept": "revelar mi identidad",
+    "decline": "rechazar",
+    "responding": "guardando...",
+    "responseAccepted": "revelaste tu identidad",
+    "responseDeclined": "rechazaste",
+    "outgoingPending": "esperando respuesta",
+    "outgoingAccepted": "reveló su identidad",
+    "outgoingDeclined": "rechazó",
+    "viewProfile": "ver su perfil"
   },
   "meta": {
     "landing": {

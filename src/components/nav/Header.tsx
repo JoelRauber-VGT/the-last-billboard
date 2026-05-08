@@ -2,16 +2,24 @@
 
 import { Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
+import { Bell } from 'lucide-react';
 import { UserMenu } from './UserMenu';
 
 interface HeaderProps {
   user: any;
   isAdmin: boolean;
+  unreadNotifications?: number;
   onOpenRules?: () => void;
   onOpenAuth?: () => void;
 }
 
-export function Header({ user, isAdmin, onOpenRules, onOpenAuth }: HeaderProps) {
+export function Header({
+  user,
+  isAdmin,
+  unreadNotifications = 0,
+  onOpenRules,
+  onOpenAuth,
+}: HeaderProps) {
   const t = useTranslations('nav');
 
   return (
@@ -49,6 +57,27 @@ export function Header({ user, isAdmin, onOpenRules, onOpenAuth }: HeaderProps) 
                   /{t('admin')}
                 </Link>
               )}
+              <Link
+                href="/inbox"
+                aria-label={t('inbox')}
+                className="relative text-term-text hover:text-white transition-colors flex items-center"
+              >
+                <Bell className="h-5 w-5" />
+                {unreadNotifications > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] font-bold rounded-full"
+                    style={{
+                      background: '#60a5fa',
+                      color: '#0a0a0a',
+                      minWidth: 16,
+                      height: 16,
+                      padding: '0 4px',
+                    }}
+                  >
+                    {unreadNotifications > 99 ? '99+' : unreadNotifications}
+                  </span>
+                )}
+              </Link>
               <UserMenu user={user} />
               <Link href="/bid" style={{ color: '#60a5fa' }} className="hover:text-white transition-colors">
                 [{t('bid')}]

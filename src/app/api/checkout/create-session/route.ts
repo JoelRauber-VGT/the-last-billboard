@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerActionClient } from '@/lib/supabase/server';
+import { createServerActionClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { getStripe } from '@/lib/stripe/server';
 import { config } from '@/lib/config';
 import { throwIfFrozenAsync } from '@/lib/freeze/getFreezeDate';
@@ -40,6 +40,7 @@ interface CreateSessionRequest {
   display_name: string;
   brand_color: string;
   locale?: string;
+  is_anonymous?: boolean;
 }
 
 /**
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
     // Parse and validate request body
     const body: CreateSessionRequest = await request.json();
     const { mode, slot_id, bid_eur, image_url, link_url, display_name, brand_color } = body;
+    const is_anonymous = body.is_anonymous === true;
     const locale = resolveLocale(request, body.locale);
 
     // Validation: mode
@@ -192,6 +194,7 @@ export async function POST(request: NextRequest) {
         amount_eur: bid_eur,
         commission_eur: commission_eur,
         status: 'pending',
+        is_anonymous,
       })
       .select('id')
       .single();
@@ -236,18 +239,27 @@ export async function POST(request: NextRequest) {
         link_url: link_url,
         display_name: display_name,
         brand_color: brand_color,
+        is_anonymous: is_anonymous ? '1' : '0',
       },
     });
 
-    // Update transaction with stripe_session_id
-    const { error: updateError } = await supabase
+    // Persist stripe_session_id via service-role client. The user-auth
+    // client has no UPDATE policy on transactions, so this would fail
+    // silently otherwise — leaving us unable to reconcile the row when
+    // the webhook arrives. See scripts/recover-pending-transactions.mjs
+    // for the recovery path used on rows that hit this bug historically.
+    const serviceRole = createServiceRoleClient();
+    const { error: updateError } = await serviceRole
       .from('transactions')
       .update({ stripe_session_id: session.id })
       .eq('id', transaction.id);
 
     if (updateError) {
       console.error('Failed to update transaction with session ID:', updateError);
-      // Continue anyway, as the session was created
+      return NextResponse.json(
+        { error: 'Failed to link Stripe session' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

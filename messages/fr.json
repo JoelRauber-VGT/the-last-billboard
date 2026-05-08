@@ -11,7 +11,9 @@
     "placeBid": "placer-enchère",
     "rules": "règles",
     "signIn": "se connecter",
-    "bid": "enchérir"
+    "bid": "enchérir",
+    "inbox": "messagerie",
+    "profile": "profil"
   },
   "landing": {
     "hero": {
@@ -296,6 +298,8 @@
       "outbiddingInfo": "Vous surenchérissez sur {name} (enchère actuelle: €{amount})",
       "displayName": "Nom d'affichage",
       "displayNamePlaceholder": "Votre marque ou nom",
+      "anonymous": "achat anonyme",
+      "anonymousHelp": "Votre nom et profil ne seront pas affichés — les autres voient « anonymous ». Ils peuvent vous demander qui vous êtes ; vous décidez si vous voulez vous révéler.",
       "image": "Image (optionnel)",
       "imageHelp": "Max 10MB, PNG/JPEG/WEBP",
       "linkUrl": "URL du lien",
@@ -394,7 +398,13 @@
       "from": "de",
       "to": "à",
       "displacedBy": "déplacé par {name}",
-      "currentOwner": "propriétaire actuel"
+      "currentOwner": "propriétaire actuel",
+      "anonymous": "anonymous",
+      "anonymousNotice": "Cet acheteur a choisi de rester anonyme.",
+      "askForReveal": "qui est-ce ?",
+      "viewProfile": "voir le profil",
+      "revealAccepted": "cet utilisateur s'est révélé à vous",
+      "revealPending": "votre demande de révélation est en attente"
     }
   },
   "ticker": {
@@ -433,6 +443,75 @@
       "message": "Ce slot a été signalé et est en cours d'examen. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
       "contactSupport": "Contacter le support"
     }
+  },
+  "profile": {
+    "title": "Profil",
+    "joinedOn": "membre depuis {date}",
+    "activeSlots": "Slots actifs",
+    "lostSlots": "Slots passés",
+    "anonymousSummary": "{count, plural, =0 {aucun achat anonyme} one {# achat anonyme} other {# achats anonymes}}",
+    "noActive": "Aucun slot actif.",
+    "noHistory": "Aucun slot passé.",
+    "notFound": "Profil introuvable.",
+    "currentBid": "enchère actuelle",
+    "lostFor": "détenu pour €{amount}",
+    "endedOn": "terminé le {date}",
+    "viewSlot": "voir le slot",
+    "noDisplayName": "user"
+  },
+  "inbox": {
+    "title": "Messagerie",
+    "tabs": {
+      "incoming": "reçues",
+      "outgoing": "envoyées"
+    },
+    "empty": {
+      "incoming": "Aucun message.",
+      "outgoing": "Vous n'avez envoyé aucune demande."
+    },
+    "markAllRead": "tout marquer comme lu",
+    "markRead": "marquer lu",
+    "open": "ouvrir",
+    "unread": "non lu",
+    "from": "de",
+    "to": "à",
+    "anonymousFrom": "utilisateur anonyme",
+    "types": {
+      "reveal_request_received": "veut savoir qui vous êtes",
+      "reveal_request_accepted": "s'est révélé",
+      "reveal_request_declined": "a refusé de se révéler",
+      "system": "message système"
+    },
+    "viewSlot": "voir le slot",
+    "noMessage": "aucun message"
+  },
+  "revealRequest": {
+    "dialogTitle": "Demander de se révéler",
+    "intro": "Ce slot a été acheté anonymement. Vous pouvez demander à l'acheteur qui il est. Il peut accepter, refuser ou ignorer.",
+    "messageLabel": "Message (optionnel)",
+    "messagePlaceholder": "Bonjour, j'aimerais savoir qui vous êtes parce que…",
+    "send": "envoyer la demande",
+    "sending": "envoi...",
+    "success": "demande envoyée",
+    "alreadySent": "vous avez déjà envoyé une demande pour ce slot",
+    "rateLimit": "vous avez atteint la limite de 3 demandes par 24h",
+    "selfTarget": "vous ne pouvez pas vous envoyer une demande à vous-même",
+    "loginRequired": "connectez-vous pour envoyer une demande",
+    "error": "impossible d'envoyer la demande, veuillez réessayer",
+    "incomingTitle": "Demande de révélation",
+    "incomingIntro": "{name} veut savoir qui vous êtes.",
+    "messageFromRequester": "Son message :",
+    "responseLabel": "Réponse (optionnel)",
+    "responsePlaceholder": "Une courte note pour le demandeur…",
+    "accept": "révéler mon identité",
+    "decline": "refuser",
+    "responding": "enregistrement...",
+    "responseAccepted": "vous vous êtes révélé",
+    "responseDeclined": "vous avez refusé",
+    "outgoingPending": "en attente de réponse",
+    "outgoingAccepted": "s'est révélé",
+    "outgoingDeclined": "a refusé",
+    "viewProfile": "voir son profil"
   },
   "meta": {
     "landing": {

@@ -46,6 +46,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
   const [upload, setUpload] = useState<UploadState>({ kind: 'idle' })
   const [pan, setPan] = useState({ x: 0.5, y: 0.5 })
   const [zoom, setZoom] = useState(1.0)
+  const [isAnonymous, setIsAnonymous] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -106,7 +107,10 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
   const bidIsValid =
     Number.isFinite(bidEur) && bidEur >= minBid && bidEur % 5 === 0
   const linkIsValid = /^https:\/\/.+/i.test(linkUrl)
-  const nameIsValid = displayName.trim().length > 0 && displayName.length <= 50
+  const effectiveDisplayName = isAnonymous ? 'anonymous' : displayName.trim()
+  const nameIsValid =
+    isAnonymous ||
+    (displayName.trim().length > 0 && displayName.length <= 50)
   const imageReady = upload.kind === 'uploaded'
 
   const canSubmit =
@@ -121,7 +125,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
     setError(null)
     try {
       const result = await createBidCheckoutSession({
-        display_name: displayName.trim(),
+        display_name: effectiveDisplayName,
         image_url: remoteUrl,
         link_url: linkUrl,
         brand_color: '#1a1a1a',
@@ -130,6 +134,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
         pan_y: pan.y,
         zoom,
         outbid_slot_id: outbidSlot?.id ?? undefined,
+        is_anonymous: isAnonymous,
       })
       if (!result.success || !result.url) {
         const msg = result.error || tErrors('sessionFailed')
@@ -290,15 +295,32 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
                   id="bid-display-name"
                   type="text"
                   maxLength={50}
-                  value={displayName}
+                  value={isAnonymous ? 'anonymous' : displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  disabled={submitting}
+                  disabled={submitting || isAnonymous}
                   placeholder="my brand"
                   className="w-full px-3 py-2 bg-term-surface border border-term-border-light text-white placeholder:text-term-dim focus:outline-none focus:border-term-accent disabled:opacity-50"
                 />
                 <div className="text-[10px] text-term-muted">
                   &gt; shown on hover · max 50 chars ({displayName.length}/50)
                 </div>
+                <label className="flex items-start gap-2 cursor-pointer select-none mt-1">
+                  <input
+                    type="checkbox"
+                    checked={isAnonymous}
+                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    disabled={submitting}
+                    className="mt-0.5 accent-term-accent"
+                  />
+                  <span className="flex flex-col gap-0.5">
+                    <span className="text-xs text-term-text">
+                      [anonymous] {tForm('anonymous')}
+                    </span>
+                    <span className="text-[10px] text-term-muted leading-snug">
+                      &gt; {tForm('anonymousHelp')}
+                    </span>
+                  </span>
+                </label>
               </section>
 
               {/* Link */}

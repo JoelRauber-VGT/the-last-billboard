@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "predev": "node ./scripts/setup-icloud-safe-dist.mjs",
+    "dev": "NODE_PATH=\"$PWD/node_modules\" next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
