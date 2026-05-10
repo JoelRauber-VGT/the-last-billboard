@@ -103,6 +103,33 @@ export async function POST(request: NextRequest) {
     }
   );
 
+  // ── Replay protection (Bug #2 / WP2) ─────────────────────────────────────
+  // Insert the event_id into webhook_events as the FIRST DB op. The PK
+  // collision on a duplicate Stripe delivery (retry, manual replay) makes
+  // this branch return 200 immediately so we never re-run process_bid for
+  // the same event. This is the primary idempotency guard; the
+  // `transactions.status != 'pending'` check below remains as defense in
+  // depth.
+  const { error: replayError } = await supabase
+    .from('webhook_events')
+    .insert({ event_id: event.id, type: event.type });
+
+  if (replayError) {
+    // Postgres unique_violation. Supabase surfaces the SQLSTATE in `code`.
+    if (replayError.code === '23505') {
+      console.log('[stripe-webhook] duplicate event skipped:', event.id);
+      return NextResponse.json({ ok: true, skipped: 'duplicate_event' });
+    }
+    // Any other failure (table missing, network, RLS) is fatal — surfacing
+    // 500 makes Stripe retry, which is the safe behavior since we have not
+    // yet processed the event.
+    console.error('[stripe-webhook] failed to record webhook event:', replayError);
+    return NextResponse.json(
+      { error: 'Failed to record webhook event' },
+      { status: 500 }
+    );
+  }
+
   // Handle different event types
   switch (event.type) {
     case 'checkout.session.completed': {
@@ -141,7 +168,7 @@ export async function POST(request: NextRequest) {
           rawMetadata
         );
         return NextResponse.json(
-          { error: 'Invalid session metadata', details: parsed.error.issues },
+          { error: 'Invalid session metadata', code: 'invalid_input', details: parsed.error.issues },
           { status: 400 }
         );
       }
@@ -225,6 +252,18 @@ export async function POST(request: NextRequest) {
       }
 
       console.log(`Bid processed successfully:`, bidResult);
+
+      // process_bid is now idempotent (migration 024). If a concurrent caller
+      // already completed this transaction, the RPC returns
+      // { success: true, idempotent: true } and we must NOT re-trigger the
+      // refund processor (it would be a no-op anyway, but skipping keeps the
+      // log readable and avoids extra Stripe API calls).
+      if (bidResult && bidResult.idempotent === true) {
+        console.log(
+          `[stripe-webhook] process_bid idempotent return for ${transactionId}; skipping refund pass`
+        );
+        return NextResponse.json({ received: true, idempotent: true });
+      }
 
       // Check if race condition occurred
       if (bidResult && !bidResult.success) {

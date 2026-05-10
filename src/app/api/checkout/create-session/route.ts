@@ -4,6 +4,7 @@ import { getStripe } from '@/lib/stripe/server';
 import { config } from '@/lib/config';
 import { throwIfFrozenAsync } from '@/lib/freeze/getFreezeDate';
 import { checkRateLimit } from '@/lib/rate-limit/checkRateLimit';
+import { isSupabaseStoragePublicUrl } from '@/lib/storage/slotImages';
 
 /**
  * Resolve the caller's locale so Stripe redirects land on the right
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       await throwIfFrozenAsync();
     } catch (freezeError) {
       return NextResponse.json(
-        { error: 'Billboard is frozen' },
+        { error: 'Billboard is frozen', code: 'billboard_frozen' },
         { status: 403 }
       );
     }
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'You must be logged in to bid' },
+        { error: 'You must be logged in to bid', code: 'auth_required' },
         { status: 401 }
       );
     }
@@ -80,7 +81,10 @@ export async function POST(request: NextRequest) {
     const rl = await checkRateLimit(supabase, `checkout:${user.id}`, 10, 300);
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: rl.error ?? 'Too many checkout attempts. Please wait a few minutes and try again.' },
+        {
+          error: rl.error ?? 'Too many checkout attempts. Please wait a few minutes and try again.',
+          code: rl.error ? 'rate_check_failed' : 'rate_limited',
+        },
         { status: rl.error ? 500 : 429 }
       );
     }
@@ -94,7 +98,7 @@ export async function POST(request: NextRequest) {
     // Validation: mode
     if (!mode || !['new', 'outbid'].includes(mode)) {
       return NextResponse.json(
-        { error: 'Invalid mode. Must be "new" or "outbid"' },
+        { error: 'Invalid mode. Must be "new" or "outbid"', code: 'invalid_mode' },
         { status: 400 }
       );
     }
@@ -102,7 +106,7 @@ export async function POST(request: NextRequest) {
     // Validation: slot_id required for outbid mode
     if (mode === 'outbid' && !slot_id) {
       return NextResponse.json(
-        { error: 'slot_id is required for outbid mode' },
+        { error: 'slot_id is required for outbid mode', code: 'missing_slot_id' },
         { status: 400 }
       );
     }
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
     // Validation: bid_eur
     if (typeof bid_eur !== 'number' || bid_eur <= 0) {
       return NextResponse.json(
-        { error: 'Invalid bid amount' },
+        { error: 'Invalid bid amount', code: 'bid_invalid' },
         { status: 400 }
       );
     }
@@ -118,7 +122,7 @@ export async function POST(request: NextRequest) {
     // Validation: minimum bid for new slots
     if (mode === 'new' && bid_eur < config.minBidEur) {
       return NextResponse.json(
-        { error: `Minimum bid is ${config.minBidEur} EUR` },
+        { error: `Minimum bid is ${config.minBidEur} EUR`, code: 'bid_too_low' },
         { status: 400 }
       );
     }
@@ -133,14 +137,14 @@ export async function POST(request: NextRequest) {
 
       if (slotError || !slot) {
         return NextResponse.json(
-          { error: 'Slot not found' },
+          { error: 'Slot not found', code: 'slot_not_found' },
           { status: 404 }
         );
       }
 
       if (bid_eur <= slot.current_bid_eur) {
         return NextResponse.json(
-          { error: `Bid must be higher than current bid of ${slot.current_bid_eur} EUR` },
+          { error: `Bid must be higher than current bid of ${slot.current_bid_eur} EUR`, code: 'bid_too_low' },
           { status: 400 }
         );
       }
@@ -149,7 +153,7 @@ export async function POST(request: NextRequest) {
     // Validation: link_url
     if (!link_url || !link_url.startsWith('https://')) {
       return NextResponse.json(
-        { error: 'link_url must be a valid HTTPS URL' },
+        { error: 'link_url must be a valid HTTPS URL', code: 'invalid_link_url' },
         { status: 400 }
       );
     }
@@ -157,7 +161,7 @@ export async function POST(request: NextRequest) {
     // Validation: display_name
     if (!display_name || display_name.length === 0 || display_name.length > 50) {
       return NextResponse.json(
-        { error: 'display_name must be between 1 and 50 characters' },
+        { error: 'display_name must be between 1 and 50 characters', code: 'invalid_display_name' },
         { status: 400 }
       );
     }
@@ -166,15 +170,20 @@ export async function POST(request: NextRequest) {
     const hexColorRegex = /^#[0-9A-Fa-f]{6}$/;
     if (!brand_color || !hexColorRegex.test(brand_color)) {
       return NextResponse.json(
-        { error: 'brand_color must be a valid hex color (e.g., #FF5733)' },
+        { error: 'brand_color must be a valid hex color (e.g., #FF5733)', code: 'invalid_brand_color' },
         { status: 400 }
       );
     }
 
-    // Validation: image_url (if provided, must be from slot-images bucket)
-    if (image_url && !image_url.includes('/slot-images/')) {
+    // Validation: image_url (if provided, must be a public URL on our own
+    // Supabase storage in the slot-images bucket). The previous substring
+    // check (`includes('/slot-images/')`) was too loose — `https://attacker
+    // .example/slot-images/xyz` would have passed. The shared helper does
+    // strict origin + path-prefix matching to also harden any future
+    // callers that fetch this URL server-side.
+    if (image_url && !isSupabaseStoragePublicUrl(image_url)) {
       return NextResponse.json(
-        { error: 'image_url must be from the slot-images bucket' },
+        { error: 'image_url must be from the slot-images bucket', code: 'invalid_image_url' },
         { status: 400 }
       );
     }
@@ -188,7 +197,7 @@ export async function POST(request: NextRequest) {
 
     if (profileError || !profile) {
       return NextResponse.json(
-        { error: 'User profile not found' },
+        { error: 'User profile not found', code: 'profile_not_found' },
         { status: 404 }
       );
     }
@@ -214,7 +223,7 @@ export async function POST(request: NextRequest) {
     if (transactionError || !transaction) {
       console.error('Transaction creation error:', transactionError);
       return NextResponse.json(
-        { error: 'Failed to create transaction' },
+        { error: 'Failed to create transaction', code: 'transaction_create_failed' },
         { status: 500 }
       );
     }
@@ -269,7 +278,7 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error('Failed to update transaction with session ID:', updateError);
       return NextResponse.json(
-        { error: 'Failed to link Stripe session' },
+        { error: 'Failed to link Stripe session', code: 'stripe_link_failed' },
         { status: 500 }
       );
     }
@@ -281,7 +290,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Checkout session creation error:', error);
     return NextResponse.json(
-      { error: 'Failed to create payment session' },
+      { error: 'Failed to create payment session', code: 'payment_session_failed' },
       { status: 500 }
     );
   }

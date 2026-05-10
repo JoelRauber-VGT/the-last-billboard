@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerActionClient } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/rate-limit/checkRateLimit'
 import { z } from 'zod'
 
 // Validation schema
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.json(
-        { error: 'You must be logged in to report a slot' },
+        { error: 'You must be logged in to report a slot', code: 'auth_required' },
         { status: 401 }
       )
     }
@@ -45,34 +46,25 @@ export async function POST(request: NextRequest) {
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: validationResult.error.issues },
+        { error: 'Invalid request data', code: 'invalid_input', details: validationResult.error.issues },
         { status: 400 }
       )
     }
 
     const { slot_id, reason, details } = validationResult.data
 
-    // Check rate limit: max 5 reports per user per hour
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-
-    const { data: recentReports, error: rateLimitError } = await supabase
-      .from('reports')
-      .select('id')
-      .eq('reporter_id', user.id)
-      .gte('created_at', oneHourAgo)
-
-    if (rateLimitError) {
-      console.error('Rate limit check error:', rateLimitError)
+    // Atomic rate limit: max 5 reports per user per hour. Backed by the
+    // SECURITY DEFINER RPC `check_and_record_rate_limit` (migration 014),
+    // which counts + inserts in a single SQL call to prevent TOCTOU bursts
+    // where parallel requests all observe `count < limit` before any insert.
+    const rl = await checkRateLimit(supabase, `report_create:${user.id}`, 5, 3600)
+    if (!rl.allowed) {
       return NextResponse.json(
-        { error: 'Failed to check rate limit' },
-        { status: 500 }
-      )
-    }
-
-    if (recentReports && recentReports.length >= 5) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded. Maximum 5 reports per hour.' },
-        { status: 429 }
+        {
+          error: rl.error ?? 'Rate limit exceeded. Maximum 5 reports per hour.',
+          code: rl.error ? 'rate_check_failed' : 'rate_limited',
+        },
+        { status: rl.error ? 500 : 429 }
       )
     }
 
@@ -85,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     if (slotError || !slot) {
       return NextResponse.json(
-        { error: 'Slot not found' },
+        { error: 'Slot not found', code: 'slot_not_found' },
         { status: 404 }
       )
     }
@@ -106,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (insertError || !report) {
       console.error('Report insertion error:', insertError)
       return NextResponse.json(
-        { error: 'Failed to submit report' },
+        { error: 'Failed to submit report', code: 'report_submit_failed' },
         { status: 500 }
       )
     }
@@ -118,7 +110,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Report submission error:', error)
     return NextResponse.json(
-      { error: 'Failed to submit report' },
+      { error: 'Failed to submit report', code: 'report_submit_failed' },
       { status: 500 }
     )
   }

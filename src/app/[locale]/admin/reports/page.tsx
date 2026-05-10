@@ -20,8 +20,11 @@ type ReportWithDetails = {
   reporter_email: string
   slot_display_name: string
   slot_image_url: string | null
+  slot_bid_eur: number
   report_count: number
 }
+
+const DEFAULT_REFUND_PERCENT = 90
 
 export default function AdminReportsPage() {
   const params = useParams()
@@ -80,40 +83,21 @@ export default function AdminReportsPage() {
     }
   }
 
-  async function handleRemoveWithRefund(reportId: string, slotId: string) {
+  async function handleRemove(reportId: string, slotId: string, refundPercent: number) {
     setActionLoading(reportId)
     try {
       const res = await fetch('/api/admin/reports/remove-with-refund', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId, slotId }),
+        body: JSON.stringify({ reportId, slotId, refundPercent }),
       })
 
       if (res.ok) {
-        toast.success('Slot removed with refund')
-        await loadReports()
-      } else {
-        toast.error(tErrors('admin.actionFailed'))
-      }
-    } catch (error) {
-      console.error('Failed to remove slot:', error)
-      toast.error(tErrors('admin.actionFailed'))
-    } finally {
-      setActionLoading(null)
-    }
-  }
-
-  async function handleRemoveNoRefund(reportId: string, slotId: string) {
-    setActionLoading(reportId)
-    try {
-      const res = await fetch('/api/admin/reports/remove-no-refund', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reportId, slotId }),
-      })
-
-      if (res.ok) {
-        toast.success('Slot removed (no refund)')
+        toast.success(
+          refundPercent > 0
+            ? `Slot removed (${refundPercent}% refund)`
+            : 'Slot removed (no refund)'
+        )
         await loadReports()
       } else {
         toast.error(tErrors('admin.actionFailed'))
@@ -275,37 +259,13 @@ export default function AdminReportsPage() {
                             >
                               {t('dismiss')}
                             </Button>
-                            <Dialog>
-                              <DialogTrigger>
-                                <Button size="sm" variant="destructive">
-                                  Remove
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>{t('confirmRemove')}</DialogTitle>
-                                  <DialogDescription>
-                                    Choose how to handle this slot removal.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => handleRemoveWithRefund(report.id, report.slot_id)}
-                                    disabled={actionLoading === report.id}
-                                  >
-                                    {t('removeWithRefund')}
-                                  </Button>
-                                  <Button
-                                    variant="destructive"
-                                    onClick={() => handleRemoveNoRefund(report.id, report.slot_id)}
-                                    disabled={actionLoading === report.id}
-                                  >
-                                    {t('removeNoRefund')}
-                                  </Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
+                            <RemoveSlotDialog
+                              report={report}
+                              loading={actionLoading === report.id}
+                              onConfirm={(percent) =>
+                                handleRemove(report.id, report.slot_id, percent)
+                              }
+                            />
                           </>
                         )}
                       </div>
@@ -322,5 +282,111 @@ export default function AdminReportsPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+function RemoveSlotDialog({
+  report,
+  loading,
+  onConfirm,
+}: {
+  report: ReportWithDetails
+  loading: boolean
+  onConfirm: (percent: number) => void
+}) {
+  const t = useTranslations('admin.reports')
+  const [open, setOpen] = useState(false)
+  const [percentInput, setPercentInput] = useState<string>(String(DEFAULT_REFUND_PERCENT))
+
+  const parsed = Number.parseInt(percentInput, 10)
+  const percent = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : DEFAULT_REFUND_PERCENT
+  const valid = percentInput.trim() !== '' && Number.isInteger(parsed) && parsed >= 0 && parsed <= 100
+
+  const bid = report.slot_bid_eur
+  const refundEur = Math.round(bid * (percent / 100) * 100) / 100
+  const feeEur = Math.round((bid - refundEur) * 100) / 100
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next)
+    if (next) setPercentInput(String(DEFAULT_REFUND_PERCENT))
+  }
+
+  function handleConfirm() {
+    if (!valid) return
+    onConfirm(percent)
+    setOpen(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger
+        render={
+          <Button size="sm" variant="destructive">
+            {t('remove')}
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('confirmRemove')}</DialogTitle>
+          <DialogDescription>{t('removeDescription')}</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          <div>
+            <label className="text-sm font-medium" htmlFor="refund-percent">
+              {t('refundPercentLabel')}
+            </label>
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                id="refund-percent"
+                type="number"
+                min={0}
+                max={100}
+                step={1}
+                value={percentInput}
+                onChange={(e) => setPercentInput(e.target.value)}
+                className="w-24 rounded border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <span className="text-sm text-muted-foreground">%</span>
+              <span className="ml-2 text-xs text-muted-foreground">
+                {t('refundPercentHint')}
+              </span>
+            </div>
+          </div>
+
+          <div className="rounded border border-border bg-muted/30 p-3 text-sm">
+            <div className="mb-1 flex justify-between">
+              <span className="text-muted-foreground">{t('originalBid')}</span>
+              <span className="font-mono">€{bid.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">
+                {t('refundLabel')} ({percent}%)
+              </span>
+              <span className="font-mono">€{refundEur.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">
+                {t('feeLabel')} ({100 - percent}%)
+              </span>
+              <span className="font-mono">€{feeEur.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button
+            variant="destructive"
+            onClick={handleConfirm}
+            disabled={loading || !valid}
+          >
+            {percent > 0
+              ? t('confirmRemoveWithRefund', { percent })
+              : t('confirmRemoveNoRefund')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

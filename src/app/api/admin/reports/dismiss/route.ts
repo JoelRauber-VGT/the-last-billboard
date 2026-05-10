@@ -11,7 +11,10 @@ export async function POST(request: NextRequest) {
   const auth = await checkAdminAuth()
 
   if (!auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'forbidden' },
+      { status: 404 }
+    )
   }
 
   const { user, supabase } = auth
@@ -32,7 +35,10 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Failed to dismiss report:', error)
-      return NextResponse.json({ error: 'Failed to dismiss report' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Failed to dismiss report', code: 'dismiss_failed' },
+        { status: 500 }
+      )
     }
 
     // Log admin action
@@ -46,9 +52,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Invalid input', code: 'invalid_input' },
+        { status: 400 }
+      )
     }
     console.error('Error dismissing report:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal server error', code: 'internal_error' },
+      { status: 500 }
+    )
   }
 }

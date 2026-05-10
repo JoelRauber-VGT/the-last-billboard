@@ -27,14 +27,17 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+      return NextResponse.json(
+        { error: 'Authentication required', code: 'auth_required' },
+        { status: 401 }
+      )
     }
 
     const body = await request.json()
     const parsed = createSchema.safeParse(body)
     if (!parsed.success) {
       return NextResponse.json(
-        { error: 'invalid_request', details: parsed.error.issues },
+        { error: 'Invalid request', code: 'invalid_input', details: parsed.error.issues },
         { status: 400 }
       )
     }
@@ -50,10 +53,16 @@ export async function POST(request: NextRequest) {
 
     if (rateErr) {
       console.error('reveal-requests rate-check error', rateErr)
-      return NextResponse.json({ error: 'rate_check_failed' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Rate-limit check failed', code: 'rate_check_failed' },
+        { status: 500 }
+      )
     }
     if ((recentCount ?? 0) >= RATE_LIMIT_PER_24H) {
-      return NextResponse.json({ error: 'rate_limit' }, { status: 429 })
+      return NextResponse.json(
+        { error: 'Rate limit exceeded', code: 'rate_limited' },
+        { status: 429 }
+      )
     }
 
     // Resolve slot + target owner
@@ -64,7 +73,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (slotErr || !slot) {
-      return NextResponse.json({ error: 'slot_not_found' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Slot not found', code: 'slot_not_found' },
+        { status: 404 }
+      )
     }
 
     const slotRow = slot as {
@@ -74,13 +86,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (!slotRow.is_anonymous) {
-      return NextResponse.json({ error: 'slot_not_anonymous' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Slot is not anonymous', code: 'slot_not_anonymous' },
+        { status: 400 }
+      )
     }
     if (!slotRow.current_owner_id) {
-      return NextResponse.json({ error: 'slot_unowned' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Slot has no current owner', code: 'slot_unowned' },
+        { status: 400 }
+      )
     }
     if (slotRow.current_owner_id === user.id) {
-      return NextResponse.json({ error: 'self_target' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Cannot send to yourself', code: 'self_target' },
+        { status: 400 }
+      )
     }
 
     const { data: inserted, error: insertErr } = await supabase
@@ -98,10 +119,16 @@ export async function POST(request: NextRequest) {
     if (insertErr) {
       // Postgres unique violation
       if (insertErr.code === '23505') {
-        return NextResponse.json({ error: 'already_sent' }, { status: 409 })
+        return NextResponse.json(
+          { error: 'Reveal request already sent', code: 'already_sent' },
+          { status: 409 }
+        )
       }
       console.error('reveal-requests insert error', insertErr)
-      return NextResponse.json({ error: 'insert_failed' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Insert failed', code: 'insert_failed' },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json(
@@ -110,6 +137,9 @@ export async function POST(request: NextRequest) {
     )
   } catch (err) {
     console.error('reveal-requests POST error', err)
-    return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal server error', code: 'internal_error' },
+      { status: 500 }
+    )
   }
 }

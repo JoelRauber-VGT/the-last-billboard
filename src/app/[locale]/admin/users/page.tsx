@@ -156,11 +156,13 @@ export default function AdminUsersPage() {
                           </Button>
                         </Link>
                         <Dialog>
-                          <DialogTrigger>
-                            <Button size="sm" variant="outline">
-                              {t('toggleAdmin')}
-                            </Button>
-                          </DialogTrigger>
+                          <DialogTrigger
+                            render={
+                              <Button size="sm" variant="outline">
+                                {t('toggleAdmin')}
+                              </Button>
+                            }
+                          />
                           <DialogContent>
                             <DialogHeader>
                               <DialogTitle>{t('confirmToggleAdmin')}</DialogTitle>

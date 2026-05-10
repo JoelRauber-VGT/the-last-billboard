@@ -2,80 +2,69 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerActionClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { deleteAllUserImages } from '@/lib/storage/slotImages'
 
-const ANONYMIZED_NAME = '[deleted account]'
-
 /**
  * Self-service account deletion (Art. 17 DSGVO).
  *
  * Strategy:
  *   1. Authenticate via the user's session.
- *   2. Anonymize the user's footprint where it cannot be deleted without
- *      destroying the financial/historical record (transactions, slot_history,
- *      currently-active slots).
- *   3. Hard-delete all of the user's slot images from storage.
+ *   2. Atomic anonymization via the `delete_account` SQL function — wraps the
+ *      previous step-1+step-2 mutations (slots PII strip, slot_history PII strip)
+ *      in a single Postgres transaction. If any inner statement fails, Postgres
+ *      rolls back the whole function. Idempotent across retries.
+ *   3. Hard-delete all of the user's slot images from storage (best-effort).
  *   4. Delete the auth.users row → cascades to profiles, notifications,
  *      reveal_requests. Transactions / slot_history.owner_id / slots.current_owner_id
  *      are FK SET NULL by schema.
  *
- * Active slots are marked status='removed' and stripped of PII (image, link,
- * display_name) but the bid record remains. No automatic refund — voluntary
- * deletion is not the same as admin-removal-for-cause.
+ * Failure mode: if step 4 fails after step 2 succeeds, the user's app data is
+ * fully anonymized (DSGVO-compliant) but the auth row still exists. Logged as
+ * critical and returned with code='partial_delete'; user-facing data leakage
+ * is impossible because step 2 already committed.
+ *
+ * Active slots are marked status='removed' and stripped of PII. No automatic
+ * refund — voluntary deletion is not the same as admin-removal-for-cause.
  */
 export async function POST(_request: NextRequest) {
   const userClient = await createServerActionClient()
   const { data: { user } } = await userClient.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'auth_required' },
+      { status: 401 }
+    )
   }
 
   const userId = user.id
   const admin = createServiceRoleClient()
 
-  // 1. Strip PII from currently-active slots owned by the user, and mark them removed.
-  const { error: slotsError } = await admin
-    .from('slots')
-    .update({
-      display_name: ANONYMIZED_NAME,
-      image_url: null,
-      link_url: '',
-      brand_color: null,
-      is_anonymous: true,
-      status: 'removed',
-    })
-    .eq('current_owner_id', userId)
+  // 1+2. Atomic anonymization (slots + slot_history) in a single transaction.
+  const { error: rpcError } = await admin.rpc('delete_account', { p_user_id: userId })
 
-  if (slotsError) {
-    console.error('[account/delete] failed to anonymize slots:', slotsError)
-    return NextResponse.json({ error: 'Failed to clean up slots' }, { status: 500 })
+  if (rpcError) {
+    console.error('[account/delete] delete_account RPC failed', { userId, error: rpcError })
+    return NextResponse.json(
+      { error: 'Failed to delete account', code: 'delete_failed' },
+      { status: 500 }
+    )
   }
 
-  // 2. Anonymize slot_history rows where this user was the owner.
-  const { error: historyError } = await admin
-    .from('slot_history')
-    .update({
-      display_name: ANONYMIZED_NAME,
-      image_url: null,
-      link_url: null,
-      is_anonymous: true,
-    })
-    .eq('owner_id', userId)
-
-  if (historyError) {
-    console.error('[account/delete] failed to anonymize history:', historyError)
-    // continue — not blocking, but caller will see partial state on retry
-  }
-
-  // 3. Delete all of the user's uploaded images.
+  // 3. Delete all of the user's uploaded images. Best-effort — image deletion is
+  //    idempotent and can be retried by an admin if a few entries remain.
   const imgResult = await deleteAllUserImages(admin, userId)
 
   // 4. Delete the auth user. Cascades through `profiles` (and downstream tables).
   const { error: authDeleteError } = await admin.auth.admin.deleteUser(userId)
 
   if (authDeleteError) {
-    console.error('[account/delete] failed to delete auth user:', authDeleteError)
+    // App data is already anonymized + committed. Auth row is the only thing left.
+    // The user could theoretically still log in but would see an empty state.
+    console.error('[account/delete] data anonymized but auth-delete failed', {
+      userId,
+      error: authDeleteError,
+    })
     return NextResponse.json(
-      { error: 'Failed to delete account', detail: authDeleteError.message },
+      { error: 'Failed to delete account', code: 'partial_delete' },
       { status: 500 }
     )
   }

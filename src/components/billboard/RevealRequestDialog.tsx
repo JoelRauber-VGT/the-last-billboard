@@ -65,7 +65,7 @@ export function RevealRequestDialog({
           setError(t('rateLimit'))
         } else if (res.status === 401) {
           setError(t('loginRequired'))
-        } else if (json?.error === 'self_target') {
+        } else if (json?.code === 'self_target' || json?.error === 'self_target') {
           setError(t('selfTarget'))
         } else {
           setError(t('error'))

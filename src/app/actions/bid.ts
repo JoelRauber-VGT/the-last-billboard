@@ -4,6 +4,7 @@ import { createServerActionClient } from '@/lib/supabase/server';
 import { config } from '@/lib/config';
 import { throwIfFrozenAsync } from '@/lib/freeze/getFreezeDate';
 import { getStripe } from '@/lib/stripe/server';
+import { isSupabaseStoragePublicUrl } from '@/lib/storage/slotImages';
 import { z } from 'zod';
 import { getLocale } from 'next-intl/server';
 
@@ -30,6 +31,7 @@ export type BidCheckoutResult = {
   success: boolean;
   url?: string;
   error?: string;
+  code?: string;
 };
 
 /**
@@ -54,9 +56,19 @@ function validateUrl(url: string): boolean {
 }
 
 /**
- * Server-side MIME type validation using magic bytes
+ * Server-side MIME type validation via HEAD request.
+ *
+ * SSRF hardening: callers MUST gate this with isSupabaseStoragePublicUrl()
+ * first. The HEAD request fetches an attacker-controlled URL, so without
+ * an origin allowlist this would let clients probe internal services
+ * (cloud-metadata, localhost admin ports, RFC1918 hosts) by observing
+ * response headers / timing. We re-assert the allowlist here as defense
+ * in depth in case a future caller forgets.
  */
 async function validateImageMimeType(imageUrl: string): Promise<boolean> {
+  if (!isSupabaseStoragePublicUrl(imageUrl)) {
+    return false;
+  }
   try {
     const response = await fetch(imageUrl, {
       method: 'HEAD',
@@ -82,6 +94,7 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: 'Billboard is frozen. No more bids accepted.',
+        code: 'billboard_frozen',
       };
     }
 
@@ -93,6 +106,7 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: 'You must be logged in to bid',
+        code: 'auth_required',
       };
     }
 
@@ -103,6 +117,7 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: firstError?.message || 'Invalid form data',
+        code: 'invalid_input',
       };
     }
 
@@ -113,16 +128,28 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: 'Invalid URL format',
+        code: 'invalid_link_url',
       };
     }
 
-    // Server-side image validation if image provided
+    // Server-side image validation if image provided.
+    // We gate on origin BEFORE the HEAD fetch (see validateImageMimeType
+    // for the SSRF rationale). Returning early with a distinct code makes
+    // the rejection unambiguous at the call site too.
     if (data.image_url) {
+      if (!isSupabaseStoragePublicUrl(data.image_url)) {
+        return {
+          success: false,
+          error: 'Image URL not allowed',
+          code: 'invalid_image_url',
+        };
+      }
       const isValidImage = await validateImageMimeType(data.image_url);
       if (!isValidImage) {
         return {
           success: false,
           error: 'Invalid image file',
+          code: 'invalid_image_type',
         };
       }
     }
@@ -141,6 +168,7 @@ export async function createBidCheckoutSession(
         return {
           success: false,
           error: 'Slot not found',
+          code: 'slot_not_found',
         };
       }
 
@@ -149,6 +177,7 @@ export async function createBidCheckoutSession(
         return {
           success: false,
           error: 'You cannot outbid your own slot',
+          code: 'self_outbid',
         };
       }
 
@@ -157,6 +186,7 @@ export async function createBidCheckoutSession(
         return {
           success: false,
           error: `Your bid must be at least €${minBid.toFixed(2)}`,
+          code: 'bid_too_low',
         };
       }
     } else {
@@ -165,6 +195,7 @@ export async function createBidCheckoutSession(
         return {
           success: false,
           error: `Minimum bid is €${config.minBidEur.toFixed(2)}`,
+          code: 'bid_too_low',
         };
       }
     }
@@ -182,6 +213,7 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: 'User profile not found',
+        code: 'profile_not_found',
       };
     }
 
@@ -214,6 +246,7 @@ export async function createBidCheckoutSession(
       return {
         success: false,
         error: 'Failed to create transaction',
+        code: 'transaction_create_failed',
       };
     }
 
@@ -277,6 +310,7 @@ export async function createBidCheckoutSession(
     return {
       success: false,
       error: 'An unexpected error occurred. Please try again.',
+      code: 'internal_error',
     };
   }
 }

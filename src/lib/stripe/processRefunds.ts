@@ -7,9 +7,10 @@ import { getStripe } from './server';
 export interface RefundProcessingResult {
   processed: number;
   failed: number;
+  skipped: number;
   details: Array<{
     transaction_id: string;
-    status: 'success' | 'failed';
+    status: 'success' | 'failed' | 'skipped';
     error?: string;
   }>;
 }
@@ -20,10 +21,17 @@ export interface RefundProcessingResult {
  * This function:
  * 1. Queries all transactions with type='refund' and status='pending'
  * 2. For each refund, finds the original payment_intent from the bid transaction
- * 3. Creates a Stripe refund
+ * 3. Creates a Stripe refund (with idempotency_key tied to the transaction row)
  * 4. Updates the transaction status to 'completed' or 'failed'
  *
- * @returns Summary of processed and failed refunds
+ * Idempotency model:
+ * - We pass `idempotency_key: refund_<transaction.id>` to Stripe so a retry
+ *   never produces a second money movement: Stripe returns the original refund.
+ * - Before calling Stripe we re-check the row and skip any transaction that
+ *   already has a `stripe_refund_id`. This protects us from a previous
+ *   successful Stripe call whose DB status update failed.
+ *
+ * @returns Summary of processed, failed and skipped refunds
  */
 export async function processRefunds(): Promise<RefundProcessingResult> {
   const stripe = getStripe();
@@ -47,13 +55,14 @@ export async function processRefunds(): Promise<RefundProcessingResult> {
   const result: RefundProcessingResult = {
     processed: 0,
     failed: 0,
+    skipped: 0,
     details: []
   };
 
   // Step 1: Get all pending refunds
   const { data: pendingRefunds, error: fetchError } = await supabase
     .from('transactions')
-    .select('id, user_id, slot_id, amount_eur, commission_eur')
+    .select('id, user_id, slot_id, amount_eur, commission_eur, stripe_refund_id')
     .eq('type', 'refund')
     .eq('status', 'pending');
 
@@ -73,6 +82,41 @@ export async function processRefunds(): Promise<RefundProcessingResult> {
   for (const refund of pendingRefunds) {
     try {
       console.log(`Processing refund for transaction ${refund.id}`);
+
+      // Idempotency guard: a previous run may have created the Stripe refund
+      // but failed to flip our status to 'completed'. The row will still look
+      // 'pending' to the SELECT above; the stripe_refund_id is the marker
+      // that the money already left the platform.
+      if (refund.stripe_refund_id) {
+        console.warn(
+          `Refund ${refund.id} already has stripe_refund_id ${refund.stripe_refund_id}; ` +
+            `reconciling status to completed and skipping Stripe call`
+        );
+
+        const { error: reconcileError } = await supabase
+          .from('transactions')
+          .update({ status: 'completed' })
+          .eq('id', refund.id);
+
+        if (reconcileError) {
+          console.error(`Failed to reconcile refund ${refund.id}:`, reconcileError);
+          result.failed++;
+          result.details.push({
+            transaction_id: refund.id,
+            status: 'failed',
+            error: 'Failed to reconcile already-refunded transaction'
+          });
+          continue;
+        }
+
+        result.skipped++;
+        result.details.push({
+          transaction_id: refund.id,
+          status: 'skipped',
+          error: 'Already refunded; status reconciled'
+        });
+        continue;
+      }
 
       // Find the original bid transaction for this slot and user
       // We need to find the most recent 'bid' transaction for this user on this slot
@@ -112,25 +156,36 @@ export async function processRefunds(): Promise<RefundProcessingResult> {
 
       console.log(`Creating Stripe refund for payment intent ${originalBid.stripe_payment_intent_id}, amount: ${refundAmountCents} cents`);
 
-      const stripeRefund = await stripe.refunds.create({
-        payment_intent: originalBid.stripe_payment_intent_id,
-        amount: refundAmountCents,
-        reason: 'requested_by_customer', // Standard reason for displacement refunds
-        metadata: {
-          transaction_id: refund.id,
-          slot_id: refund.slot_id || '',
-          refund_type: 'displacement'
+      // The idempotency_key is the safety net for the gap between this call
+      // and the DB write below. If the worker crashes or the next poll runs
+      // before we persisted stripe_refund_id, Stripe will dedupe by the key
+      // and return the same refund object instead of charging us twice.
+      const stripeRefund = await stripe.refunds.create(
+        {
+          payment_intent: originalBid.stripe_payment_intent_id,
+          amount: refundAmountCents,
+          reason: 'requested_by_customer', // Standard reason for displacement refunds
+          metadata: {
+            transaction_id: refund.id,
+            slot_id: refund.slot_id || '',
+            refund_type: 'displacement'
+          }
+        },
+        {
+          idempotencyKey: `refund_${refund.id}`,
         }
-      });
+      );
 
       console.log(`Stripe refund created: ${stripeRefund.id}`);
 
-      // Step 4: Update transaction status to completed
+      // Step 4: Persist the Stripe refund id first, then flip status. The
+      // unique index on stripe_refund_id makes this write the durable marker
+      // even if a follow-up status update fails.
       const { error: updateError } = await supabase
         .from('transactions')
         .update({
           status: 'completed',
-          stripe_payment_intent_id: stripeRefund.id // Store refund ID for reference
+          stripe_refund_id: stripeRefund.id,
         })
         .eq('id', refund.id);
 
@@ -154,7 +209,9 @@ export async function processRefunds(): Promise<RefundProcessingResult> {
     } catch (error) {
       console.error(`Failed to process refund ${refund.id}:`, error);
 
-      // Mark as failed
+      // Mark as failed. We deliberately do NOT clear stripe_refund_id here:
+      // if the failure happened post-Stripe-call, the marker (if any) must
+      // survive so the next run skips instead of double-refunding.
       await supabase
         .from('transactions')
         .update({ status: 'failed' })
@@ -169,6 +226,8 @@ export async function processRefunds(): Promise<RefundProcessingResult> {
     }
   }
 
-  console.log(`Refund processing complete: ${result.processed} processed, ${result.failed} failed`);
+  console.log(
+    `Refund processing complete: ${result.processed} processed, ${result.failed} failed, ${result.skipped} skipped`
+  );
   return result;
 }

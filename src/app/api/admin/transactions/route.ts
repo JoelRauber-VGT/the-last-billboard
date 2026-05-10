@@ -1,19 +1,25 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
-import { NextResponse } from 'next/server'
+import { parsePagination } from '@/lib/admin/pagination'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const auth = await checkAdminAuth()
 
   if (!auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'forbidden' },
+      { status: 404 },
+    )
   }
 
   const { supabase } = auth
+  const { page, pageSize, from, to } = parsePagination(request.nextUrl.searchParams)
 
-  // Fetch all transactions with user details
-  const { data: transactions, error } = await supabase
+  // Paginated fetch + exact total count for future Pagination-UI follow-up.
+  const { data: transactions, error, count } = await supabase
     .from('transactions')
-    .select(`
+    .select(
+      `
       id,
       created_at,
       type,
@@ -22,12 +28,18 @@ export async function GET() {
       stripe_payment_intent_id,
       status,
       user:user_id(email)
-    `)
+    `,
+      { count: 'exact' },
+    )
     .order('created_at', { ascending: false })
+    .range(from, to)
 
   if (error) {
     console.error('Failed to fetch transactions:', error)
-    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch transactions', code: 'fetch_failed' },
+      { status: 500 },
+    )
   }
 
   const formattedTransactions = transactions?.map(t => ({
@@ -41,5 +53,10 @@ export async function GET() {
     status: t.status,
   }))
 
-  return NextResponse.json({ transactions: formattedTransactions })
+  return NextResponse.json({
+    transactions: formattedTransactions,
+    total: count ?? 0,
+    page,
+    pageSize,
+  })
 }

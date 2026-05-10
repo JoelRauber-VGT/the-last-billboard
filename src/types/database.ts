@@ -169,6 +169,7 @@ export interface Database {
           commission_eur: number
           stripe_session_id: string | null
           stripe_payment_intent_id: string | null
+          stripe_refund_id: string | null
           status: 'pending' | 'completed' | 'failed' | 'refunded'
           is_anonymous: boolean
           created_at: string
@@ -182,6 +183,7 @@ export interface Database {
           commission_eur?: number
           stripe_session_id?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           status: 'pending' | 'completed' | 'failed' | 'refunded'
           is_anonymous?: boolean
           created_at?: string
@@ -195,6 +197,7 @@ export interface Database {
           commission_eur?: number
           stripe_session_id?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_refund_id?: string | null
           status?: 'pending' | 'completed' | 'failed' | 'refunded'
           is_anonymous?: boolean
           created_at?: string

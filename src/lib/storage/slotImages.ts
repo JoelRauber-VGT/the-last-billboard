@@ -6,6 +6,65 @@ const BUCKET = 'slot-images'
 const PUBLIC_URL_RE = /\/storage\/v1\/object\/public\/slot-images\/([^?]+)/
 
 /**
+ * Strict SSRF guard: ensure a client-supplied image URL points at our own
+ * Supabase storage public-object endpoint for the given bucket.
+ *
+ * Why this exists: callers like createBidCheckoutSession used to fetch the
+ * URL with HEAD to sniff the MIME type. Without this gate an attacker could
+ * point us at internal services (169.254.169.254 metadata, localhost admin
+ * ports, etc.) and observe response timing/headers — classic SSRF probe.
+ *
+ * We compare full origin equality (not substring) against
+ * NEXT_PUBLIC_SUPABASE_URL and require the path to start with the canonical
+ * `/storage/v1/object/public/<bucket>/` prefix. Userinfo (`https://x@evil`),
+ * punycode hostnames, and protocol tricks all fail the origin check because
+ * URL.origin is normalized.
+ *
+ * Returns true on match; false on any malformed/foreign URL. Never throws.
+ */
+export function isSupabaseStoragePublicUrl(
+  url: string | null | undefined,
+  bucket: string = BUCKET
+): boolean {
+  if (!url || typeof url !== 'string') return false
+
+  const supabaseBase = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!supabaseBase) return false
+
+  let expectedOrigin: string
+  try {
+    expectedOrigin = new URL(supabaseBase).origin
+  } catch {
+    return false
+  }
+
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return false
+  }
+
+  // Reject anything that smuggles credentials. URL parsing accepts
+  // `https://attacker@supabase.co/...` and the origin still matches; the
+  // server fetch resolves the host correctly so it's not a vector here, but
+  // we strip the surface anyway because legitimate public URLs never carry
+  // userinfo.
+  if (parsed.username || parsed.password) return false
+
+  if (parsed.protocol !== 'https:') return false
+  if (parsed.origin !== expectedOrigin) return false
+
+  const requiredPrefix = `/storage/v1/object/public/${bucket}/`
+  if (!parsed.pathname.startsWith(requiredPrefix)) return false
+
+  // Reject empty object path (`.../slot-images/`).
+  if (parsed.pathname.length <= requiredPrefix.length) return false
+
+  return true
+}
+
+/**
  * Extract the storage object path from a slot image's public URL.
  * Returns null for malformed URLs or URLs that don't belong to this bucket.
  */

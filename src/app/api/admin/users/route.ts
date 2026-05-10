@@ -1,38 +1,57 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
-import { NextResponse } from 'next/server'
+import { parsePagination } from '@/lib/admin/pagination'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const auth = await checkAdminAuth()
 
   if (!auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'forbidden' },
+      { status: 404 },
+    )
   }
 
   const { supabase } = auth
+  const { page, pageSize, from, to } = parsePagination(request.nextUrl.searchParams)
 
-  // Fetch all users
-  const { data: users, error } = await supabase
+  // Paginated fetch + exact total count for future Pagination-UI follow-up.
+  const { data: users, error, count } = await supabase
     .from('profiles')
-    .select('id, email, display_name, is_admin, created_at')
+    .select('id, email, display_name, is_admin, created_at', { count: 'exact' })
     .order('created_at', { ascending: false })
+    .range(from, to)
 
   if (error) {
     console.error('Failed to fetch users:', error)
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch users', code: 'fetch_failed' },
+      { status: 500 },
+    )
   }
 
-  // Single-shot fetch of all completed bid transactions; aggregate in JS.
-  // Replaces the previous per-user query (N+1) — one round-trip regardless
-  // of user count.
-  const { data: allTx, error: txError } = await supabase
-    .from('transactions')
-    .select('user_id, amount_eur')
-    .eq('type', 'bid')
-    .eq('status', 'completed')
+  const userIds = (users || []).map((u) => u.id)
 
-  if (txError) {
-    console.error('Failed to fetch transactions:', txError)
-    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 })
+  // Single-shot fetch of completed bid transactions for the page's users
+  // only; aggregate in JS. Replaces both the previous N+1 (one query per
+  // user) and the previous "load all transactions ever" pattern.
+  let allTx: Array<{ user_id: string; amount_eur: number }> | null = []
+  if (userIds.length > 0) {
+    const { data, error: txError } = await supabase
+      .from('transactions')
+      .select('user_id, amount_eur')
+      .eq('type', 'bid')
+      .eq('status', 'completed')
+      .in('user_id', userIds)
+
+    if (txError) {
+      console.error('Failed to fetch transactions:', txError)
+      return NextResponse.json(
+        { error: 'Failed to fetch transactions', code: 'fetch_failed' },
+        { status: 500 },
+      )
+    }
+    allTx = data
   }
 
   const statsByUser = new Map<string, { count: number; total: number }>()
@@ -57,5 +76,10 @@ export async function GET() {
     }
   })
 
-  return NextResponse.json({ users: usersWithStats })
+  return NextResponse.json({
+    users: usersWithStats,
+    total: count ?? 0,
+    page,
+    pageSize,
+  })
 }

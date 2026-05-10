@@ -15,14 +15,14 @@ const updateSchema = z.object({
 
 export type UpdateFreezeResult =
   | { ok: true; freezeDateIso: string }
-  | { ok: false; error: string };
+  | { ok: false; error: string; code?: string };
 
 export async function updateFreezeDate(
   input: z.infer<typeof updateSchema>
 ): Promise<UpdateFreezeResult> {
   const auth = await checkAdminAuth();
   if (!auth) {
-    return { ok: false, error: 'unauthorized' };
+    return { ok: false, error: 'Forbidden', code: 'forbidden' };
   }
 
   const parsed = updateSchema.safeParse(input);
@@ -30,6 +30,7 @@ export async function updateFreezeDate(
     return {
       ok: false,
       error: parsed.error.issues[0]?.message ?? 'Invalid input',
+      code: 'invalid_input',
     };
   }
 
@@ -61,7 +62,16 @@ export async function updateFreezeDate(
     );
 
   if (upsertError) {
-    return { ok: false, error: upsertError.message };
+    // Never propagate the raw Supabase / Postgres message to the client —
+    // it can include schema details, constraint names, etc. Log server-side,
+    // return a stable code instead.
+    console.error('[api-error]', {
+      code: 'freeze_date_update_failed',
+      route: 'actions/adminSettings.updateFreezeDate',
+      adminId: user.id,
+      cause: upsertError.message,
+    });
+    return { ok: false, error: 'update_failed', code: 'freeze_date_update_failed' };
   }
 
   // Audit trail (uses the shared helper so it shows up in the existing

@@ -1,17 +1,26 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
 import { logAdminAction } from '@/lib/admin/audit'
+import { escapeCsvCell } from '@/lib/csv/escape'
 import { NextResponse } from 'next/server'
+
+// Hard server-side cap for CSV export. Admins are expected to receive the
+// full dataset, but we still bound the query so a runaway table (millions of
+// rows) cannot OOM the route. Bump if/when the table actually approaches it.
+const EXPORT_HARD_LIMIT = 100_000
 
 export async function GET() {
   const auth = await checkAdminAuth()
 
   if (!auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'forbidden' },
+      { status: 404 }
+    )
   }
 
   const { user, supabase } = auth
 
-  // Fetch all transactions with user details
+  // Fetch all transactions with user details (capped for safety).
   const { data: transactions, error } = await supabase
     .from('transactions')
     .select(`
@@ -25,13 +34,18 @@ export async function GET() {
       user:user_id(email)
     `)
     .order('created_at', { ascending: false })
+    .range(0, EXPORT_HARD_LIMIT - 1)
 
   if (error) {
     console.error('Failed to fetch transactions:', error)
-    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch transactions', code: 'fetch_failed' },
+      { status: 500 }
+    )
   }
 
-  // Generate CSV
+  // Generate CSV. Every cell is run through escapeCsvCell which guards
+  // against CSV-Injection (formula-prefix sanitation) and RFC 4180 quoting.
   const headers = ['ID', 'Timestamp', 'User Email', 'Type', 'Amount (EUR)', 'Commission (EUR)', 'Stripe Payment Intent ID', 'Status']
   const rows = transactions?.map(t => [
     t.id,
@@ -45,9 +59,9 @@ export async function GET() {
   ]) || []
 
   const csv = [
-    headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
-  ].join('\n')
+    headers.map(escapeCsvCell).join(','),
+    ...rows.map(row => row.map(escapeCsvCell).join(',')),
+  ].join('\r\n')
 
   // Log admin action
   await logAdminAction({

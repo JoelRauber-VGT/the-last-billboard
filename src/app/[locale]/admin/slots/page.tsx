@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { useTranslations } from 'next-intl'
+import { XIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type SlotWithDetails = {
   id: string
@@ -137,7 +139,8 @@ export default function AdminSlotsPage() {
         </div>
       </div>
 
-      <Card>
+      <div className="flex items-start gap-6">
+        <Card className={cn('transition-all duration-300 ease-out', historySlot ? 'min-w-0 flex-1' : 'w-full')}>
         <CardContent className="p-0">
           {filteredSlots.length > 0 ? (
             <Table>
@@ -148,13 +151,17 @@ export default function AdminSlotsPage() {
                   <TableHead>Owner</TableHead>
                   <TableHead>Current Bid</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                  {!historySlot && <TableHead>Created</TableHead>}
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredSlots.map((slot) => (
-                  <TableRow key={slot.id}>
+                  <TableRow
+                    key={slot.id}
+                    data-active={historySlot?.id === slot.id ? 'true' : undefined}
+                    className="data-[active=true]:bg-accent/40"
+                  >
                     <TableCell>
                       {slot.image_url ? (
                         <img
@@ -182,66 +189,31 @@ export default function AdminSlotsPage() {
                         {slot.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(slot.created_at).toLocaleDateString(locale)}
-                    </TableCell>
+                    {!historySlot && (
+                      <TableCell className="text-sm text-muted-foreground">
+                        {new Date(slot.created_at).toLocaleDateString(locale)}
+                      </TableCell>
+                    )}
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Dialog>
-                          <DialogTrigger>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setHistorySlot(slot)}
-                            >
-                              {t('viewHistory')}
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle>Slot History: {slot.display_name}</DialogTitle>
-                              <DialogDescription>
-                                Complete history of this slot
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="max-h-96 overflow-y-auto">
-                              {slot.history.length > 0 ? (
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead>Owner</TableHead>
-                                      <TableHead>Display Name</TableHead>
-                                      <TableHead>Bid</TableHead>
-                                      <TableHead>Period</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {slot.history.map((h) => (
-                                      <TableRow key={h.id}>
-                                        <TableCell className="text-sm">{h.owner_email}</TableCell>
-                                        <TableCell className="text-sm">{h.display_name}</TableCell>
-                                        <TableCell className="font-mono text-sm">€{h.bid_eur.toFixed(2)}</TableCell>
-                                        <TableCell className="text-sm text-muted-foreground">
-                                          {new Date(h.started_at).toLocaleDateString(locale)}
-                                          {h.ended_at && ` - ${new Date(h.ended_at).toLocaleDateString(locale)}`}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              ) : (
-                                <p className="py-4 text-center text-sm text-muted-foreground">No history yet</p>
-                              )}
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+                        <Button
+                          size="sm"
+                          variant={historySlot?.id === slot.id ? 'default' : 'ghost'}
+                          onClick={() =>
+                            setHistorySlot((current) => (current?.id === slot.id ? null : slot))
+                          }
+                        >
+                          {t('viewHistory')}
+                        </Button>
                         {slot.status === 'active' ? (
                           <Dialog>
-                            <DialogTrigger>
-                              <Button size="sm" variant="destructive">
-                                {t('hide')}
-                              </Button>
-                            </DialogTrigger>
+                            <DialogTrigger
+                              render={
+                                <Button size="sm" variant="destructive">
+                                  {t('hide')}
+                                </Button>
+                              }
+                            />
                             <DialogContent>
                               <DialogHeader>
                                 <DialogTitle>{t('confirmHide')}</DialogTitle>
@@ -262,11 +234,13 @@ export default function AdminSlotsPage() {
                           </Dialog>
                         ) : (
                           <Dialog>
-                            <DialogTrigger>
-                              <Button size="sm" variant="outline">
-                                {t('restore')}
-                              </Button>
-                            </DialogTrigger>
+                            <DialogTrigger
+                              render={
+                                <Button size="sm" variant="outline">
+                                  {t('restore')}
+                                </Button>
+                              }
+                            />
                             <DialogContent>
                               <DialogHeader>
                                 <DialogTitle>{t('confirmRestore')}</DialogTitle>
@@ -297,7 +271,99 @@ export default function AdminSlotsPage() {
             </p>
           )}
         </CardContent>
-      </Card>
+        </Card>
+
+        {historySlot && (
+          <aside
+            className="sticky top-8 w-[420px] shrink-0 animate-in slide-in-from-right-4 fade-in duration-300"
+            aria-label="Slot history panel"
+          >
+            <Card className="overflow-hidden">
+              <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+                <div className="min-w-0">
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Slot History
+                  </p>
+                  <h2 className="mt-0.5 truncate text-lg font-semibold text-foreground">
+                    {historySlot.display_name}
+                  </h2>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {historySlot.owner_email}
+                  </p>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="-mr-2 -mt-1 size-8 shrink-0"
+                  onClick={() => setHistorySlot(null)}
+                  aria-label="Close history"
+                >
+                  <XIcon className="size-4" />
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 border-b border-border px-5 py-3 text-center">
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Owners
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {new Set(historySlot.history.map((h) => h.owner_email)).size}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Bids
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">
+                    {historySlot.history.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    Volume
+                  </p>
+                  <p className="mt-1 font-mono text-sm font-semibold text-foreground">
+                    €{historySlot.history.reduce((s, h) => s + h.bid_eur, 0).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="max-h-[calc(100vh-18rem)] overflow-y-auto">
+                {historySlot.history.length > 0 ? (
+                  <ol className="divide-y divide-border">
+                    {historySlot.history.map((h) => (
+                      <li key={h.id} className="px-5 py-3">
+                        <div className="flex items-baseline justify-between gap-3">
+                          <p className="truncate text-sm font-medium text-foreground">
+                            {h.display_name}
+                          </p>
+                          <p className="shrink-0 font-mono text-sm font-semibold text-foreground">
+                            €{h.bid_eur.toFixed(2)}
+                          </p>
+                        </div>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                          {h.owner_email}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {new Date(h.started_at).toLocaleDateString(locale)}
+                          {h.ended_at
+                            ? ` – ${new Date(h.ended_at).toLocaleDateString(locale)}`
+                            : ' – present'}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No history yet
+                  </p>
+                )}
+              </div>
+            </Card>
+          </aside>
+        )}
+      </div>
     </div>
   )
 }

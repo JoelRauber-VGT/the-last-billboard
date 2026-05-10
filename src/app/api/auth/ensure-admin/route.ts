@@ -15,7 +15,10 @@ export async function POST(_request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json(
+        { error: 'Unauthorized', code: 'auth_required' },
+        { status: 401 }
+      )
     }
 
     // Rate limit per user. The bootstrap path is single-shot, but the
@@ -24,7 +27,10 @@ export async function POST(_request: NextRequest) {
     const rl = await checkRateLimit(supabase, `ensure-admin:${user.id}`, 5, 600)
     if (!rl.allowed) {
       return NextResponse.json(
-        { error: rl.error ?? 'Too many requests' },
+        {
+          error: rl.error ?? 'Too many requests',
+          code: rl.error ? 'rate_check_failed' : 'rate_limited',
+        },
         { status: rl.error ? 500 : 429 }
       )
     }
@@ -41,7 +47,10 @@ export async function POST(_request: NextRequest) {
 
     if (adminCheckError) {
       console.error('Error checking for existing admins:', adminCheckError)
-      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Database error', code: 'database_error' },
+        { status: 500 }
+      )
     }
 
     const bootstrapEmail = process.env.ADMIN_BOOTSTRAP_EMAIL?.trim().toLowerCase()
@@ -62,7 +71,10 @@ export async function POST(_request: NextRequest) {
 
       if (updateError) {
         console.error('Error setting bootstrap admin:', updateError)
-        return NextResponse.json({ error: 'Failed to set admin' }, { status: 500 })
+        return NextResponse.json(
+          { error: 'Failed to set admin', code: 'admin_toggle_failed' },
+          { status: 500 }
+        )
       }
 
       console.log(`Bootstrap admin granted to ${user.id} (${userEmail})`)
@@ -86,6 +98,9 @@ export async function POST(_request: NextRequest) {
     })
   } catch (error) {
     console.error('Unexpected error in ensure-admin:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Internal server error', code: 'internal_error' },
+      { status: 500 }
+    )
   }
 }

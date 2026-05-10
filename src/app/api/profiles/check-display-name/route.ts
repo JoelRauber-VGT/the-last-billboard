@@ -45,7 +45,10 @@ export async function GET(req: Request) {
 
   if (error) {
     console.error('check-display-name query failed', error)
-    return NextResponse.json({ error: 'query_failed' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Query failed', code: 'query_failed' },
+      { status: 500 }
+    )
   }
 
   return NextResponse.json({ available: (count ?? 0) === 0 })

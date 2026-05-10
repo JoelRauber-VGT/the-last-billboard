@@ -12,31 +12,46 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'auth_required' },
+      { status: 401 }
+    )
   }
 
   const userId = user.id
 
-  // Fetch in parallel; each query is RLS-restricted to the caller.
-  const [
-    profileRes,
-    slotsRes,
-    slotHistoryRes,
-    transactionsRes,
-    reportsRes,
-    revealOutgoingRes,
-    revealIncomingRes,
-    notificationsRes,
-  ] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', userId).single(),
-    supabase.from('slots').select('*').eq('current_owner_id', userId),
-    supabase.from('slot_history').select('*').eq('owner_id', userId),
-    supabase.from('transactions').select('*').eq('user_id', userId),
-    supabase.from('reports').select('*').eq('reporter_id', userId),
-    supabase.from('reveal_requests').select('*').eq('requester_id', userId),
-    supabase.from('reveal_requests').select('*').eq('target_owner_id', userId),
-    supabase.from('notifications').select('*').eq('user_id', userId),
-  ])
+  // Fetch in parallel; each query is RLS-restricted to the caller. Wrap in
+  // try/catch so a single rejected query doesn't crash the route handler with
+  // an unhandled exception — caller gets a clean 500 JSON instead.
+  let profileRes, slotsRes, slotHistoryRes, transactionsRes,
+      reportsRes, revealOutgoingRes, revealIncomingRes, notificationsRes
+  try {
+    [
+      profileRes,
+      slotsRes,
+      slotHistoryRes,
+      transactionsRes,
+      reportsRes,
+      revealOutgoingRes,
+      revealIncomingRes,
+      notificationsRes,
+    ] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', userId).single(),
+      supabase.from('slots').select('*').eq('current_owner_id', userId),
+      supabase.from('slot_history').select('*').eq('owner_id', userId),
+      supabase.from('transactions').select('*').eq('user_id', userId),
+      supabase.from('reports').select('*').eq('reporter_id', userId),
+      supabase.from('reveal_requests').select('*').eq('requester_id', userId),
+      supabase.from('reveal_requests').select('*').eq('target_owner_id', userId),
+      supabase.from('notifications').select('*').eq('user_id', userId),
+    ])
+  } catch (err) {
+    console.error('[account/export] data fetch failed', { userId, error: err })
+    return NextResponse.json(
+      { error: 'Export failed', code: 'export_failed' },
+      { status: 500 }
+    )
+  }
 
   const payload = {
     exported_at: new Date().toISOString(),

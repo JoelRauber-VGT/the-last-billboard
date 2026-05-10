@@ -1,19 +1,25 @@
 import { checkAdminAuth } from '@/lib/admin/auth'
-import { NextResponse } from 'next/server'
+import { parsePagination } from '@/lib/admin/pagination'
+import { type NextRequest, NextResponse } from 'next/server'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const auth = await checkAdminAuth()
 
   if (!auth) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'Unauthorized', code: 'forbidden' },
+      { status: 404 },
+    )
   }
 
   const { supabase } = auth
+  const { page, pageSize, from, to } = parsePagination(request.nextUrl.searchParams)
 
-  // Fetch all slots with owner details
-  const { data: slots, error } = await supabase
+  // Paginated fetch + exact total count for future Pagination-UI follow-up.
+  const { data: slots, error, count } = await supabase
     .from('slots')
-    .select(`
+    .select(
+      `
       id,
       display_name,
       image_url,
@@ -21,12 +27,18 @@ export async function GET() {
       status,
       created_at,
       owner:current_owner_id(email)
-    `)
+    `,
+      { count: 'exact' },
+    )
     .order('created_at', { ascending: false })
+    .range(from, to)
 
   if (error) {
     console.error('Failed to fetch slots:', error)
-    return NextResponse.json({ error: 'Failed to fetch slots' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch slots', code: 'fetch_failed' },
+      { status: 500 },
+    )
   }
 
   // Fetch history for each slot
@@ -65,5 +77,10 @@ export async function GET() {
     })
   )
 
-  return NextResponse.json({ slots: slotsWithHistory })
+  return NextResponse.json({
+    slots: slotsWithHistory,
+    total: count ?? 0,
+    page,
+    pageSize,
+  })
 }

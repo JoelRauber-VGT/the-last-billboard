@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { checkAdminAuth } from '@/lib/admin/auth';
+import { apiError } from '@/lib/errors/apiError';
 import { processRefunds } from '@/lib/stripe/processRefunds';
 
 /**
@@ -12,7 +13,10 @@ export async function POST() {
   const auth = await checkAdminAuth();
 
   if (!auth) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json(
+      { error: 'Not found', code: 'forbidden' },
+      { status: 404 }
+    );
   }
 
   try {
@@ -24,13 +28,11 @@ export async function POST() {
 
     return NextResponse.json({ success: true, ...results });
   } catch (error) {
-    console.error('Error processing refunds:', error);
-    return NextResponse.json(
-      {
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    // Never leak the underlying error / stack to the client — apiError logs
+    // the cause server-side and returns only a stable code + generic label.
+    return apiError('refund_processing_failed', 500, {
+      cause: error,
+      logContext: { route: 'admin/process-refunds', adminId: auth.user.id },
+    });
   }
 }
