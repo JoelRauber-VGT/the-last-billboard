@@ -386,6 +386,47 @@
     "ended": "ended",
     "endsIn": "ends in"
   },
+  "share": {
+    "subtitle": "Pick a platform — your post is pre-filled and links back to your slot.",
+    "previewLabel": "preview",
+    "promptLabel": "share it",
+    "promptSubtitle": "show the world what you claimed.",
+    "shareNow": "Share my slot",
+    "shareShort": "share",
+    "copyText": "Copy text",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Could not copy",
+    "openLink": "Open link",
+    "email": "Email",
+    "downloadStory": "Story image",
+    "storyHelp": "1080×1920 PNG — perfect for Instagram & TikTok stories",
+    "moreApps": "More…",
+    "close": "Close",
+    "outbidShort": "outbid {name}",
+    "hashtags": "TheLastBillboard,LastBillboard",
+    "stats": {
+      "sharesTitle": "Times you shared this slot",
+      "clicksTitle": "Visitors who clicked your share link"
+    },
+    "purchase": {
+      "title": "I just claimed a slot on The Last Billboard",
+      "heading": "Tell the world you're on the board",
+      "promptHeadline": "{name} is now live on the billboard.",
+      "body": "I just claimed a slot on The Last Billboard for €{bid}. The final ad space on the internet — bid to be seen, get displaced if someone outbids you. Come find my block 👇"
+    },
+    "outbid": {
+      "title": "I outbid a slot on The Last Billboard",
+      "heading": "You took the slot — go flex it",
+      "promptHeadline": "You outbid {name} — the slot is yours.",
+      "body": "I just outbid a slot on The Last Billboard. €{bid} got me the spot — until someone outbids me. Come watch the war 👇"
+    },
+    "own": {
+      "title": "My slot on The Last Billboard",
+      "heading": "Bring more eyes to your slot",
+      "promptHeadline": "Share {name} with your audience.",
+      "body": "My slot is live on The Last Billboard for €{bid}. The final ad space on the internet — bid higher, get more space, or get displaced. See it before someone outbids me 👇"
+    }
+  },
   "bid": {
     "frozen": {
       "title": "Billboard Frozen",
@@ -411,7 +452,7 @@
       "submit": "Proceed to Payment",
       "submitting": "Processing...",
       "uploadingImage": "Uploading image...",
-      "cropHint": "[info] your image will be cropped to fit your slot format. keep the important content centered."
+      "cropHint": "[info] your slot can be portrait, square, or landscape. frame your image for each — the billboard picks the right crop automatically."
     },
     "validation": {
       "displayNameRequired": "Display name is required",
@@ -641,7 +682,14 @@
       "reveal_request_received": "wants to know who you are",
       "reveal_request_accepted": "revealed their identity",
       "reveal_request_declined": "declined to reveal their identity",
+      "slot_outbid": "you were outbid",
       "system": "system message"
+    },
+    "outbid": {
+      "body": "{name} took your slot for €{newBid}. Your bid was €{prevBid}. Want it back?",
+      "bodyAnonymous": "An anonymous bidder took your slot for €{newBid}. Your bid was €{prevBid}. Want it back?",
+      "rebid": "outbid them",
+      "acknowledge": "Got it"
     },
     "viewSlot": "view slot",
     "noMessage": "no message"

@@ -5,6 +5,19 @@ import { isBillboardFrozenAsync } from '@/lib/freeze/getFreezeDate';
 import Stripe from 'stripe';
 import { z } from 'zod';
 
+// Per-aspect framing triplet (matches lib/billboard/framing.ts).
+const framingSchema = z.object({
+  pan_x: z.number().min(0).max(1),
+  pan_y: z.number().min(0).max(1),
+  zoom: z.number().min(1).max(3),
+});
+
+const framingsObjectSchema = z.object({
+  portrait: framingSchema,
+  square: framingSchema,
+  landscape: framingSchema,
+});
+
 // Stripe metadata values arrive as strings. We coerce and validate
 // with Zod so malformed values (NaN, out-of-range zoom) never reach
 // the process_bid RPC.
@@ -29,6 +42,26 @@ const webhookMetadataSchema = z
     pan_x: z.coerce.number().min(0).max(1).default(0.5),
     pan_y: z.coerce.number().min(0).max(1).default(0.5),
     zoom: z.coerce.number().min(1.0).max(3.0).default(1.0),
+    // framings is a JSON-encoded { portrait, square, landscape } object.
+    // Optional for back-compat with checkout sessions created before
+    // migration 027 — when missing the RPC mirrors pan/zoom into all
+    // three buckets server-side.
+    framings: z
+      .string()
+      .optional()
+      .transform((v, ctx) => {
+        if (!v) return null;
+        try {
+          return JSON.parse(v) as unknown;
+        } catch {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'framings is not valid JSON',
+          });
+          return z.NEVER;
+        }
+      })
+      .pipe(framingsObjectSchema.nullable()),
     is_anonymous: z
       .string()
       .optional()
@@ -241,6 +274,7 @@ export async function POST(request: NextRequest) {
         p_pan_y: metadata.pan_y,
         p_zoom: metadata.zoom,
         p_is_anonymous: metadata.is_anonymous,
+        p_framings: metadata.framings,
       });
 
       if (bidError) {

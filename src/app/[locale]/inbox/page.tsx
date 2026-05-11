@@ -32,6 +32,7 @@ export default async function InboxPage({
       | 'reveal_request_received'
       | 'reveal_request_accepted'
       | 'reveal_request_declined'
+      | 'slot_outbid'
       | 'system'
     payload: Record<string, unknown>
     related_reveal_request_id: string | null

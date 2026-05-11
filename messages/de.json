@@ -386,6 +386,47 @@
     "ended": "beendet",
     "endsIn": "endet in"
   },
+  "share": {
+    "subtitle": "Plattform auswählen – dein Post ist vorbereitet und verlinkt direkt auf deinen Slot.",
+    "previewLabel": "vorschau",
+    "promptLabel": "teilen",
+    "promptSubtitle": "zeig der Welt, was du dir geschnappt hast.",
+    "shareNow": "Slot teilen",
+    "shareShort": "teilen",
+    "copyText": "Text kopieren",
+    "copied": "In Zwischenablage kopiert",
+    "copyFailed": "Konnte nicht kopiert werden",
+    "openLink": "Link öffnen",
+    "email": "E-Mail",
+    "downloadStory": "Story-Bild",
+    "storyHelp": "1080×1920 PNG – perfekt für Instagram- und TikTok-Stories",
+    "moreApps": "Mehr…",
+    "close": "Schließen",
+    "outbidShort": "{name} überboten",
+    "hashtags": "TheLastBillboard,LastBillboard",
+    "stats": {
+      "sharesTitle": "So oft hast du diesen Slot geteilt",
+      "clicksTitle": "Besucher, die deinen Share-Link geklickt haben"
+    },
+    "purchase": {
+      "title": "Ich habe gerade einen Slot auf The Last Billboard ergattert",
+      "heading": "Sag der Welt, dass du auf dem Board bist",
+      "promptHeadline": "{name} ist jetzt live auf dem Billboard.",
+      "body": "Ich habe gerade einen Slot auf The Last Billboard für €{bid} ergattert. Die letzte Werbefläche im Netz – bieten, sichtbar werden, überboten werden. Schau dir meinen Block an 👇"
+    },
+    "outbid": {
+      "title": "Ich habe einen Slot auf The Last Billboard überboten",
+      "heading": "Slot geschnappt – jetzt zeigen",
+      "promptHeadline": "Du hast {name} überboten – der Slot gehört dir.",
+      "body": "Ich habe gerade einen Slot auf The Last Billboard überboten. €{bid} – der Platz gehört mir, bis jemand mehr bietet. Schau dir das Duell an 👇"
+    },
+    "own": {
+      "title": "Mein Slot auf The Last Billboard",
+      "heading": "Mehr Aufmerksamkeit für deinen Slot",
+      "promptHeadline": "Teile {name} mit deinem Publikum.",
+      "body": "Mein Slot ist live auf The Last Billboard für €{bid}. Die letzte Werbefläche im Netz – höher bieten, mehr Raum bekommen, oder überboten werden. Sieh ihn dir an, bevor mich jemand überbietet 👇"
+    }
+  },
   "bid": {
     "frozen": {
       "title": "Billboard eingefroren",
@@ -411,7 +452,7 @@
       "submit": "Zur Zahlung",
       "submitting": "Verarbeiten...",
       "uploadingImage": "Bild wird hochgeladen...",
-      "cropHint": "[info] dein bild wird auf dein slot-format zugeschnitten. halte wichtige inhalte mittig."
+      "cropHint": "[info] dein slot kann hochformat, quadrat oder querformat sein. richte dein bild für alle drei aus — das billboard wählt den passenden ausschnitt automatisch."
     },
     "validation": {
       "displayNameRequired": "Anzeigename ist erforderlich",
@@ -641,7 +682,14 @@
       "reveal_request_received": "möchte wissen, wer Sie sind",
       "reveal_request_accepted": "hat sich zu erkennen gegeben",
       "reveal_request_declined": "hat die Offenlegung abgelehnt",
+      "slot_outbid": "du wurdest überboten",
       "system": "Systemnachricht"
+    },
+    "outbid": {
+      "body": "{name} hat deinen Slot für €{newBid} übernommen. Dein Gebot lag bei €{prevBid}. Zurückholen?",
+      "bodyAnonymous": "Ein anonymer Bieter hat deinen Slot für €{newBid} übernommen. Dein Gebot lag bei €{prevBid}. Zurückholen?",
+      "rebid": "zurückbieten",
+      "acknowledge": "Verstanden"
     },
     "viewSlot": "slot ansehen",
     "noMessage": "keine Nachricht"

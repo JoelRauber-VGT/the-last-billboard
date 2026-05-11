@@ -49,6 +49,7 @@ export interface Database {
           pan_x: number
           pan_y: number
           zoom: number
+          framings: Json | null
           is_anonymous: boolean
           created_at: string
           updated_at: string
@@ -65,6 +66,7 @@ export interface Database {
           pan_x?: number
           pan_y?: number
           zoom?: number
+          framings?: Json | null
           is_anonymous?: boolean
           created_at?: string
           updated_at?: string
@@ -81,6 +83,7 @@ export interface Database {
           pan_x?: number
           pan_y?: number
           zoom?: number
+          framings?: Json | null
           is_anonymous?: boolean
           created_at?: string
           updated_at?: string
@@ -317,7 +320,7 @@ export interface Database {
         Row: {
           id: string
           user_id: string
-          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'system'
+          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'slot_outbid' | 'system'
           payload: Json
           related_reveal_request_id: string | null
           read_at: string | null
@@ -326,7 +329,7 @@ export interface Database {
         Insert: {
           id?: string
           user_id: string
-          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'system'
+          type: 'reveal_request_received' | 'reveal_request_accepted' | 'reveal_request_declined' | 'slot_outbid' | 'system'
           payload?: Json
           related_reveal_request_id?: string | null
           read_at?: string | null

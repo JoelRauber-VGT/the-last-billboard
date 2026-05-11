@@ -3,6 +3,8 @@ import { createServerClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/routing'
 import type { Slot, SlotHistory } from '@/types/database'
+import { ShareSlotButton } from '@/components/share/ShareSlotButton'
+import { SlotShareStats } from '@/components/share/SlotShareStats'
 
 type OutbidEntry = SlotHistory & {
   slots: Pick<Slot, 'id' | 'current_bid_eur' | 'status'> | null
@@ -90,6 +92,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                     <div className="flex-1 min-w-0">
                       <div className="font-medium text-sm truncate text-term-text">{slot.display_name}</div>
                       <div className="text-xs text-term-muted truncate">{slot.link_url}</div>
+                      <div className="mt-1">
+                        <SlotShareStats slotId={slot.id} />
+                      </div>
                     </div>
 
                     <span className="shrink-0 inline-flex items-center gap-1.5 text-xs px-2 py-0.5 bg-green-500/10 text-green-400">
@@ -104,6 +109,17 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
                     <div className="shrink-0 text-xs text-term-muted text-right hidden sm:block w-24">
                       {formatDate(slot.updated_at, locale)}
                     </div>
+
+                    <ShareSlotButton
+                      slot={{
+                        id: slot.id,
+                        display_name: slot.display_name,
+                        current_bid_eur: slot.current_bid_eur,
+                        image_url: slot.image_url,
+                      }}
+                      variant="own"
+                      size="sm"
+                    />
                   </div>
                 ))}
               </div>

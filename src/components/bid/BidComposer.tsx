@@ -8,6 +8,7 @@ import { config } from '@/lib/config'
 import { uploadSlotImage } from '@/lib/upload/uploadSlotImage'
 import { createBidCheckoutSession } from '@/app/actions/bid'
 import { ImagePositioner } from '@/components/bid/ImagePositioner'
+import { DEFAULT_FRAMINGS, type Framings } from '@/lib/billboard/framing'
 
 interface SlotInfo {
   id: string
@@ -43,8 +44,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
   const [bidEur, setBidEur] = useState<number>(minBid)
   const [linkUrl, setLinkUrl] = useState('')
   const [upload, setUpload] = useState<UploadState>({ kind: 'idle' })
-  const [pan, setPan] = useState({ x: 0.5, y: 0.5 })
-  const [zoom, setZoom] = useState(1.0)
+  const [framings, setFramings] = useState<Framings>(() => structuredClone(DEFAULT_FRAMINGS))
   const [isAnonymous, setIsAnonymous] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -77,8 +77,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
 
       const previewUrl = URL.createObjectURL(file)
       setUpload({ kind: 'uploading', file, previewUrl })
-      setPan({ x: 0.5, y: 0.5 })
-      setZoom(1.0)
+      setFramings(structuredClone(DEFAULT_FRAMINGS))
 
       try {
         const remoteUrl = await uploadSlotImage(file, userId)
@@ -98,8 +97,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
   const handleRemoveImage = () => {
     if (upload.kind !== 'idle') URL.revokeObjectURL(upload.previewUrl)
     setUpload({ kind: 'idle' })
-    setPan({ x: 0.5, y: 0.5 })
-    setZoom(1.0)
+    setFramings(structuredClone(DEFAULT_FRAMINGS))
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -124,9 +122,7 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
         link_url: linkUrl,
         brand_color: '#1a1a1a',
         bid_eur: bidEur,
-        pan_x: pan.x,
-        pan_y: pan.y,
-        zoom,
+        framings,
         outbid_slot_id: outbidSlot?.id ?? undefined,
         is_anonymous: isAnonymous,
       })
@@ -339,10 +335,8 @@ export function BidComposer({ userId, outbidSlot }: BidComposerProps) {
                 <div className="lg:flex-1 lg:min-h-0 lg:overflow-auto">
                   <ImagePositioner
                     imageUrl={remoteUrl}
-                    pan={pan}
-                    zoom={zoom}
-                    onPanChange={setPan}
-                    onZoomChange={setZoom}
+                    framings={framings}
+                    onFramingsChange={setFramings}
                     disabled={submitting}
                   />
                 </div>

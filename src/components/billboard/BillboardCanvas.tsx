@@ -4,6 +4,7 @@ import React, { useMemo, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 import type { Slot } from '@/types/database'
 import { computeBillboardTreemap, type TreemapRect } from '@/lib/billboard/treemap'
+import { pickFraming } from '@/lib/billboard/framing'
 import type { Viewport, ContainerSize } from '@/hooks/useBillboardViewport'
 
 interface BillboardCanvasProps {
@@ -129,6 +130,7 @@ function SlotTile({ rect, isFrozen, onMouseEnter, onMouseMove, onMouseLeave }: S
   const { slot, x0, y0, x1, y1 } = rect
   const width = x1 - x0
   const height = y1 - y0
+  const framing = pickFraming(slot, width, height)
 
   return (
     <div
@@ -154,10 +156,10 @@ function SlotTile({ rect, isFrozen, onMouseEnter, onMouseMove, onMouseLeave }: S
           draggable={false}
           style={{
             position: 'absolute',
-            left: -width * (slot.zoom - 1) * slot.pan_x,
-            top: -height * (slot.zoom - 1) * slot.pan_y,
-            width: width * slot.zoom,
-            height: height * slot.zoom,
+            left: -width * (framing.zoom - 1) * framing.pan_x,
+            top: -height * (framing.zoom - 1) * framing.pan_y,
+            width: width * framing.zoom,
+            height: height * framing.zoom,
             objectFit: 'cover',
             pointerEvents: 'none',
             userSelect: 'none',

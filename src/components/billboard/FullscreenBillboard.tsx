@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { useBillboardData } from '@/hooks/useBillboardData'
 import { useBillboardViewport } from '@/hooks/useBillboardViewport'
 import { BillboardCanvas } from './BillboardCanvas'
@@ -23,6 +24,44 @@ export function FullscreenBillboard({
   const { slots } = useBillboardData(initialSlots)
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const deepLinkSlotId = searchParams.get('slot')
+  const consumedDeepLinkRef = useRef(false)
+
+  useEffect(() => {
+    if (consumedDeepLinkRef.current) return
+    if (!deepLinkSlotId) return
+    if (slots.length === 0) return
+    const target = slots.find((s) => s.id === deepLinkSlotId)
+    if (!target) return
+    consumedDeepLinkRef.current = true
+    setSelectedSlot(target)
+    setModalOpen(true)
+
+    // Inbound click tracking: only when arriving from a share link, and
+    // only once per browser session per slot to avoid refresh inflation.
+    const utmSource = searchParams.get('utm_source')
+    if (utmSource === 'share') {
+      const sessionKey = `tlb-inbound-click:${deepLinkSlotId}`
+      try {
+        if (typeof window !== 'undefined' && !window.sessionStorage.getItem(sessionKey)) {
+          window.sessionStorage.setItem(sessionKey, '1')
+          fetch(`/api/slots/${encodeURIComponent(deepLinkSlotId)}/share-event`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              kind: 'click',
+              platform: searchParams.get('utm_medium') || 'inbound',
+              variant: searchParams.get('utm_campaign') || 'inbound',
+            }),
+            keepalive: true,
+          }).catch(() => {})
+        }
+      } catch {
+        // sessionStorage may be blocked — silent.
+      }
+    }
+  }, [deepLinkSlotId, slots, searchParams])
   const [hoveredSlot, setHoveredSlot] = useState<Slot | null>(null)
   const [cursor, setCursor] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   const { isOpen: onboardingOpen, close: closeOnboarding } = useOnboarding()

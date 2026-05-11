@@ -23,6 +23,7 @@ export function generateTestSlots(count: number): Slot[] {
       pan_x: 0.5,
       pan_y: 0.5,
       zoom: 1.0,
+      framings: null,
       created_at: new Date(Date.now() - i * 86400000).toISOString(),
       updated_at: new Date().toISOString(),
     })

@@ -12,6 +12,7 @@ export interface IncomingItem {
     | 'reveal_request_received'
     | 'reveal_request_accepted'
     | 'reveal_request_declined'
+    | 'slot_outbid'
     | 'system'
   created_at: string
   read_at: string | null
@@ -188,8 +189,118 @@ export function InboxClient({ incoming, outgoing, locale }: Props) {
               const reveal = item.related_reveal_request
               const isPendingReveal =
                 item.type === 'reveal_request_received' && reveal?.status === 'pending'
+              const isOutbid = item.type === 'slot_outbid'
               const requesterName =
                 item.requester_name || t('anonymousFrom')
+
+              if (isOutbid) {
+                const slotId =
+                  typeof item.payload.slot_id === 'string'
+                    ? item.payload.slot_id
+                    : null
+                const newOwnerName =
+                  typeof item.payload.new_owner_name === 'string'
+                    ? item.payload.new_owner_name
+                    : null
+                const newOwnerIsAnon = item.payload.new_is_anonymous === true
+                const newBid =
+                  typeof item.payload.new_bid_eur === 'number'
+                    ? item.payload.new_bid_eur
+                    : Number.parseFloat(String(item.payload.new_bid_eur ?? ''))
+                const prevBid =
+                  typeof item.payload.previous_bid_eur === 'number'
+                    ? item.payload.previous_bid_eur
+                    : Number.parseFloat(
+                        String(item.payload.previous_bid_eur ?? '')
+                      )
+
+                return (
+                  <li
+                    key={item.id}
+                    className="border p-4 flex flex-col gap-3"
+                    style={{
+                      borderColor: unread
+                        ? 'rgba(248,113,113,0.45)'
+                        : 'rgba(255,255,255,0.08)',
+                      background: unread ? 'rgba(248,113,113,0.05)' : 'transparent',
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-col gap-1 min-w-0">
+                        <span className="text-sm">
+                          <span
+                            className="text-white font-bold"
+                            style={{ color: '#f87171' }}
+                          >
+                            {t('types.slot_outbid')}
+                          </span>
+                        </span>
+                        <span className="text-[11px] text-term-muted">
+                          {formatWhen(item.created_at, locale)}
+                        </span>
+                      </div>
+                      {unread && (
+                        <span
+                          className="text-[10px] uppercase tracking-wider"
+                          style={{ color: '#f87171' }}
+                        >
+                          ◉ {t('unread')}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="text-sm text-term-text">
+                      {newOwnerIsAnon || !newOwnerName
+                        ? t('outbid.bodyAnonymous', {
+                            newBid: Number.isFinite(newBid)
+                              ? newBid.toFixed(0)
+                              : '—',
+                            prevBid: Number.isFinite(prevBid)
+                              ? prevBid.toFixed(0)
+                              : '—',
+                          })
+                        : t('outbid.body', {
+                            name: newOwnerName,
+                            newBid: Number.isFinite(newBid)
+                              ? newBid.toFixed(0)
+                              : '—',
+                            prevBid: Number.isFinite(prevBid)
+                              ? prevBid.toFixed(0)
+                              : '—',
+                          })}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {slotId && (
+                        <Link
+                          href={`/bid?outbid=${slotId}`}
+                          className="px-3 py-1.5 text-xs font-bold transition-colors"
+                          style={{ background: '#FF6B00', color: '#0a0a0a' }}
+                        >
+                          [{t('outbid.rebid')} →]
+                        </Link>
+                      )}
+                      {slotId && (
+                        <Link
+                          href={`/?slot=${slotId}`}
+                          className="px-3 py-1.5 text-xs text-term-muted border border-term-border-light hover:text-white hover:border-term-accent transition-colors"
+                        >
+                          [{t('viewSlot')}]
+                        </Link>
+                      )}
+                      {unread && (
+                        <button
+                          type="button"
+                          onClick={() => markRead(item.id)}
+                          className="ml-auto text-xs text-term-muted hover:text-white"
+                        >
+                          {t('outbid.acknowledge')}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                )
+              }
 
               return (
                 <li

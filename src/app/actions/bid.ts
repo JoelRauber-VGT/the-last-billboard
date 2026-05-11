@@ -8,6 +8,27 @@ import { isSupabaseStoragePublicUrl } from '@/lib/storage/slotImages';
 import { z } from 'zod';
 import { getLocale } from 'next-intl/server';
 
+// Per-aspect framing triplet. Each slot stores three of these, one per
+// aspect bucket (portrait/square/landscape); the renderer picks the bucket
+// from the slot's actual rendered aspect. See lib/billboard/framing.ts.
+const framingSchema = z.object({
+  pan_x: z.number().min(0).max(1),
+  pan_y: z.number().min(0).max(1),
+  zoom: z.number().min(1.0).max(3.0),
+});
+
+const framingsSchema = z.object({
+  portrait: framingSchema,
+  square: framingSchema,
+  landscape: framingSchema,
+});
+
+const DEFAULT_FRAMINGS = {
+  portrait: { pan_x: 0.5, pan_y: 0.5, zoom: 1.0 },
+  square: { pan_x: 0.5, pan_y: 0.5, zoom: 1.0 },
+  landscape: { pan_x: 0.5, pan_y: 0.5, zoom: 1.0 },
+} as const;
+
 // Validation schema for bid data. `display_name` is no longer accepted from
 // the client — the server reads the bidder's profile.display_name and uses
 // that for both the Stripe line item and the eventual slot record. This means
@@ -19,9 +40,7 @@ const bidFormSchema = z.object({
   brand_color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid color format'),
   bid_eur: z.number().positive('Bid must be positive').multipleOf(0.01, 'Bid must be in cents'),
   outbid_slot_id: z.string().uuid().optional(),
-  pan_x: z.number().min(0).max(1).default(0.5),
-  pan_y: z.number().min(0).max(1).default(0.5),
-  zoom: z.number().min(1.0).max(3.0).default(1.0),
+  framings: framingsSchema.default(DEFAULT_FRAMINGS),
   is_anonymous: z.boolean().default(false),
 });
 
@@ -283,9 +302,13 @@ export async function createBidCheckoutSession(
         link_url: data.link_url,
         display_name: resolvedDisplayName,
         brand_color: data.brand_color,
-        pan_x: data.pan_x.toString(),
-        pan_y: data.pan_y.toString(),
-        zoom: data.zoom.toString(),
+        // Mirror the square bucket into the legacy pan/zoom keys so any
+        // older webhook handler / process_bid signature without framings
+        // support still gets a sensible crop.
+        pan_x: data.framings.square.pan_x.toString(),
+        pan_y: data.framings.square.pan_y.toString(),
+        zoom: data.framings.square.zoom.toString(),
+        framings: JSON.stringify(data.framings),
         is_anonymous: data.is_anonymous ? '1' : '0',
       },
     });

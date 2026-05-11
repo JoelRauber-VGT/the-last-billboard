@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dialog'
 import { ReportDialog } from './ReportDialog'
 import { RevealRequestDialog } from './RevealRequestDialog'
+import { ShareSlotDialog } from '@/components/share/ShareSlotDialog'
+import { SlotShareStats } from '@/components/share/SlotShareStats'
 
 interface SlotDetailModalProps {
   slot: Slot | null
@@ -59,6 +61,7 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
   const [locale, setLocale] = useState<LocaleKey>('en')
   const [reportDialogOpen, setReportDialogOpen] = useState(false)
   const [revealDialogOpen, setRevealDialogOpen] = useState(false)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [authedUserId, setAuthedUserId] = useState<string | null>(null)
   const [ownerProfile, setOwnerProfile] = useState<{
     display_name: string | null
@@ -642,6 +645,42 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
 
         {/* Action footer */}
         <div className="flex flex-col items-center gap-3">
+          {authedUserId === slot.current_owner_id && (
+            <div className="w-full flex items-center justify-between gap-2 pb-1">
+              <span className="text-[11px] text-term-muted uppercase tracking-widest">
+                share stats
+              </span>
+              <SlotShareStats slotId={slot.id} variant="block" />
+            </div>
+          )}
+          {authedUserId === slot.current_owner_id && (
+            <button
+              type="button"
+              onClick={() => setShareDialogOpen(true)}
+              className="transition-all"
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: 'transparent',
+                color: '#FF6B00',
+                fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
+                fontSize: 14,
+                fontWeight: 600,
+                border: '1px solid rgba(255,107,0,0.6)',
+                borderRadius: 3,
+                cursor: 'pointer',
+                letterSpacing: '0.04em',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255,107,0,0.1)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              [ SHARE THIS SLOT ]
+            </button>
+          )}
           <button
             type="button"
             onClick={handleOutbid}
@@ -707,6 +746,19 @@ export function SlotDetailModal({ slot, open, onOpenChange }: SlotDetailModalPro
             open={revealDialogOpen}
             onOpenChange={setRevealDialogOpen}
             onSent={() => setRevealStatus('pending')}
+          />
+        )}
+        {slot && authedUserId === slot.current_owner_id && (
+          <ShareSlotDialog
+            open={shareDialogOpen}
+            onOpenChange={setShareDialogOpen}
+            variant="own"
+            slot={{
+              id: slot.id,
+              display_name: slot.display_name,
+              current_bid_eur: slot.current_bid_eur,
+              image_url: slot.image_url,
+            }}
           />
         )}
       </DialogContent>

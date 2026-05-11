@@ -386,6 +386,47 @@
     "ended": "terminé",
     "endsIn": "se termine dans"
   },
+  "share": {
+    "subtitle": "Choisis une plateforme — ton post est pré-rempli et renvoie vers ton slot.",
+    "previewLabel": "aperçu",
+    "promptLabel": "partager",
+    "promptSubtitle": "montre au monde ce que tu as réservé.",
+    "shareNow": "Partager mon slot",
+    "shareShort": "partager",
+    "copyText": "Copier le texte",
+    "copied": "Copié dans le presse-papiers",
+    "copyFailed": "Impossible de copier",
+    "openLink": "Ouvrir le lien",
+    "email": "E-mail",
+    "downloadStory": "Image story",
+    "storyHelp": "PNG 1080×1920 — parfait pour les stories Instagram et TikTok",
+    "moreApps": "Plus…",
+    "close": "Fermer",
+    "outbidShort": "{name} surenchéri",
+    "hashtags": "TheLastBillboard,LastBillboard",
+    "stats": {
+      "sharesTitle": "Nombre de fois où tu as partagé ce slot",
+      "clicksTitle": "Visiteurs ayant cliqué sur ton lien de partage"
+    },
+    "purchase": {
+      "title": "Je viens de réserver un slot sur The Last Billboard",
+      "heading": "Dis au monde que tu es sur le panneau",
+      "promptHeadline": "{name} est maintenant en direct sur le billboard.",
+      "body": "Je viens de réserver un slot sur The Last Billboard pour €{bid}. Le dernier espace publicitaire du web — enchéris pour être vu, ou fais-toi déloger. Va voir mon bloc 👇"
+    },
+    "outbid": {
+      "title": "J'ai surenchéri un slot sur The Last Billboard",
+      "heading": "Slot pris — affiche-le",
+      "promptHeadline": "Tu as surenchéri {name} — le slot est à toi.",
+      "body": "Je viens de surenchérir un slot sur The Last Billboard. €{bid} — la place est à moi jusqu'à ce que quelqu'un mise plus haut. Viens voir la bataille 👇"
+    },
+    "own": {
+      "title": "Mon slot sur The Last Billboard",
+      "heading": "Attire plus d'yeux sur ton slot",
+      "promptHeadline": "Partage {name} avec ton audience.",
+      "body": "Mon slot est en direct sur The Last Billboard pour €{bid}. Le dernier espace publicitaire du web — enchéris plus haut, prends plus de place, ou fais-toi déloger. Regarde-le avant que quelqu'un me déloge 👇"
+    }
+  },
   "bid": {
     "frozen": {
       "title": "Billboard gelé",
@@ -411,7 +452,7 @@
       "submit": "Procéder au paiement",
       "submitting": "Traitement...",
       "uploadingImage": "Téléchargement de l'image...",
-      "cropHint": "[info] votre image sera recadrée selon le format de votre slot. gardez l'essentiel au centre."
+      "cropHint": "[info] votre slot peut être portrait, carré ou paysage. cadrez votre image pour chacun — le billboard choisit automatiquement le bon recadrage."
     },
     "validation": {
       "displayNameRequired": "Le nom d'affichage est requis",
@@ -641,7 +682,14 @@
       "reveal_request_received": "veut savoir qui vous êtes",
       "reveal_request_accepted": "s'est révélé",
       "reveal_request_declined": "a refusé de se révéler",
+      "slot_outbid": "tu as été surenchéri",
       "system": "message système"
+    },
+    "outbid": {
+      "body": "{name} a pris ton slot pour €{newBid}. Ton enchère était de €{prevBid}. Le récupérer ?",
+      "bodyAnonymous": "Un enchérisseur anonyme a pris ton slot pour €{newBid}. Ton enchère était de €{prevBid}. Le récupérer ?",
+      "rebid": "surenchérir",
+      "acknowledge": "Compris"
     },
     "viewSlot": "voir le slot",
     "noMessage": "aucun message"

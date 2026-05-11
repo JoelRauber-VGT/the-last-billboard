@@ -386,6 +386,47 @@
     "ended": "terminado",
     "endsIn": "termina en"
   },
+  "share": {
+    "subtitle": "Elige una plataforma — tu publicación viene lista y enlaza a tu slot.",
+    "previewLabel": "vista previa",
+    "promptLabel": "compártelo",
+    "promptSubtitle": "muéstrale al mundo lo que reclamaste.",
+    "shareNow": "Compartir mi slot",
+    "shareShort": "compartir",
+    "copyText": "Copiar texto",
+    "copied": "Copiado al portapapeles",
+    "copyFailed": "No se pudo copiar",
+    "openLink": "Abrir enlace",
+    "email": "Email",
+    "downloadStory": "Imagen story",
+    "storyHelp": "PNG 1080×1920 — perfecto para historias de Instagram y TikTok",
+    "moreApps": "Más…",
+    "close": "Cerrar",
+    "outbidShort": "{name} superado",
+    "hashtags": "TheLastBillboard,LastBillboard",
+    "stats": {
+      "sharesTitle": "Veces que compartiste este slot",
+      "clicksTitle": "Visitantes que hicieron clic en tu enlace"
+    },
+    "purchase": {
+      "title": "Acabo de reclamar un slot en The Last Billboard",
+      "heading": "Dile al mundo que estás en el tablero",
+      "promptHeadline": "{name} ya está en vivo en el billboard.",
+      "body": "Acabo de reclamar un slot en The Last Billboard por €{bid}. El último espacio publicitario de internet — pujas para ser visto, te desplazan si alguien sube más. Ven a ver mi bloque 👇"
+    },
+    "outbid": {
+      "title": "Superé un slot en The Last Billboard",
+      "heading": "Te llevaste el slot — presúmelo",
+      "promptHeadline": "Superaste a {name} — el slot es tuyo.",
+      "body": "Acabo de superar un slot en The Last Billboard. €{bid} y el lugar es mío, hasta que alguien me supere. Ven a ver la batalla 👇"
+    },
+    "own": {
+      "title": "Mi slot en The Last Billboard",
+      "heading": "Atrae más miradas a tu slot",
+      "promptHeadline": "Comparte {name} con tu audiencia.",
+      "body": "Mi slot está en vivo en The Last Billboard por €{bid}. El último espacio publicitario de internet — puja más alto, gana más espacio, o te desplazan. Míralo antes de que me superen 👇"
+    }
+  },
   "bid": {
     "frozen": {
       "title": "Billboard congelado",
@@ -411,7 +452,7 @@
       "submit": "Proceder al pago",
       "submitting": "Procesando...",
       "uploadingImage": "Subiendo imagen...",
-      "cropHint": "[info] tu imagen se recortará al formato de tu slot. mantén el contenido importante centrado."
+      "cropHint": "[info] tu slot puede ser vertical, cuadrado u horizontal. encuadra tu imagen para los tres — el billboard elige el recorte correcto automáticamente."
     },
     "validation": {
       "displayNameRequired": "El nombre para mostrar es requerido",
@@ -641,7 +682,14 @@
       "reveal_request_received": "quiere saber quién eres",
       "reveal_request_accepted": "reveló su identidad",
       "reveal_request_declined": "se negó a revelar su identidad",
+      "slot_outbid": "te superaron",
       "system": "mensaje del sistema"
+    },
+    "outbid": {
+      "body": "{name} se llevó tu slot por €{newBid}. Tu puja era €{prevBid}. ¿Lo recuperas?",
+      "bodyAnonymous": "Un postor anónimo se llevó tu slot por €{newBid}. Tu puja era €{prevBid}. ¿Lo recuperas?",
+      "rebid": "supéralo",
+      "acknowledge": "Entendido"
     },
     "viewSlot": "ver slot",
     "noMessage": "sin mensaje"

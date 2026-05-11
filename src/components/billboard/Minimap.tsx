@@ -3,6 +3,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type { Slot } from '@/types/database'
 import { computeBillboardTreemap } from '@/lib/billboard/treemap'
+import { pickFraming } from '@/lib/billboard/framing'
 import type { ContainerSize, Viewport } from '@/hooks/useBillboardViewport'
 import { MIN_ZOOM } from '@/hooks/useBillboardViewport'
 
@@ -193,6 +194,7 @@ export function Minimap({
         const w = r.x1 - r.x0
         const h = r.y1 - r.y0
         const { slot } = r
+        const framing = pickFraming(slot, w, h)
         return (
           <div
             key={slot.id}
@@ -214,10 +216,10 @@ export function Minimap({
                 draggable={false}
                 style={{
                   position: 'absolute',
-                  left: -w * (slot.zoom - 1) * slot.pan_x,
-                  top: -h * (slot.zoom - 1) * slot.pan_y,
-                  width: w * slot.zoom,
-                  height: h * slot.zoom,
+                  left: -w * (framing.zoom - 1) * framing.pan_x,
+                  top: -h * (framing.zoom - 1) * framing.pan_y,
+                  width: w * framing.zoom,
+                  height: h * framing.zoom,
                   objectFit: 'cover',
                   pointerEvents: 'none',
                   userSelect: 'none',
